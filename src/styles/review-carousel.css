@@ -1,0 +1,131 @@
+.review-carousel-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1.5rem 0.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.review-slide {
+  transition: transform 0.3s ease;
+  height: 100%;
+}
+
+.review-slide-active {
+  transform: scale(1.02);
+  z-index: 2;
+}
+
+.review-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 0.75rem;
+  height: auto;
+  min-height: 160px;
+  max-height: 200px;
+  transition: all 0.3s ease;
+  transform-origin: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.review-avatar {
+  width: 32px;
+  height: 32px;
+}
+
+.review-content {
+  font-style: italic;
+  line-height: 1.4;
+  margin-bottom: 0.75rem;
+  color: #4B5563;
+  font-size: 0.875rem;
+}
+
+.review-media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+.review-media-item {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.review-media-item:hover {
+  transform: scale(1.05);
+}
+
+.swiper-pagination {
+  position: relative;
+  margin-top: 2rem;
+}
+
+.swiper-pagination-bullet {
+  width: 6px;
+  height: 6px;
+  background: rgba(107, 114, 128, 0.3);
+  opacity: 0.5;
+  transition: all 0.3s ease;
+  margin: 0 4px;
+}
+
+.swiper-pagination-bullet-active {
+  background: #4B5563;
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.swiper-button-prev,
+.swiper-button-next {
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  color: #4B5563;
+  transition: all 0.3s ease;
+}
+
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+  background: #ffffff;
+  color: #1F2937;
+}
+
+.swiper-button-prev::after,
+.swiper-button-next::after {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .review-carousel-container {
+    padding: 1rem 0.5rem;
+  }
+  
+  .review-card {
+    padding: 1rem;
+  }
+  
+  .swiper-button-prev,
+  .swiper-button-next {
+    display: none;
+  }
+  
+  .review-media-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

@@ -1,0 +1,122 @@
+'use client';
+
+import React,{useState} from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useCart } from '@/context/CartContext';
+import { ShoppingCart } from 'lucide-react';
+
+interface ProductCardProps {
+  product: {
+    id: string;
+    name: string;
+    price: number;
+    images: string[];
+    description: string;
+    isNewArrival?: boolean;
+    isBestSeller?: boolean;
+  };
+}
+
+const formatPrice = (price: number) => {
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    maximumFractionDigits: 0,
+  }).format(price);
+};
+
+export default function ProductCard({ product }: ProductCardProps) {
+  const { addToCart } = useCart();
+
+  const [isAdding, setIsAdding] = useState(false);
+
+  const handleAddToCart = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsAdding(true);
+    try {
+      addToCart({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.images[0],
+      });
+      setTimeout(() => setIsAdding(false), 1000);
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      setIsAdding(false);
+    }
+  };
+
+  return (
+    <div className="group relative bg-white rounded-lg shadow-sm overflow-hidden">
+      <Link href={`/product/${product.id}`}>
+        <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-t-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
+          <Image
+            src={product.images?.[0] || '/images/brand-logo.png'}
+            alt={product.name}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            priority
+            className="object-cover object-center transform transition-transform duration-300 group-hover:scale-105"
+          {product.isNewArrival && (
+            <div className="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 rounded-md text-xs font-medium">
+              New Arrival
+            </div>
+          )}
+          {product.isBestSeller && (
+            <div className="absolute top-2 right-2 bg-yellow-500 text-white px-2 py-1 rounded-md text-xs font-medium">
+              Best Seller
+            </div>
+          )}
+        </div>
+      </Link>
+      <div className="p-4">
+        <h3 className="text-sm text-gray-700">
+          <Link href={`/product/${product.id}`}>
+            <span aria-hidden="true" className="absolute inset-0" />
+            {product.name}
+          </Link>
+        </h3>
+        <p className="mt-1 text-lg font-medium text-gray-900">{formatPrice(product.price)}</p>
+        
+        <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-gray-600">
+          {product.price >= 999 && (
+            <div className="flex items-center">
+              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Free Shipping</span>
+            </div>
+          )}
+          <div className="flex items-center">
+            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+            <span>2 Year Warranty</span>
+          </div>
+          <div className="flex items-center">
+            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3" />
+            </svg>
+            <span>Free Returns</span>
+          </div>
+          <div className="flex items-center">
+            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            <span>100% Guaranteed</span>
+          </div>
+        </div>
+        <button
+          onClick={handleAddToCart}
+          className="mt-4 w-full flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+        >
+          <ShoppingCart className={`h-5 w-5 mr-2 ${isAdding ? 'animate-bounce' : ''}`} />
+          {isAdding ? 'Adding...' : 'Add to Cart'}
+        </button>
+      </div>
+    </div>
+  );
+}

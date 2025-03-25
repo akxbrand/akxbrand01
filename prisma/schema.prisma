@@ -1,0 +1,318 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  email       String?     @unique
+  phoneNumber String      @unique
+  password    String?
+  name        String?
+  role        String      @default("client")
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  isVerified  Boolean     @default(false)
+  status      String      @default("active")
+  statusChangeReason String?
+  statusChangedAt DateTime?
+  orders      Order[]
+  cart        Cart?
+  reviews     Review[]
+  addresses   Address[]
+  reservations ProductReservation[]
+  couponsUsed CouponUsage[]
+}
+
+model Order {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  items     OrderItem[]
+  total     Float
+  status    String   @default("Processing")
+  shippingAddress Json
+  paymentId String? @unique
+  paymentStatus String @default("pending")
+  paymentMode String?
+  paymentTimestamp DateTime?
+  transactionDetails Json?
+  couponsUsed CouponUsage[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OrderItem {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderId   String   @db.ObjectId
+  order     Order    @relation(fields: [orderId], references: [id])
+  productId String   @db.ObjectId
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Float
+  size      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Cart {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String     @unique @db.ObjectId
+  user      User       @relation(fields: [userId], references: [id])
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model CartItem {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  cartId    String   @db.ObjectId
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId String   @db.ObjectId
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int
+  size      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Banner {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  title        String
+  description  String?
+  imageUrl     String
+  link         String?
+  status       String   @default("inactive")
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Category {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  description   String?
+  imageUrl      String
+  status        String        @default("active")
+  subCategories SubCategory[]
+  products      Product[]     @relation("CategoryProducts")
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model SubCategory {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  imageUrl    String
+  status      String    @default("Active")
+  categoryId  String    @db.ObjectId
+  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  products    Product[] @relation("SubCategoryProducts")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Product {
+  id                String          @id @default(auto()) @map("_id") @db.ObjectId
+  name              String
+  nickname          String?
+  images            String[]
+  description       String?
+  uniqueFeatures    String?
+  productDetails    String?
+  careInstructions  String?
+  deliveryReturns   String?
+  
+  categoryId        String          @db.ObjectId
+  category          Category        @relation("CategoryProducts", fields: [categoryId], references: [id])
+  subCategoryId     String?         @db.ObjectId
+  subCategory       SubCategory?    @relation("SubCategoryProducts", fields: [subCategoryId], references: [id])
+  oldPrice          Float?
+  price             Float
+  stock             Int             @default(0)
+  status            String          @default("active")
+  isLimitedTimeDeal Boolean         @default(false)
+  dealStartTime     DateTime?
+  dealEndTime       DateTime?
+  reviews           Review[]
+  dealQuantityLimit Int?
+  isBestSeller      Boolean         @default(false)
+  isNewArrival      Boolean         @default(false)
+  isTop10           Boolean         @default(false)
+  isLimitted           Boolean         @default(false)
+  weeklySales       Int             @default(0)
+  sizes             ProductSize[]
+  reservations      ProductReservation[]
+  orderItems        OrderItem[]
+  cartItems         CartItem[]
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+model ProductReservation {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId String   @db.ObjectId
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quantity  Int      @default(1)
+  expiresAt DateTime
+  status    String   @default("Processing") // pending, completed, expired
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+
+model FeatureVideo {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  videoUrl    String
+  thumbnailUrl String
+  description String?
+  duration    Int?
+  viewCount   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ProductSize {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  size              String
+  description       String?
+  uniqueFeatures    String?
+  productDetails    String?
+  careInstructions  String?
+  deliveryReturns   String?
+  oldPrice          Float?
+  price             Float
+  stock             Int      @default(0)
+  isLimitedTimeDeal Boolean  @default(false)
+  dealStartTime     DateTime?
+  dealEndTime       DateTime?
+  dealQuantityLimit Int?
+  productId         String   @db.ObjectId
+  product           Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model Coupon {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  code           String   @unique
+  description    String?
+  discountType   String   @default("percentage") // percentage or fixed
+  discountAmount Float
+  minPurchase    Float    @default(0)
+  maxDiscount    Float?
+  startDate      DateTime
+  endDate        DateTime
+  usageLimit     Int?
+  usedCount      Int      @default(0)
+  isActive       Boolean  @default(true)
+  categoryIds    String[] @db.ObjectId
+  productIds     String[] @db.ObjectId
+  usedBy         CouponUsage[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model CouponUsage {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  couponId  String   @db.ObjectId
+  coupon    Coupon   @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderId   String   @db.ObjectId
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  usedAt    DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([couponId, userId])
+}
+
+model Review {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String   @db.ObjectId
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId  String   @db.ObjectId
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  rating     Int
+  text       String
+  photos     String[]
+  adminNotes String?
+  isFeatured Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Address {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label     String
+  street    String
+  apartment String?
+  city      String
+  state     String
+  pincode   String
+  phone     String
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Newsletter {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  email        String   @unique
+  status       String   @default("active")
+  subscribedAt DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+
+
+model AdminNotification {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  type      String
+  title     String
+  message   String
+  isRead    Boolean   @default(false)
+  readAt    DateTime?
+  metadata  Json?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model BulkOrderProduct {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String
+  minQuantity Int
+  regularPrice Float
+  pricePerUnit Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Announcement {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  message   String
+  priority  Int      @default(0)
+  status    String   @default("active")
+  startDate DateTime
+  endDate   DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
