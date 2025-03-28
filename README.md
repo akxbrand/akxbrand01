@@ -1,4 +1,4 @@
-# Himanshi E-commerce Platform
+# AKX Brand E-commerce Platform
 
 A modern, full-stack e-commerce platform built with Next.js 15.1.7, featuring a robust admin dashboard, secure user authentication, and seamless payment integration with Razorpay.
 
@@ -49,7 +49,7 @@ A modern, full-stack e-commerce platform built with Next.js 15.1.7, featuring a 
 1. Clone the repository and install dependencies:
 ```bash
 git clone <repository-url>
-cd himanshi-ecom
+cd akxbrand01
 npm install
 ```
 
