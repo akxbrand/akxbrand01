@@ -14,7 +14,7 @@ interface AddCategoryModalProps {
     description: string;
     status: 'Active' | 'Inactive';
     imageUrl: string;
-    subcategories: Array<{
+    subcategories?: Array<{
       name: string;
       description: string;
       imageUrl: string;
@@ -28,7 +28,7 @@ export default function AddCategoryModal({ isOpen, onClose, onAdd }: AddCategory
     description: '',
     status: 'Active' as const,
     imageUrl: '',
-    subcategories: [{ name: '', description: '',imageUrl: '' }]
+    subcategories: [] // Initialize with empty array since subcategories are optional
   });
 
   const [imagePreview, setImagePreview] = useState('');
@@ -84,17 +84,11 @@ export default function AddCategoryModal({ isOpen, onClose, onAdd }: AddCategory
       setUploadError('Please enter a category name');
       return;
     }
-    // Validate subcategories
+    // Only include subcategories if they are valid
     const validSubcategories = formData.subcategories.filter(sub => sub.name.trim() && sub.imageUrl);
-    const invalidSubcategories = formData.subcategories.filter(sub => sub.name.trim() && !sub.imageUrl);
-    if (invalidSubcategories.length > 0) {
-      setUploadError('Please upload images for all subcategories with names');
-      return;
-    }
-    // Only submit subcategories that have both name and image
     const dataToSubmit = {
       ...formData,
-      subcategories: validSubcategories
+      subcategories: validSubcategories.length > 0 ? validSubcategories : undefined
     };
     onAdd(dataToSubmit);
     setFormData({
@@ -102,7 +96,7 @@ export default function AddCategoryModal({ isOpen, onClose, onAdd }: AddCategory
       description: '',
       status: 'Active',
       imageUrl: '',
-      subcategories: [{ name: '', description: '', imageUrl: '' }]
+      subcategories: []
     });
     setImagePreview('');
     setUploadError('');
@@ -238,15 +232,14 @@ export default function AddCategoryModal({ isOpen, onClose, onAdd }: AddCategory
                     <div className="space-y-3">
                       <div>
                         <label className="block text-sm font-medium text-gray-700">
-                          Subcategory Name <span className="text-red-500">*</span>
+                          Subcategory Name
                         </label>
                         <input
                           type="text"
                           value={subcategory.name}
                           onChange={(e) => updateSubcategory(index, 'name', e.target.value)}
                           className="mt-1 text-gray-700 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                          placeholder="Enter subcategory name"
-                          required
+                          placeholder="Enter subcategory name (optional)"
                         />
                       </div>
 
@@ -259,7 +252,7 @@ export default function AddCategoryModal({ isOpen, onClose, onAdd }: AddCategory
                           onChange={(e) => updateSubcategory(index, 'description', e.target.value)}
                           rows={2}
                           className="mt-1 text-gray-700 resize-none block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                          placeholder="Enter subcategory description"
+                          placeholder="Enter subcategory description (optional)"
                         />
                       </div>
 
