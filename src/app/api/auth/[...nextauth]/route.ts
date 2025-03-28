@@ -17,6 +17,16 @@ export const authOptions: AuthOptions = {
             throw new Error("Please provide both email and password");
           }
 
+          // Check if the request is for admin login
+          const isAdminLogin = credentials.role === 'admin';
+          
+          if (isAdminLogin) {
+            const user = await userDb.getByEmail(credentials.email);
+            if (!user || user.role !== 'admin') {
+              throw new Error("Unauthorized: Admin access only");
+            }
+          }
+
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           if (!emailRegex.test(credentials.email)) {
             throw new Error("Please provide a valid email address");
