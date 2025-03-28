@@ -240,9 +240,7 @@ export default function Home() {
                 <Image
                   src={banner.imageUrl}
                   alt={banner.title || 'Banner image'}
-               
-                  width={2000}
-                  height={1000}
+               fill
                   className="object-cover brightness-80"
                   priority={index === 0}
                   loading="eager"
