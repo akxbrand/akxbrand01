@@ -239,12 +239,16 @@ export default function Home() {
               <div className="absolute inset-0">
                 <Image
                   src={banner.imageUrl}
-                  alt={banner.title}
-                  // fill
-                  width={3000}
-                  height={5000}
+                  alt={banner.title || 'Banner image'}
+                  fill
                   className="object-cover brightness-80"
                   priority={index === 0}
+                  loading="eager"
+                  onError={(e) => {
+                    console.error('Error loading banner image:', e);
+                    const target = e.target as HTMLImageElement;
+                    target.src = '/images/banner-second.jpg';
+                  }}
                 />
               </div>
               <div className="relative h-full flex flex-col items-center justify-center text-white text-center px-4">

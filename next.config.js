@@ -15,6 +15,13 @@ const nextConfig = {
       'i.imgur.com',
       'img.youtube.com'
     ],
+    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**'
+      }
+    ]
   },
 };
 
