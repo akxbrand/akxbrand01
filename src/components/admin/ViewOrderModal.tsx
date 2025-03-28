@@ -10,13 +10,14 @@ const printStyles = `
 
 import React from 'react';
 import Modal from '@/components/ui/Modal';
-import { X, Download, Printer } from 'lucide-react';
+import { X, Download } from 'lucide-react';
 import Image from 'next/image';
 
 interface OrderItem {
   id: string;
   name: string;
   price: number;
+  size: string;
   quantity: number;
   image: string;
 }
@@ -66,6 +67,7 @@ export default function ViewOrderModal({ isOpen, onClose, order }: ViewOrderModa
           <style>
             body { font-family: Arial, sans-serif; padding: 20px; }
             .invoice-header { display: flex; justify-content: space-between; margin-bottom: 30px; }
+            .brand-logo { width: 150px; height: auto; margin-bottom: 20px; }
             table { width: 100%; border-collapse: collapse; margin: 20px 0; }
             th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
             .total-section { margin-top: 30px; text-align: right; }
@@ -75,8 +77,13 @@ export default function ViewOrderModal({ isOpen, onClose, order }: ViewOrderModa
           </style>
         </head>
         <body>
+        <div style="display: flex;">
           <div id="printable-content">
             ${document.getElementById('printable-content')?.innerHTML || ''}
+          </div>
+           <div style="text-align: right; margin-bottom: 20px;">
+            <img src="/images/brand-logo.png" alt="AKX Brand Logo" class="brand-logo" />
+          </div>
           </div>
           <script>
             window.onload = () => {
@@ -175,6 +182,9 @@ export default function ViewOrderModal({ isOpen, onClose, order }: ViewOrderModa
                     Item
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Details
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Quantity
                   </th>
                   <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -204,6 +214,9 @@ export default function ViewOrderModal({ isOpen, onClose, order }: ViewOrderModa
                       </div>
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                      Size: {item.size}
+                    </td>
+                    <td className="px-4 text-center py-4 whitespace-nowrap text-sm text-gray-500">
                       {item.quantity}
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 text-right">

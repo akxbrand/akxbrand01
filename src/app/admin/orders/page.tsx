@@ -58,6 +58,7 @@ export default function OrdersPage() {
       name: string;
       price: number;
       quantity: number;
+      size: string;
       image: string;
     }[];
     total: number;
@@ -129,7 +130,7 @@ export default function OrdersPage() {
 
   const handleViewOrder = async (orderId: string) => {
     try {
-      const response = await fetch(`/api/admin/orders/${orderId}`);
+      const response = await fetch(`/api/admin/order/${orderId}`);
       const data = await response.json();
 
       if (response.ok) {
@@ -143,6 +144,7 @@ export default function OrdersPage() {
             id: item.id,
             name: item.product.name,
             price: item.price,
+            size: item.size,
             quantity: item.quantity,
             image: item.product.images[0] || '/images/placeholder.jpg'
           })),
@@ -182,9 +184,14 @@ export default function OrdersPage() {
       const data = await response.json();
 
       if (response.ok) {
-        setOrders(orders.map(order =>
-          order.id === orderId ? { ...order, status: newStatus as OrderStatus } : order
-        ));
+        // setOrders(orders.map(order =>
+        //   order.id === orderId ? { ...order, status: newStatus as OrderStatus } : order
+        // ));
+        setOrders(prevOrders =>
+          prevOrders.map(order =>
+            order.id === orderId ? { ...order, status: newStatus } : order
+          )
+       );
         setToastMessage('Order status updated successfully');
         setToastType('success');
       } else {
@@ -204,6 +211,9 @@ export default function OrdersPage() {
     id: string;
     status: OrderStatus;
     items: any[];
+    size: string;
+    quantity: number;
+    shippingAddress: any;
     user: { name: string; email: string };
     createdAt: string;
     date: string;

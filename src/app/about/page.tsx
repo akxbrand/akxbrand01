@@ -16,19 +16,21 @@ const About = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-12 mb-24 py-16">
-            <div className="relative h-[400px]">
+          <div className="grid md:grid-cols-2 gap-12 mb-24 py-10">
+            <div className="relative w-full h-[300px] md:h-[300px] lg:h-[500px]">
               <Image
                 src="/images/brand-logo.png"
                 alt="Modern bedroom"
-                fill
-                className="object-cover rounded-lg shadow-lg"
+                layout="responsive"
+                width={1000}
+                height={1000}
+                className="object-cover rounded-lg shadow-lg mt-20"
               />
             </div>
             <div className="flex flex-col justify-center">
               <h2 className="text-2xl font-semibold mb-6">Our Heritage</h2>
               <p className="text-gray-600 mb-4">
-                With our expertise dating back to 2017, we've refined our craft and deepened our understanding of what truly makes exceptional bedding. This experience has given us invaluable insights into the quality standards and designs that best serve our customers' needs.
+                With our expertise dating back to 2017, we&apos;ve refined our craft and deepened our understanding of what truly makes exceptional bedding. This experience has given us invaluable insights into the quality standards and designs that best serve our customer&apos;s needs.
               </p>
               <p className="text-gray-600">
                 Every AKX product is crafted with meticulous attention to detail, using carefully selected materials that ensure both comfort and durability. Our years of dedicated experience in the industry have allowed us to perfect our manufacturing processes, resulting in bedding that consistently exceeds expectations.
@@ -111,7 +113,7 @@ const About = () => {
           {/* Closing Statement */}
           <div className="text-center max-w-3xl mx-auto">
             <p className="text-gray-600">
-              When you choose AKX Brand, you're benefiting from our established history of excellence. Since 2017, we've been dedicated to creating the perfect balance of comfort, quality, and style. Experience the difference that passionate dedication and years of expertise can make in your everyday life.
+              When you choose AKX Brand, you&apos;re benefiting from our established history of excellence. Since 2017, we&apos;ve been dedicated to creating the perfect balance of comfort, quality, and style. Experience the difference that passionate dedication and years of expertise can make in your everyday life.
             </p>
           </div>
         </div>

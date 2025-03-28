@@ -17,12 +17,17 @@ export async function GET() {
       select: { role: true }
     });
 
-    if (!session?.user?.role || session.user.role !== 'admin') {
+    if (!user?.role || user.role !== 'admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Fetch all orders with related data
     const orders = await prisma.order.findMany({
+      where: {
+        user: {
+          isNot: null
+        }
+      },
       select: {
         id: true,
         createdAt: true,
@@ -46,7 +51,8 @@ export async function GET() {
                 id: true,
                 name: true,
                 images: true,
-                price: true
+                price: true,
+                sizes: true
               }
             }
           }

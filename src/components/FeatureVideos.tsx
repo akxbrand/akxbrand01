@@ -67,30 +67,7 @@ export default function FeatureVideos() {
     fetchVideos();
   }, []);
 
-  const handleSlideChange = (swiper: any) => {
-    const activeIndex = swiper.activeIndex;
-    const slides = swiper.slides;
-
-    // Pause all videos first
-    Object.entries(videoRefs.current).forEach(([id, video]) => {
-      if (video) {
-        video.pause();
-        if (activeVideoId === id) {
-          setActiveVideoId(null);
-        }
-      }
-    });
-
-    // Play the center video
-    if (slides[activeIndex]) {
-      const videoElement = slides[activeIndex].querySelector('video');
-      if (videoElement) {
-        const videoId = videoElement.dataset.videoId;
-        setActiveVideoId(videoId);
-        videoElement.play().catch((error : any) => console.log('Play on center failed:', error));
-      }
-    }
-  };
+ 
 
   const handleVideoHover = (videoId: string, isHovering: boolean) => {
     const video = videoRefs.current[videoId];
@@ -145,14 +122,14 @@ export default function FeatureVideos() {
           slidesPerView={3}
           initialSlide={1}
           coverflowEffect={{
-            rotate: 20,
-            stretch: 0,
-            depth: 200,
+            rotate: 1,
+            stretch: 20,
+            depth: 80,
             modifier: 1,
             slideShadows: false,
           }}
           breakpoints={{
-            320: {
+            480: {
               slidesPerView: 1,
               spaceBetween: 10,
             },

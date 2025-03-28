@@ -76,22 +76,43 @@ export async function POST(req: Request) {
         }
       });
 
-      // Update product stock for each item
+      // Update product stock and size stock for each item
       for (const item of existingOrder.items) {
         const product = await tx.product.findUnique({
-          where: { id: item.productId }
+          where: { id: item.productId },
+          include: { sizes: true }
         });
 
-        if (!product || product.stock < item.quantity) {
-          throw new Error(`Insufficient stock for product ${item.productId}`);
+        if (!product) {
+          throw new Error(`Product not found: ${item.productId}`);
         }
 
-        await tx.product.update({
-          where: { id: item.productId },
-          data: {
-            stock: { decrement: item.quantity }
+        // If the item has a size, update the specific size's stock
+        if (item.size) {
+          const productSize = product.sizes.find(size => size.size === item.size);
+          if (!productSize || productSize.stock < item.quantity) {
+            throw new Error(`Insufficient stock for product ${item.productId} size ${item.size}`);
           }
-        });
+
+          await tx.productSize.update({
+            where: { id: productSize.id },
+            data: {
+              stock: { decrement: item.quantity }
+            }
+          });
+        } else {
+          // If no size specified, update the main product stock
+          if (product.stock < item.quantity) {
+            throw new Error(`Insufficient stock for product ${item.productId}`);
+          }
+
+          await tx.product.update({
+            where: { id: item.productId },
+            data: {
+              stock: { decrement: item.quantity }
+            }
+          });
+        }
       }
 
       // Clear the user's cart within the transaction
@@ -115,8 +136,40 @@ export async function POST(req: Request) {
         }
       });
 
-      return updatedOrder;
+      // Get user details for email
+      const user = await tx.user.findUnique({
+        where: { id: session.user.id },
+        select: { name: true, email: true }
+      });
+
+      if (!user?.email) {
+        throw new Error('User email not found');
+      }
+
+      return { updatedOrder, userDetails: user };
     });
+
+    // Send order confirmation email
+    try {
+      const { sendOrderConfirmationEmail } = await import('@/lib/email');
+      await sendOrderConfirmationEmail({
+        orderNumber: order.updatedOrder.id,
+        customerName: order.userDetails.name || 'Valued Customer',
+        customerEmail: order.userDetails.email,
+        items: existingOrder.items.map(item => ({
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+          size: item.size
+        })),
+        total: existingOrder.total,
+        shippingAddress: existingOrder.shippingAddress,
+        paymentMode: 'Razorpay'
+      });
+    } catch (error) {
+      console.error('Failed to send order confirmation email:', error);
+      // Continue with the order process even if email fails
+    }
 
     // If there's a coupon used in this order, record its usage
     if (existingOrder.couponCode) {

@@ -232,6 +232,28 @@ export default function CheckoutPage() {
         name: 'Himanshi Ecom',
         description: 'Purchase Payment',
         order_id: orderId,
+        method: {
+          upi: true,
+          netbanking: true,
+          card: true,
+          wallet: true
+        },
+        config: {
+          display: {
+            blocks: {
+              upi: {
+                name: 'Pay using UPI',
+                instruments: [
+                  { method: 'upi' }
+                ]
+              }
+            },
+            sequence: ['block.upi', 'block.other'],
+            preferences: {
+              show_default_blocks: true
+            }
+          }
+        },
         handler: async (response: any) => {
           try {
             const verificationResponse = await fetch('/api/payment/verify', {

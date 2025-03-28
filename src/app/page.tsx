@@ -221,10 +221,11 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative py-8 sm:py-16 px-4 sm:px-6 lg:px-8 h-[200] sm:h-[450] mt-20  overflow-hidden ">
         {loading ? (
-          // <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-          //   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-          // </div>
-          <Preloader />
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+            {/* <Preloader /> */}
+          </div>
+          // <Preloader />
         ) : banners.length === 0 ? (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
             <p className="text-gray-500">No banners available</p>
@@ -239,7 +240,9 @@ export default function Home() {
                 <Image
                   src={banner.imageUrl}
                   alt={banner.title}
-                  fill
+                  // fill
+                  width={3000}
+                  height={5000}
                   className="object-cover brightness-80"
                   priority={index === 0}
                 />
@@ -247,14 +250,7 @@ export default function Home() {
               <div className="relative h-full flex flex-col items-center justify-center text-white text-center px-4">
                 {/* <h1 className="text-4xl md:text-5xl font-bold mb-4">{banner.title}</h1> */}
                 {/* <p className="text-lg md:text-xl mb-8">{banner.description}</p> */}
-                {banner.link && (
-                  <Link
-                    href={banner.link}
-                    className="bg-white text-gray-900 px-8 py-3 rounded-md font-medium hover:bg-gray-100 transition-colors"
-                  >
-                    Shop Now
-                  </Link>
-                )}
+                 
               </div>
             </div>
           ))
@@ -279,7 +275,7 @@ export default function Home() {
       <TopProducts />
 
       {/* Categories Section */}
-      <section className="py-8 sm:py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <section className="py-6 sm:py-10 px-4 sm:px-6 lg:px-8 bg-gray-50">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-6 sm:mb-12">
             Categories
@@ -322,6 +318,7 @@ export default function Home() {
           {newArrivalsLoading ? (
             <div className="flex justify-center items-center h-[300px]">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+              {/* <Preloader />  */}
             </div>
 
           ) : newArrivals.length === 0 ? (
@@ -510,7 +507,7 @@ export default function Home() {
             alt="Special Offer"
             width={2000}
             height={5000}
-            className="object-cover brightness-100 "
+            className="object-cover brightness-80 "
           />
         </div>
       </section>

@@ -8,6 +8,7 @@ import { Package, ChevronRight, ShoppingBag, Truck, MapPin, CheckCircle, CreditC
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Preloader from '@/components/ui/preloader';
+import { Button } from '@/components/ui/button';
 
 interface Order {
   id: string;
@@ -279,17 +280,18 @@ export default function OrdersPage() {
                             {order.paymentStatus}
                           </span>
                           <span className="text-xs text-gray-500">{order.paymentMode}</span>
+                          <span className='text-[8px] text-orange-500'>{order.paymentStatus === 'completed' ? null : 'delete Automatic in 24h'}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                         ₹{order.total.toFixed(2)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                        <Link href={`/orders/${order.id}`} className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2 items-center">
+                        {/* <Button className="inline-flex items-center px-3 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-200">
                           <Package className="w-4 h-4 mr-1.5" />
                           Track
-                        </Link>
-                        <Link href={`/orders/${order.id}`} className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
+                        </Button> */}
+                        <Link href={`/orders/${order.id}`} className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-200">
                           View Details
                           <ChevronRight className="w-4 h-4 ml-1" />
                         </Link>

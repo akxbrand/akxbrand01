@@ -88,28 +88,7 @@
   transform: scale(1.1);
 }
 
-.swiper-button-prev,
-.swiper-button-next {
-  width: 32px;
-  height: 32px;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 50%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  color: #4B5563;
-  transition: all 0.3s ease;
-}
 
-.swiper-button-prev:hover,
-.swiper-button-next:hover {
-  background: #ffffff;
-  color: #1F2937;
-}
-
-.swiper-button-prev::after,
-.swiper-button-next::after {
-  font-size: 1rem;
-  font-weight: bold;
-}
 
 @media (max-width: 768px) {
   .review-carousel-container {
@@ -119,11 +98,7 @@
   .review-card {
     padding: 1rem;
   }
-  
-  .swiper-button-prev,
-  .swiper-button-next {
-    display: none;
-  }
+
   
   .review-media-grid {
     grid-template-columns: repeat(3, 1fr);

@@ -306,55 +306,9 @@ export default function AccountPage() {
  
 
  
-  const fetchAddressDetails = async (pincode: string) => {
-    if (pincode.length === 6) {
-      setIsLoadingPincode(true);
-      setPincodeError("");
-      try {
-        const response = await fetch(
-          `https://api.postalpincode.in/pincode/${pincode}`
-        );
-        const data = await response.json();
+ 
 
-        if (data[0].Status === "Success") {
-          const postOffice = data[0].PostOffice[0];
-          setNewAddress((prev) => ({
-            ...prev,
-            city: postOffice.District,
-            state: postOffice.State,
-          }));
-        } else {
-          setPincodeError(
-            "Invalid PIN code. Please enter city and state manually."
-          );
-          setNewAddress((prev) => ({
-            ...prev,
-            city: "",
-            state: "",
-          }));
-        }
-      } catch (error) {
-        setPincodeError(
-          "Error fetching address details. Please enter city and state manually."
-        );
-        setNewAddress((prev) => ({
-          ...prev,
-          city: "",
-          state: "",
-        }));
-      } finally {
-        setIsLoadingPincode(false);
-      }
-    }
-  };
-
-  const handlePincodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, "").slice(0, 6);
-    setNewAddress((prev) => ({ ...prev, pincode: value }));
-    if (value.length === 6) {
-      fetchAddressDetails(value);
-    }
-  };
+ 
 
   // Handle profile input changes
   const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -621,12 +575,10 @@ const handleProfileSubmit = async (e: React.FormEvent) => {
                           id="email"
                           name="email"
                           value={profileSettings.email}
-                          onChange={handleProfileChange}
-                          className="w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ease-in-out placeholder-gray-400 hover:border-gray-400 ${validationErrors.email ? 'border-red-500 focus:ring-red-500' : ''}"
+                         disabled
+                          className="w-full px-4 py-3 text-gray-900 bg-gray-100 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ease-in-out placeholder-gray-400 hover:border-gray-400 ${validationErrors.email ? 'border-red-500 focus:ring-red-500' : ''}"
                           placeholder="Enter your email"
                           aria-label="Email Address"
-                          aria-invalid={!!validationErrors.email}
-                          aria-describedby={validationErrors.email ? 'email-error' : undefined}
                         />
                         {validationErrors.email && (
                           <p id="email-error" className="mt-1 text-sm text-red-600">{validationErrors.email}</p>

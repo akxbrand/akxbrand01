@@ -27,10 +27,7 @@ interface ProductSize {
   uniqueFeatures?: string;
   productDetails?: { [key: string]: string };
   careInstructions?: string;
-  deliveryReturns?: {
-    deliveryInfo?: string;
-    returnPolicy?: string;
-  };
+  deliveryReturns?: string;
   oldPrice?: number;
   price: number;
   stock: number;
@@ -758,19 +755,44 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                       : 'Add to Cart'}
                 </button>
                 <button
-                  onClick={() => {
-                    const selectedSizeData = product.sizes?.find(s => s.size === selectedSize);
-                    const productDetails = {
-                      id: params.id,
+                onClick={async () => {
+                  if (!session) {
+                    router.push('/login');
+                    return;
+                  }
+
+                  if (product.sizes && product.sizes.length > 0 && !selectedSize) {
+                    setToastMessage('Please select a size');
+                    setToastType('error');
+                    setShowToast(true);
+                    return;
+                  }
+
+                  const sizeInfo = product.sizes?.find(s => s.size === selectedSize);
+                  if (sizeInfo && sizeInfo.stock <= 0) {
+                    setToastMessage(`Sorry, size ${selectedSize} is out of stock`);
+                    setToastType('error');
+                    setShowToast(true);
+                    return;
+                  }
+
+                  try {
+                    await addToCart({
+                      id: `${product.id}-${selectedSize}`,
+                      productId: product.id,
                       name: product.name,
-                      price: selectedSizeData?.price || product.price,
-                      color: selectedColor,
+                      price: sizeInfo?.price || product.price,
+                      image: product.images[0],
                       size: selectedSize,
-                      quantity: quantity,
-                      image: product.images[0]
-                    };
-                    router.push(`/checkout?product=${encodeURIComponent(JSON.stringify(productDetails))}`);
-                  }}
+                      quantity: 1
+                    });
+                    router.push('/checkout');
+                  } catch (error) {
+                    setToastMessage('Failed to process your request');
+                    setToastType('error');
+                    setShowToast(true);
+                  }
+                }}
                   disabled={
                     (product.sizes && product.sizes.length > 0 && !selectedSize) ||
                     (selectedSize && product.sizes?.find(s => s.size === selectedSize)?.stock === 0)
@@ -938,14 +960,22 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             {activeSection === 'features' && (
               <div className="pb-6 px-4">
                 <ul className="space-y-2">
-                  {product.features.map((feature, index) => (
-                    <li key={index} className="flex items-center text-gray-600">
-                      <svg className="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      {feature}
-                    </li>
-                  ))}
+                  {selectedSize && product.sizes.find(s => s.size === selectedSize)?.uniqueFeatures ? (
+                    typeof product.sizes.find(s => s.size === selectedSize)?.uniqueFeatures === 'string' ? (
+                      product.sizes.find(s => s.size === selectedSize)?.uniqueFeatures?.split('\n').map((feature, index) => (
+                        <li key={index} className="flex items-center text-gray-600">
+                          <svg className="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                          {feature}
+                        </li>
+                      ))
+                    ) : (
+                      <li className="text-gray-600">No unique features available for this size</li>
+                    )
+                  ) : (
+                    <li className="text-gray-600">Select a size to see unique features</li>
+                  )}
                 </ul>
               </div>
             )}
@@ -967,10 +997,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </button>
-            {activeSection === 'details' && (
-              <div className="pb-6 px-4">
-                <div className="grid grid-cols-2 gap-4">
-                  {selectedSize ? (
+            {selectedSize ? (
                     <>
                       <div>
                         <h3 className="text-sm font-medium text-gray-900">Size</h3>
@@ -991,9 +1018,6 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                       </div>
                     ))
                   )}
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Care Instructions */}
@@ -1015,9 +1039,24 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             {activeSection === 'care' && (
               <div className="pb-6 px-4">
                 <ul className="space-y-2 text-sm text-gray-600">
-                  {product.careInstructions?.map((instruction, index) => (
-                    <li key={index}>{instruction}</li>
-                  ))}
+                  {selectedSize && product.sizes.find(s => s.size === selectedSize)?.careInstructions ? (
+                    typeof product.sizes.find(s => s.size === selectedSize)?.careInstructions === 'string' ? (
+                      product.sizes.find(s => s.size === selectedSize)?.careInstructions?.split('\n').map((instruction, index) => (
+                        <li key={index} className="flex items-start space-x-2">
+                          <span className="mt-1">
+                            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                          </span>
+                          <span>{instruction}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <li className="text-gray-600">No care instructions available for this size</li>
+                    )
+                  ) : (
+                    <li className="text-gray-600">Select a size to see care instructions</li>
+                  )}
                 </ul>
               </div>
             )}

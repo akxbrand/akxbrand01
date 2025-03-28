@@ -2,8 +2,17 @@
 
 import { useSearchParams } from 'next/navigation';
 import RegistrationForm from '@/components/auth/RegistrationForm';
+import { Suspense } from 'react';
 
 export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <RegisterContent />
+    </Suspense>
+  );
+}
+
+function RegisterContent() {
   const searchParams = useSearchParams();
   const phoneNumber = searchParams?.get('phoneNumber');
 

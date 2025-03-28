@@ -262,7 +262,8 @@ export async function POST(req: Request) {
             create: items.map((item: any) => ({
               productId: cleanProductId(item.productId), // Clean productId before saving
               quantity: item.quantity,
-              price: item.price
+              price: item.price,
+              size: item.size // Include size information from cart item
             }))
           },
           total: finalAmount,

@@ -37,6 +37,7 @@ interface OrderEmailData {
   orderNumber: string;
   customerName: string;
   customerEmail: string;
+  productName: string; // Add productName to the OrderEmailData interface
   items: Array<{
     name: string;
     quantity: number;
@@ -58,9 +59,14 @@ export const sendOrderConfirmationEmail = async (data: OrderEmailData) => {
   const itemsList = data.items
     .map(
       (item) =>
-        `${item.name}${item.size ? ` (${item.size})` : ''} x ${item.quantity} - ₹${item.price.toFixed(2)}`
+        `• Product: ${item.name || 'N/A'}
+        • Product: ${data.productName || 'N/A'}
+  Size: ${item.size || 'N/A'}
+  Quantity: ${item.quantity}
+  Price: ₹${item.price.toFixed(2)}
+  Subtotal: ₹${(item.price * item.quantity).toFixed(2)}`
     )
-    .join('\n');
+    .join('\n\n');
 
   const mailOptions = {
     from: process.env.EMAIL_USER,

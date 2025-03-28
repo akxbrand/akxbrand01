@@ -12,8 +12,6 @@ interface InvoiceTemplateProps {
       price: number;
       quantity: number;
       size?: string;
-      color?: string;
-      material?: string;
       threadCount?: number;
       fillPower?: number;
     }>;
@@ -47,7 +45,7 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ order }) => {
       <div className="flex justify-between items-start mb-10 border-b pb-6">
         <div className="flex flex-col">
           <div className="flex items-center mb-4">
-            <img
+            <Image
               src="/images/brand-logo.png"
               alt="Brand Logo"
               width="150"
@@ -129,22 +127,7 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ order }) => {
             {order.items.map((item) => (
               <tr key={item.id} className="hover:bg-gray-50">
                 <td className="px-4 py-4 text-sm text-gray-700 font-medium">{item.name}</td>
-                <td className="px-4 py-4 text-sm text-gray-600">
-                  {item.size && item.color && (
-                    <span className="inline-flex items-center gap-2">
-                      <span className="px-2 py-1 bg-gray-100 rounded text-xs">Size: {item.size}</span>
-                      <span className="px-2 py-1 bg-gray-100 rounded text-xs">Color: {item.color}</span>
-                    </span>
-                  )}
-                  {item.material && (
-                    <div className="mt-1">
-                      <span className="px-2 py-1 bg-gray-100 rounded text-xs">
-                        {item.material} | 
-                        {item.threadCount ? `${item.threadCount} Thread Count` : `${item.fillPower} Fill Power`}
-                      </span>
-                    </div>
-                  )}
-                </td>
+                <td className="px-4 py-4 text-sm text-gray-600">Size: {item.size}</td>
                 <td className="px-4 py-4 text-sm text-right text-gray-700">{item.quantity}</td>
                 <td className="px-4 py-4 text-sm text-right text-gray-700">₹{item.price.toFixed(2)}</td>
                 <td className="px-4 py-4 text-sm text-right font-medium text-gray-900">₹{(item.price * item.quantity).toFixed(2)}</td>

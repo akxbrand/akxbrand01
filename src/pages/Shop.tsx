@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiGrid, FiList } from 'react-icons/fi';
-import ProductCard from '../components/ProductCard';
+import SearchBar from '@/components/common/SearchBar';
+// import ProductCard from '@/components/';
 
 interface Category {
 	id: string;

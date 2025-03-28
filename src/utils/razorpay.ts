@@ -21,7 +21,30 @@ export const initializeRazorpay = async (options: any): Promise<any> => {
     throw new Error('Razorpay SDK failed to load');
   }
 
-  const razorpay = new window.Razorpay(options);
+  const defaultOptions = {
+    ...options,
+    prefill: {
+      ...options.prefill
+    },
+    config: {
+      display: {
+        blocks: {
+          upi: {
+            name: 'Pay using UPI',
+            instruments: [
+              { method: 'upi' }
+            ]
+          }
+        },
+        sequence: ['block.upi', 'block.other'],
+        preferences: {
+          show_default_blocks: true
+        }
+      }
+    }
+  };
+
+  const razorpay = new window.Razorpay(defaultOptions);
   return razorpay;
 };
 

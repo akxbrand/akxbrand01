@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Review, ReviewStats } from '@/types/review';
-import { Star, Flag, Eye, EyeOff, Trash2, MessageSquare, ImageIcon, Video } from 'lucide-react';
-import NextImage from 'next/image';
+import { Star, Flag, Trash2, MessageSquare, ImageIcon, Video } from 'lucide-react';
+
 import Toast from '@/components/ui/Toast';
+import Image from 'next/image';
 
 interface ReviewManagementProps {
   productId: string;
@@ -25,7 +26,7 @@ export default function ReviewManagement({
   const [adminNote, setAdminNote] = useState('');
   const [filterOptions, setFilterOptions] = useState({
     rating: 'all',
-    hasMedia: false,
+    hasPhoto: false,
     isHidden: false,
     isReported: false,
   });
@@ -41,7 +42,7 @@ export default function ReviewManagement({
   const filteredReviews = (reviews || []).filter((review) => {
     if (!review) return false;
     if (filterOptions.rating !== 'all' && review.rating !== Number(filterOptions.rating)) return false;
-    if (filterOptions.hasMedia && (!review.media || review.media.length === 0)) return false;
+    // if (filterOptions.hasPhoto && (!review.photo || review.photo.length === 0)) return false;
     if (filterOptions.isHidden && !review.isHidden) return false;
     if (filterOptions.isReported && (!review.reportCount || review.reportCount === 0)) return false;
     return true;
@@ -93,7 +94,7 @@ export default function ReviewManagement({
       {/* Stats Section */}
       <div className="p-4 border-b border-gray-200">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Review Statistics</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div className="p-3 bg-gray-50 rounded-lg">
             <div className="text-sm text-gray-500">Total Reviews</div>
             <div className="text-xl text-gray-600 font-semibold">{stats.totalReviews}</div>
@@ -112,13 +113,7 @@ export default function ReviewManagement({
               <ImageIcon className="w-4 h-4 text-gray-400 ml-1" />
             </div>
           </div>
-          <div className="p-3 bg-gray-50 rounded-lg">
-            <div className="text-sm text-gray-500">Videos</div>
-            <div className="text-xl text-gray-600 font-semibold flex items-center">
-              {stats.mediaCount.video}
-              <Video className="w-4 h-4 text-gray-400 ml-1" />
-            </div>
-          </div>
+         
         </div>
       </div>
 
@@ -177,10 +172,10 @@ export default function ReviewManagement({
                   <span className="font-medium text-gray-900">{review.userName}</span>
                   <div className="flex items-center text-yellow-400">
                     {Array.from({ length: review.rating }).map((_, i) => (
-                      <Star 
+                      <Star
                         key={i} 
-                        className={`w-4 h-4 ${review.isFeatured ? 'fill-current' : ''} cursor-pointer`} 
-                        onClick={() => handleFeatureToggle(review)}
+                        className={`w-4 h-4 ${review.rating ? 'fill-current' : ''} cursor-pointer`} 
+                        
                       />
                     ))}
                   </div>
@@ -196,24 +191,18 @@ export default function ReviewManagement({
                   )}
                 </div>
                 <p className="mt-2 text-gray-700">{review.text}</p>
-                {review.media && review.media.length > 0 && (
+                {review.photos && review.photos.length > 0 && (
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {review.media.map((media) => (
-                      <div key={media.id} className="relative">
-                        {media.type === 'photo' ? (
-                          <div className="w-24 h-24 relative rounded-lg overflow-hidden">
-                            <NextImage
-                              src={media.url}
-                              alt="Review media"
-                              fill
-                              className="object-cover"
-                            />
-                          </div>
-                        ) : (
-                          <div className="w-24 h-24 relative rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
-                            <Video className="w-8 h-8 text-gray-400" />
-                          </div>
-                        )}
+                    {review.photos.map((photoUrl, index) => (
+                      <div key={index} className="relative">
+                        <div className="w-24 h-24 relative rounded-lg overflow-hidden">
+                          <Image
+                            src={photoUrl}
+                            alt="Review photo"
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
                       </div>
                     ))}
                   </div>

@@ -93,10 +93,11 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
     if (selectedSizeIndex >= 0 && sizes[selectedSizeIndex]) {
       const selectedSize = sizes[selectedSizeIndex];
       setCurrentSize({
+        ...selectedSize,
         size: selectedSize.size || '',
         description: selectedSize.description || '',
-        uniqueFeatures: selectedSize.uniqueFeatures ||'',
-        productDetails: selectedSize.productDetails ||'',
+        uniqueFeatures: selectedSize.uniqueFeatures || '',
+        productDetails: selectedSize.productDetails || '',
         careInstructions: selectedSize.careInstructions || '',
         deliveryReturns: selectedSize.deliveryReturns || '',
         oldPrice: selectedSize.oldPrice || 0,
@@ -223,9 +224,19 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
       status,
       images: imagePreviews,
       sizes: sizes.map(size => ({
-        ...size,
+        size: size.size,
+        description: size.description || '',
+        uniqueFeatures: size.uniqueFeatures || '',
+        productDetails: size.productDetails || '',
+        careInstructions: size.careInstructions || '',
+        deliveryReturns: size.deliveryReturns || '',
+        oldPrice: size.oldPrice || 0,
+        price: size.price,
+        stock: size.stock,
+        isLimitedTimeDeal: size.isLimitedTimeDeal || false,
         dealStartTime: size.dealStartTime ? new Date(size.dealStartTime).toISOString() : undefined,
         dealEndTime: size.dealEndTime ? new Date(size.dealEndTime).toISOString() : undefined,
+        dealQuantityLimit: size.dealQuantityLimit || 0
       })),
       isLimitedTimeDeal,
       isBestSeller,
@@ -234,6 +245,7 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
       isLimitted
     });
     onClose();
+    // onClose();
   };
 
   if (!isOpen) return null;

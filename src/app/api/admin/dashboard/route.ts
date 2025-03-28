@@ -9,6 +9,9 @@ export async function GET() {
         total: true,
         status: true,
         createdAt: true
+      },
+      where: {
+        paymentStatus: 'completed'
       }
     });
 

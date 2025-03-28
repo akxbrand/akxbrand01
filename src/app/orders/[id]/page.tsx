@@ -224,11 +224,9 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
                             <div>
                               <h3 className="text-lg font-medium text-gray-900">{item.name}</h3>
                               <p className="mt-1 text-sm text-gray-500">
-                                Size: {item.size} | Color: {item.color}
+                                Size: {item.size}
                               </p>
-                              <p className="mt-1 text-sm text-gray-500">
-                                {item.material} | {item.threadCount ? `${item.threadCount} Thread Count` : `${item.fillPower} Fill Power`}
-                              </p>
+                              
                             </div>
                             <p className="text-lg font-medium text-gray-900">
                               ₹{item.price.toFixed(2)}
