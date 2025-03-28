@@ -48,7 +48,7 @@ A modern, full-stack e-commerce platform built with Next.js 15.1.7, featuring a 
 
 1. Clone the repository and install dependencies:
 ```bash
-git clone <repository-url>
+git clone https://github.com/akxbrand/akxbrand01.git
 cd akxbrand01
 npm install
 ```
