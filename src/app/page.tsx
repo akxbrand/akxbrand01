@@ -236,11 +236,13 @@ export default function Home() {
               key={banner.id}
               className={`absolute inset-0 px-4 sm:px-6 lg:px-8 transition-opacity duration-1000 ${index === currentBanner ? 'opacity-100' : 'opacity-0'}`}
             >
-              <div className="absolute inset-0">
+              <div className="absolute flex inset-0 justify-center">
                 <Image
                   src={banner.imageUrl}
                   alt={banner.title || 'Banner image'}
-                  fill
+               
+                  width={2000}
+                  height={1000}
                   className="object-cover brightness-80"
                   priority={index === 0}
                   loading="eager"
