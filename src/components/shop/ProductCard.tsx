@@ -181,7 +181,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 <X size={20} />
               </button>
               <h3 className="text-lg font-semibold mb-4">Select Size</h3>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 {(product.sizes || []).map((sizeInfo) => {
                   const isOutOfStock = sizeInfo.stock <= 0;
                   const cartItem = cartItems.find(item => item.productId === product.id && item.size === sizeInfo.size);
