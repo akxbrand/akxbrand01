@@ -1344,7 +1344,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             <div className="relative">
               <div className="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory hide-scrollbar">
                 {relatedProducts.map((relatedProduct) => (
-                  <div key={relatedProduct.id} className="flex-none w-[calc(50%-8px)] sm:w-1/2 lg:w-1/4 snap-start">
+                  <div key={relatedProduct.id} className="flex-none w-[calc(30%-8px)] sm:w-1/4 lg:w-1/6 snap-start">
                     <ProductCard
                       viewMode="grid"
                       product={{

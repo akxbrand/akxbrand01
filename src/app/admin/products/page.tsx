@@ -224,11 +224,11 @@ export default function ProductsPage() {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {loading ? (
-                <tr>
+                <tr key="loading-row">
                   <td colSpan={6} className="px-6 py-4 text-gray-400 text-center">Loading...</td>
                 </tr>
               ) : products.length === 0 ? (
-                <tr>
+                <tr key="no-products-row">
                   <td colSpan={6} className="px-6 text-gray-400 py-4 text-center">No products found</td>
                 </tr>
               ) : (

@@ -113,7 +113,7 @@ export default function AddProductModal({ isOpen, onClose, onAdd }: AddProductMo
   const handleImageUploadSuccess = (url: string) => {
     if (imageUrls.length < 5) { // Maximum 5 images
       setImageUrls([...imageUrls, url]);
-      setImageError(imageUrls.length + 1 < 3 ? 'Please add at least 3 product images' : '');
+      setImageError(imageUrls.length + 1 < 1 ? 'Please add at least 1 product image' : '');
     }
   };
 
@@ -134,7 +134,7 @@ export default function AddProductModal({ isOpen, onClose, onAdd }: AddProductMo
   const removeImage = (index: number) => {
     const newImages = imageUrls.filter((_, i) => i !== index);
     setImageUrls(newImages);
-    setImageError(newImages.length < 3 ? 'Please add at least 3 product images' : '');
+    setImageError(newImages.length < 1 ? 'Please add at least 1 product image' : '');
   };
 
   const handleAddSize = () => {
@@ -177,8 +177,8 @@ export default function AddProductModal({ isOpen, onClose, onAdd }: AddProductMo
       return;
     }
 
-    if (imageUrls.length < 3) {
-      setImageError('Please add at least 3 product images');
+    if (imageUrls.length < 1) {
+      setImageError('Please add at least 1 product image');
       return;
     }
 
@@ -604,7 +604,7 @@ export default function AddProductModal({ isOpen, onClose, onAdd }: AddProductMo
               {/* Image Upload */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Product Images * (Min 3, Max 5)
+                  Product Images * (Min 1, Max 5)
                 </label>
                 <div className="space-y-2">
                   <CloudinaryUpload

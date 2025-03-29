@@ -122,7 +122,7 @@ export default function Home() {
 
     const currentBannerData = banners[currentBanner];
     const isGif = currentBannerData?.imageUrl?.toLowerCase().endsWith('.gif');
-    const interval = isGif ? 10000 : 5000; // 10 seconds for GIFs, 5 seconds for other images
+    const interval = isGif ? 20000 : 5000; // 10 seconds for GIFs, 5 seconds for other images
 
     const timer = setInterval(() => {
       setCurrentBanner((prev) => (prev + 1) % banners.length);

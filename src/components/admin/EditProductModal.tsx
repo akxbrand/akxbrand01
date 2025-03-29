@@ -133,7 +133,7 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
   const handleImageUploadSuccess = (url: string) => {
     if (imagePreviews.length < 5) { // Maximum 5 images
       setImagePreviews([...imagePreviews, url]);
-      setImageError(imagePreviews.length + 1 < 3 ? 'Please add at least 3 product images' : '');
+      setImageError(imagePreviews.length + 1 < 1 ? 'Please add at least 1 product image' : '');
     }
   };
 
@@ -144,7 +144,7 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
   const removeImage = (index: number) => {
     const newImages = imagePreviews.filter((_, i) => i !== index);
     setImagePreviews(newImages);
-    setImageError(newImages.length < 3 ? 'Please add at least 3 product images' : '');
+    setImageError(newImages.length < 1 ? 'Please add at least 1 product image' : '');
   };
 
   const handleAddSize = () => {

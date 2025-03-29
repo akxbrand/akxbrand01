@@ -46,7 +46,7 @@ export default function NetworkError() {
   }, [router, isOnline]);
 
   const handleRetry = () => {
-    window.location.reload();
+    router.push('/');
   };
 
   return (
