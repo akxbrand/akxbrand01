@@ -44,6 +44,7 @@
     "jspdf": "^3.0.1",
     "libphonenumber-js": "^1.11.20",
     "localtunnel": "^2.0.2",
+    "lottie-react": "^2.4.1",
     "lucide-react": "^0.475.0",
     "mongodb": "^6.13.0",
     "mongoose": "^8.10.1",
