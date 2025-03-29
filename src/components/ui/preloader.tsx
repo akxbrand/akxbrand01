@@ -1,8 +1,12 @@
+'use client';
+
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import Lottie from 'lottie-react';
 import preAnimation from '../../../public/animations/pre-animation.json';
+
+
 
 const Preloader = () => {
   const [show, setShow] = useState(true);
@@ -36,7 +40,7 @@ const Preloader = () => {
             src="/images/brand-logo.png"
             alt="Brand Logo"
             width={700}
-            height={700}
+            height={500}
             className="opacity-[0.08] object-contain"
             priority
           />
