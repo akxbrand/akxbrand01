@@ -79,7 +79,6 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState('');
-  const [selectedColor, setSelectedColor] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [activeSection, setActiveSection] = useState<string>('');
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
@@ -364,7 +363,6 @@ export default function ProductPage({ params }: { params: { id: string } }) {
         if (processedProduct.sizes?.length > 0) {
           setSelectedSize(processedProduct.sizes[0].size);
         }
-        if (processedProduct.colors?.length > 0) setSelectedColor(processedProduct.colors[0]);
 
         // Fetch related products when product data is available
         if (processedProduct.category?.id) {
@@ -997,7 +995,9 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </button>
-            {selectedSize ? (
+            {activeSection === 'details' && (
+              <>
+               {selectedSize? (
                     <>
                       <div>
                         <h3 className="text-sm font-medium text-gray-900">Size</h3>
@@ -1018,6 +1018,9 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                       </div>
                     ))
                   )}
+              </>
+            )}
+           
           </div>
 
           {/* Care Instructions */}
@@ -1081,18 +1084,28 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             {activeSection === 'delivery' && (
               <div className="pb-6 px-4">
                 <div className="space-y-4">
-                  {product.deliveryInfo && (
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-900">Delivery Information</h3>
-                      <p className="mt-1 text-sm text-gray-600">{product.deliveryInfo}</p>
-                    </div>
-                  )}
-                  {product.returnPolicy && (
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-900">Return Policy</h3>
-                      <p className="mt-1 text-sm text-gray-600">{product.returnPolicy}</p>
-                    </div>
-                  )}
+                  
+                    <ul className="space-y-2 text-sm text-gray-600">
+                    {selectedSize && product.sizes.find(s => s.size === selectedSize)?.deliveryReturns ? (
+                      typeof product.sizes.find(s => s.size === selectedSize)?.deliveryReturns === 'string' ? (
+                        product.sizes.find(s => s.size === selectedSize)?.deliveryReturns?.split('\n').map((deliveryReturnsValue, index) => (
+                          <li key={index} className="flex items-start space-x-2">
+                            <span className="mt-1">
+                              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                            </span>
+                            <span>{deliveryReturnsValue}</span>
+                          </li>
+                        ))
+                      ) : (
+                        <li className="text-gray-600">No care instructions available for this size</li>
+                      )
+                    ) : (
+                      <li className="text-gray-600">Select a size to see care instructions</li>
+                    )}
+                  </ul>
+                  
                 </div>
               </div>
             )}

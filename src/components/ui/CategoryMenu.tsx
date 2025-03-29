@@ -55,21 +55,22 @@ export default function CategoryMenu() {
         aria-label="Categories"
       >
         <span>Categories</span>
-        <ChevronDown className="w-4 h-4" />
+        {/* <ChevronDown className="w-4 h-4" /> */}
       </button>
 
       <div className="absolute left-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
         <div className="py-2">
           {categories.map((category) => (
             <div key={category.id} className="relative group/item">
-              <button
+              <a
+                href={category.subCategories.length > 0 ? '#' : `/shop?category=${category.id}`}
                 className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors flex items-center justify-between"
               >
                 <span>{category.name}</span>
                 {category.subCategories.length > 0 && (
                   <ChevronRight className="w-4 h-4 ml-2" />
                 )}
-              </button>
+              </a>
               {category.subCategories.length > 0 && (
                 <div className="absolute left-full top-0 w-48 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover/item:opacity-100 group-hover/item:visible transition-all duration-200">
                   <div className="py-2">

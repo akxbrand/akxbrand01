@@ -51,12 +51,12 @@ export default function BannersPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(bannerData)
       });
-
+  
       const data = await response.json();
       if (data.success) {
         await fetchBanners();
         setIsAddModalOpen(false);
-        showToastMessage('Banner added successfully');
+        // showToastMessage('Banner added successfully');
       } else {
         throw new Error(data.error);
       }
@@ -72,13 +72,13 @@ export default function BannersPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(bannerData)
       });
-
+  
       const data = await response.json();
       if (data.success) {
         await fetchBanners();
         setIsEditModalOpen(false);
         setSelectedBanner(null);
-        showToastMessage('Banner updated successfully');
+        // showToastMessage('Banner updated successfully');
       } else {
         throw new Error(data.error);
       }
@@ -95,11 +95,11 @@ export default function BannersPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id: bannerId })
         });
-
+  
         const data = await response.json();
         if (data.success) {
           await fetchBanners();
-          showToastMessage('Banner deleted successfully');
+          // showToastMessage('Banner deleted successfully');
         } else {
           throw new Error(data.error);
         }

@@ -126,8 +126,8 @@ export default function AddBannerModal({ isOpen, onClose, onAdd }: AddBannerModa
           <div className="space-y-4">
             {/* Image Upload */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Banner Image *
+              <label className="flex block text-sm font-medium text-gray-700 mb-2">
+                Banner Image * <p className='text-[9px] italic text-red-800'>(support png,jpg,jpeg,gif)</p>
               </label>
               <CloudinaryUpload
                 onUploadSuccess={handleImageUploadSuccess}

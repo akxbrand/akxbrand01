@@ -12,10 +12,8 @@ import Header from '@/components/layout/Header';
 import MobileMenu from '@/components/layout/MobileMenu';
 import { useState, useEffect } from 'react';
 import Footer from '@/components/layout/Footer';
-import { Section } from 'lucide-react';
 import SubCategoryModal from '@/components/ui/SubCategoryModal';
 import TopProducts from '@/components/TopProducts';
-import Preloader from '@/components/ui/preloader';
 import CustomerReviews from '@/components/CustomerReviews';
 interface FeaturedReview {
   id: string;
@@ -47,7 +45,6 @@ export default function Home() {
   const [bestSellers, setBestSellers] = useState<Array<any>>([]);
   const [bestSellersLoading, setBestSellersLoading] = useState(true);
   const [featuredReviews, setFeaturedReviews] = useState<FeaturedReview[]>([]);
-  const [featuredReviewsLoading, setFeaturedReviewsLoading] = useState(true);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error'>('success');
@@ -66,9 +63,7 @@ export default function Home() {
         }
       } catch (error) {
         console.error('Error fetching featured reviews:', error);
-      } finally {
-        setFeaturedReviewsLoading(false);
-      }
+      } 
     };
 
     fetchFeaturedReviews();
@@ -125,12 +120,16 @@ export default function Home() {
   useEffect(() => {
     if (banners.length === 0) return;
 
+    const currentBannerData = banners[currentBanner];
+    const isGif = currentBannerData?.imageUrl?.toLowerCase().endsWith('.gif');
+    const interval = isGif ? 10000 : 5000; // 10 seconds for GIFs, 5 seconds for other images
+
     const timer = setInterval(() => {
       setCurrentBanner((prev) => (prev + 1) % banners.length);
-    }, 5000); // Change banner every 5 seconds
+    }, interval);
 
     return () => clearInterval(timer);
-  }, [banners.length]);
+  }, [banners.length, currentBanner, banners]);
 
   const [categories, setCategories] = useState<Array<{
     id: string;
@@ -180,8 +179,13 @@ export default function Home() {
   }, []);
 
   const handleCategoryClick = (categoryName: string) => {
-    setSelectedCategory(categoryName);
-    setIsSubCategoryModalOpen(true);
+    const category = categories.find(cat => cat.name === categoryName);
+    if (category && category.subCategories.length > 0) {
+      setSelectedCategory(categoryName);
+      setIsSubCategoryModalOpen(true);
+    } else {
+      router.push(`/shop?category=${encodeURIComponent(categoryName)}`);
+    }
   };
 
   const handleAddToCart = async (product: any) => {
@@ -219,29 +223,28 @@ export default function Home() {
       <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
 
       {/* Hero Section */}
-      <section className="relative py-8 sm:py-16 px-4 sm:px-6 lg:px-8 h-[400px] sm:h-[600px] mt-20 overflow-hidden ">
-        {loading ? (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-            {/* <Preloader /> */}
-          </div>
-          // <Preloader />
-        ) : banners.length === 0 ? (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-            <p className="text-gray-500">No banners available</p>
-          </div>
-        ) : (
-          banners.map((banner, index) => (
+      <section className="relative w-full h-[160px] sm:h-[600px] lg:h-[480px] overflow-hidden flex items-center justify-center mt-20">
+      {loading ? (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+        </div>
+      ) : banners.length === 0 ? (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+          <p className="text-gray-500">No banners available</p>
+        </div>
+      ) : (
+        <div className="relative w-full h-full">
+          {banners.map((banner, index) => (
             <div
               key={banner.id}
-              className={`absolute inset-0 px-4 sm:px-6 lg:px-8 transition-opacity duration-1000 ${index === currentBanner ? 'opacity-100' : 'opacity-0'}`}
+              className={`absolute inset-0 transition-opacity duration-1000 ${index === currentBanner ? 'opacity-100' : 'opacity-0'}`}
             >
-              <div className="absolute flex inset-0 justify-center">
+              <div className="absolute inset-0 w-full h-full flex items-center justify-center">
                 <Image
                   src={banner.imageUrl}
                   alt={banner.title || 'Banner image'}
-               fill
-                  className="object-cover brightness-80"
+                  layout="fill"
+                  objectFit="contain"
                   priority={index === 0}
                   loading="eager"
                   onError={(e) => {
@@ -252,28 +255,27 @@ export default function Home() {
                 />
               </div>
               <div className="relative h-full flex flex-col items-center justify-center text-white text-center px-4">
-                {/* <h1 className="text-4xl md:text-5xl font-bold mb-4">{banner.title}</h1> */}
-                {/* <p className="text-lg md:text-xl mb-8">{banner.description}</p> */}
-                 
+                {/* Add title and description if needed */}
               </div>
             </div>
-          ))
-        )}
-
-        {/* Banner Navigation Dots */}
-        {banners.length > 0 && (
-          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2">
-            {banners.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentBanner(index)}
-                className={`w-2 h-2 rounded-full transition-all ${index === currentBanner ? 'bg-white w-4' : 'bg-white/50'}`}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            ))}
-          </div>
-        )}
-      </section>
+          ))}
+        </div>
+      )}
+      
+      {/* Navigation Dots */}
+      {banners.length > 0 && (
+        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2">
+          {banners.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentBanner(index)}
+              className={`w-2 h-2 rounded-full transition-all ${index === currentBanner ? 'bg-white w-4' : 'bg-white/50'}`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+      )}
+    </section>
 
       {/* Top Products Section */}
       <TopProducts />

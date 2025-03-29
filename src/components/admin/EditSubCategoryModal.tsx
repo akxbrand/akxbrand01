@@ -17,7 +17,7 @@ interface SubCategory {
   description: string;
   categoryId: string;
   status: 'Active' | 'Inactive';
-  imageUrl: string;
+  image: string;
 }
 
 interface EditSubCategoryModalProps {
@@ -36,29 +36,29 @@ export default function EditSubCategoryModal({
   categories,
 }: EditSubCategoryModalProps) {
   const [formData, setFormData] = useState<SubCategory>(subCategory);
-  const [imagePreview, setImagePreview] = useState<string>(subCategory.imageUrl || '');
+  const [imagePreview, setImagePreview] = useState<string>(subCategory.image || '');
   const [uploadError, setUploadError] = useState('');
 
   useEffect(() => {
     setFormData(subCategory);
-    setImagePreview(subCategory.imageUrl || '');
+    setImagePreview(subCategory.image || '');
   }, [subCategory]);
 
   const handleImageUploadSuccess = (url: string) => {
-    setFormData(prev => ({ ...prev, imageUrl: url }));
+    setFormData(prev => ({ ...prev, image: url }));
     setImagePreview(url);
     setUploadError('');
   };
 
   const handleImageUploadError = (error: string) => {
     setUploadError(error);
-    setFormData(prev => ({ ...prev, imageUrl: '' }));
+    setFormData(prev => ({ ...prev, image: '' }));
     setImagePreview('');
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.imageUrl) {
+    if (!formData.image) {
       setUploadError('Please upload a subcategory image');
       return;
     }
@@ -98,7 +98,7 @@ export default function EditSubCategoryModal({
                 <button
                   type="button"
                   onClick={() => {
-                    setFormData(prev => ({ ...prev, imageUrl: '' }));
+                    setFormData(prev => ({ ...prev, image: '' }));
                     setImagePreview('');
                   }}
                   className="absolute top-2 right-2 p-1 bg-white rounded-full shadow-sm hover:bg-gray-100"
