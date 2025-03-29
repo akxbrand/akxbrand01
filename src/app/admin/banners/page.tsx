@@ -56,7 +56,6 @@ export default function BannersPage() {
       if (data.success) {
         await fetchBanners();
         setIsAddModalOpen(false);
-        // showToastMessage('Banner added successfully');
       } else {
         throw new Error(data.error);
       }
@@ -99,7 +98,7 @@ export default function BannersPage() {
         const data = await response.json();
         if (data.success) {
           await fetchBanners();
-          // showToastMessage('Banner deleted successfully');
+          showToastMessage('Banner deleted successfully');
         } else {
           throw new Error(data.error);
         }
