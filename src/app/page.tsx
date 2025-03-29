@@ -223,7 +223,7 @@ export default function Home() {
       <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
 
       {/* Hero Section */}
-      <section className="relative w-full h-[160px] sm:h-[600px] lg:h-[480px] overflow-hidden flex items-center justify-center mt-20">
+      <section className="relative w-full h-[240px] sm:h-[600px] lg:h-[560px] overflow-hidden flex items-center justify-center pt-20">
       {loading ? (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
