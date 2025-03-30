@@ -28,7 +28,14 @@ export async function GET(request: NextRequest) {
 
     // Build filter conditions
     const where: any = {
-      name: { contains: search, mode: 'insensitive' },
+      ...(search && {
+        OR: [
+          { name: { contains: search, mode: 'insensitive' } },
+          { nickname: { contains: search, mode: 'insensitive' } },
+          { category: { name: { contains: search, mode: 'insensitive' } } },
+          { subCategory: { name: { contains: search, mode: 'insensitive' } } }
+        ]
+      }),
       ...(category && { categoryId: category }),
       ...(subcategory && { subCategoryId: subcategory })
     };
