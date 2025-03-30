@@ -6,7 +6,7 @@ import AdminLayout from '@/components/admin/AdminLayout';
 import AddProductModal from '@/components/admin/AddProductModal';
 import EditProductModal from '@/components/admin/EditProductModal';
 import ProductDetailModal from '@/components/admin/ProductDetailModal';
-import { Plus, PenSquare, Trash2, X } from 'lucide-react';
+import { Plus, PenSquare, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 
 interface Product {
