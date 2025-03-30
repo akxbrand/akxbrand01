@@ -11,11 +11,13 @@ const printStyles = `
 import React from 'react';
 import Modal from '@/components/ui/Modal';
 import { X, Download } from 'lucide-react';
-import Image from 'next/image';
+import InvoiceTemplate from '../ui/InvoiceTemplate';
+import { log } from 'console';
 
 interface OrderItem {
   id: string;
   name: string;
+  nickname?: string;
   price: number;
   size: string;
   quantity: number;
@@ -25,7 +27,7 @@ interface OrderItem {
 interface Order {
   id: string;
   customerName: string;
-  nickname?: string;
+  // nickname?: string;
   email: string;
   phone: string;
   address: {
@@ -50,52 +52,26 @@ interface ViewOrderModalProps {
 export default function ViewOrderModal({ isOpen, onClose, order }: ViewOrderModalProps) {
   console.log('ViewOrderModal:', { isOpen, order });
 
-  // const handlePrint = () => {
-  //   window.print();
-  // };
-
   const handleDownloadInvoice = () => {
-    // Create a new window for the invoice
+    console.log('Downloading invoice...');
     const printWindow = window.open('', '_blank');
-    if (!printWindow) return;
-
-    // Write the invoice content to the new window
-    printWindow.document.write(`
+    printWindow?.document.write(`
       <html>
         <head>
-          <title>Invoice - ${order.id}</title>
+          <title>Invoice</title>
           <style>
-            body { font-family: Arial, sans-serif; padding: 20px; }
-            .invoice-header { display: flex; justify-content: space-between; margin-bottom: 30px; }
-            .brand-logo { width: 150px; height: auto; margin-bottom: 20px; }
-            table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-            th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
-            .total-section { margin-top: 30px; text-align: right; }
-            @media print {
-              .no-print { display: none; }
-            }
+            ${printStyles}
           </style>
         </head>
         <body>
-        <div style="display: flex;">
-          <div id="printable-content">
-            ${document.getElementById('printable-content')?.innerHTML || ''}
-          </div>
-           <div style="text-align: right; margin-bottom: 20px;">
-            <img src="/images/brand-logo.png" alt="AKX Brand Logo" class="brand-logo" />
-          </div>
-          </div>
-          <script>
-            window.onload = () => {
-              window.print();
-              window.onafterprint = () => window.close();
-            }
-          </script>
+          ${printableContent.innerHTML}
         </body>
       </html>
     `);
-    printWindow.document.close();
-  };
+    printWindow?.document.close();
+    printWindow?.print();
+    printWindow?.close();
+  }
 
   return (
     <>
@@ -151,9 +127,9 @@ export default function ViewOrderModal({ isOpen, onClose, order }: ViewOrderModa
               <div className="mb-4 not-printable">
               <h4 className="text-gray-600 text-sm font-medium mb-2">Customer Details:</h4>
               <p className="font-medium text-gray-900">{order.customerName}</p>
-              {order.nickname && (
-                <p className="text-gray-600">Nickname: {order.nickname}</p>
-              )}
+              
+                
+              
               </div>
               <div className="print:block">
               <h4 className="text-gray-600 text-sm font-medium mb-2">Bill To:</h4>
@@ -198,23 +174,23 @@ export default function ViewOrderModal({ isOpen, onClose, order }: ViewOrderModa
               <tbody className="bg-white divide-y divide-gray-200">
                 {order.items.map((item) => (
                   <tr key={item.id}>
-                    <td className="px-4 py-4 whitespace-nowrap">
+                    <td className="px-4 py-4">
                       <div className="flex items-center">
                         <div className="h-10 w-10 relative flex-shrink-0">
-                          <Image
+                          <img
                             src={item.image}
                             alt={item.name}
-                            fill
-                            className="object-cover rounded"
+                            className="w-full h-full object-cover rounded"
                           />
                         </div>
-                        <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">{item.name}</div>
+                        <div className="ml-2 flex-1 min-w-0">
+                          <div className="text-sm font-medium text-gray-900 break-words">{item.name}</div>
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                      Size: {item.size}
+                      <div>Size: {item.size}</div>
+                      {item.nickname && <div>Nickname: {item.nickname}</div>}
                     </td>
                     <td className="px-4 text-center py-4 whitespace-nowrap text-sm text-gray-500">
                       {item.quantity}

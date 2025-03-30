@@ -420,7 +420,7 @@ export default function OrdersPage() {
                       {order.paymentStatus.charAt(0).toUpperCase() + order.paymentStatus.slice(1)}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <td className=" flex px-6 py-4 whitespace-nowrap text-sm font-medium justify-center">
                     <div className="flex justify-end items-center space-x-3">
                       <button
                         onClick={() => handleViewOrder(order.id)}
@@ -429,13 +429,13 @@ export default function OrdersPage() {
                       >
                         <Eye className="w-5 h-5" />
                       </button>
-                      <button
+                      {/* <button
                         onClick={() => handleDownloadInvoice(order.id)}
                         className="p-1 text-gray-400 hover:text-blue-600 transition-colors duration-150"
                         title="Download Invoice"
                       >
                         <Download className="w-5 h-5" />
-                      </button>
+                      </button> */}
                     </div>
                   </td>
                 </tr>

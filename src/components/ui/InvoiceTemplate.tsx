@@ -56,8 +56,7 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ order }) => {
           </div>
           <div className="text-gray-600 text-sm">
             <p>33/10 Matta Chowk, Rani Mahal</p>
-            <p>Panipat, Haryana - 132103</p>
-            <p>India</p>
+            <p>Panipat, Haryana - 132103, India</p>
             <p className="mt-2">+91 9034366104</p>
             <p>akxbrand@gmail.com</p>
             <p className="mt-2 font-medium">GSTIN: 06BPQPR1739P1ZZ</p>

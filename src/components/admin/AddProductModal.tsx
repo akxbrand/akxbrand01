@@ -607,10 +607,34 @@ export default function AddProductModal({ isOpen, onClose, onAdd }: AddProductMo
                   Product Images * (Min 1, Max 5)
                 </label>
                 <div className="space-y-2">
-                  <CloudinaryUpload
-                    onUploadSuccess={handleImageUploadSuccess}
-                    onUploadError={handleImageUploadError}
-                  />
+                  <div className="flex gap-2">
+                    <div className="flex-1">
+                      <CloudinaryUpload
+                        onUploadSuccess={handleImageUploadSuccess}
+                        onUploadError={handleImageUploadError}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <div className="relative">
+                        <input
+                          type="url"
+                          placeholder="Or paste image URL here"
+                          className="w-full px-3 py-2 text-gray-800 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              const input = e.target as HTMLInputElement;
+                              const url = input.value.trim();
+                              if (url) {
+                                handleImageUploadSuccess(url);
+                                input.value = '';
+                              }
+                          }
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
                   {imageUrls.length > 0 && (
                     <div className="grid grid-cols-3 gap-2 mt-2">
                       {imageUrls.map((url, index) => (

@@ -327,10 +327,30 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
                   ))}
                 </div>
                 {imagePreviews.length < 5 && (
-                  <CloudinaryUpload
-                    onUploadSuccess={handleImageUploadSuccess}
-                    onUploadError={handleImageUploadError}
-                  />
+                  <div className="space-y-2">
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="Enter image URL"
+                        className="flex-1 px-3 py-2 text-gray-700 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            const input = e.target as HTMLInputElement;
+                            const url = input.value.trim();
+                            if (url) {
+                              handleImageUploadSuccess(url);
+                              input.value = '';
+                            }
+                          }
+                        }}
+                      />
+                    </div>
+                    <CloudinaryUpload
+                      onUploadSuccess={handleImageUploadSuccess}
+                      onUploadError={handleImageUploadError}
+                    />
+                  </div>
                 )}
                 {imageError && (
                   <p className="text-red-500 text-sm mt-1">{imageError}</p>

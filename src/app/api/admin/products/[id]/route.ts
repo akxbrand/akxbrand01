@@ -120,6 +120,11 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     }
 
     const productId = params.id;
+    // First delete all associated order items
+    await prisma.orderItem.deleteMany({
+      where: { productId }
+    });
+    // Then delete the product
     await prisma.product.delete({
       where: { id: productId }
     });
