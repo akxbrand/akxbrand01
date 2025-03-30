@@ -36,12 +36,12 @@ export default function EditSubCategoryModal({
   categories,
 }: EditSubCategoryModalProps) {
   const [formData, setFormData] = useState<SubCategory>(subCategory);
-  const [imagePreview, setImagePreview] = useState<string>(subCategory.image || '');
+  const [imagePreview, setImagePreview] = useState<string>(subCategory.image);
   const [uploadError, setUploadError] = useState('');
 
   useEffect(() => {
     setFormData(subCategory);
-    setImagePreview(subCategory.image || '');
+    setImagePreview(subCategory.image);
   }, [subCategory]);
 
   const handleImageUploadSuccess = (url: string) => {

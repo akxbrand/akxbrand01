@@ -22,6 +22,17 @@ interface ProductSize {
   dealQuantityLimit?: number;
 }
 
+interface Category {
+  id: string;
+  name: string;
+  subCategories: SubCategory[];
+}
+
+interface SubCategory {
+  id: string;
+  name: string;
+}
+
 interface EditProductModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -32,7 +43,9 @@ interface EditProductModalProps {
 export default function EditProductModal({ isOpen, onClose, onSave, product }: EditProductModalProps) {
   const [name, setName] = useState(product.name);
   const [nickname, setNickname] = useState(product.nickname);
-  const [category, setCategory] = useState(product.category);
+  const [categoryId, setCategoryId] = useState(product.category?.id || '');
+  const [subCategoryId, setSubCategoryId] = useState(product.subCategory?.id || '');
+  const [categories, setCategories] = useState<Category[]>([]);
   const [oldPrice, setOldPrice] = useState(product.oldPrice || 0);
   const [price, setPrice] = useState(product.price);
   const [stock, setStock] = useState(product.stock);
@@ -55,10 +68,10 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
   const [currentSize, setCurrentSize] = useState<ProductSize>({
     size: '',
     description: '',
-    uniqueFeatures:'',
-    productDetails:'',
-    careInstructions:'',
-    deliveryReturns:'',
+    uniqueFeatures: '',
+    productDetails: '',
+    careInstructions: '',
+    deliveryReturns: '',
     oldPrice: 0,
     price: 0,
     stock: 0,
@@ -69,10 +82,28 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
   });
 
   useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch('/api/admin/categories');
+      const data = await response.json();
+
+      if (!response.ok) throw new Error(data.error);
+
+      setCategories(data.categories);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      setError('Failed to load categories');
+    }
+  };
+
+  useEffect(() => {
     setName(product.name);
     setNickname(product.nickname);
-    setCategory(product.category);
-    
+    setCategoryId(product.category?.id || '');
+    setSubCategoryId(product.subCategory?.id || '');
     setOldPrice(product.oldPrice || 0);
     setPrice(product.price);
     setStock(product.stock);
@@ -112,10 +143,10 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
       setCurrentSize({
         size: '',
         description: '',
-        uniqueFeatures:'',
-    productDetails:'',
-    careInstructions:'',
-    deliveryReturns:'',
+        uniqueFeatures: '',
+        productDetails: '',
+        careInstructions: '',
+        deliveryReturns: '',
         oldPrice: 0,
         price: 0,
         stock: 0,
@@ -153,10 +184,10 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
       setCurrentSize({
         size: '',
         description: '',
-        uniqueFeatures:'',
-    productDetails:'',
-    careInstructions:'',
-    deliveryReturns:'',
+        uniqueFeatures: '',
+        productDetails: '',
+        careInstructions: '',
+        deliveryReturns: '',
         oldPrice: 0,
         price: 0,
         stock: 0,
@@ -216,7 +247,8 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
     onSave({
       name,
       nickname,
-      category,
+      categoryId,
+      subCategoryId,
       oldPrice,
       price,
       stock,
@@ -302,6 +334,52 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
                 />
               </div>
 
+              {/* Category Selection */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Category <span className="text-red-500">*</span>
+                </label>
+                <select
+                  value={categoryId}
+                  onChange={(e) => {
+                    setCategoryId(e.target.value);
+                    setSubCategoryId('');
+                  }}
+                  className="w-full px-3 py-2 text-gray-800 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  required
+                >
+                  <option value="">Select a category</option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Subcategory Selection */}
+              {categoryId && categories.find(cat => cat.id === categoryId)?.subCategories.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Subcategory
+                  </label>
+                  <select
+                    value={subCategoryId}
+                    onChange={(e) => setSubCategoryId(e.target.value)}
+                    className="w-full px-3 py-2 text-gray-800 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  >
+                    <option value="">Select a subcategory</option>
+                    {categories
+                      .find(cat => cat.id === categoryId)
+                      ?.subCategories.map((subCategory) => (
+                        <option key={subCategory.id} value={subCategory.id}>
+                          {subCategory.name}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              )}
+
               {/* Product Images */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700">Product Images</label>
@@ -329,10 +407,15 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
                 {imagePreviews.length < 5 && (
                   <div className="space-y-2">
                     <div className="flex gap-2">
+                      <CloudinaryUpload
+                        onUploadSuccess={handleImageUploadSuccess}
+                        onUploadError={handleImageUploadError}
+                      />
+
                       <input
                         type="text"
-                        placeholder="Enter image URL"
-                        className="flex-1 px-3 py-2 text-gray-700 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        placeholder="OR Enter image URL"
+                        className="flex-1 ml-10 px-3 py-2 text-gray-700 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') {
                             e.preventDefault();
@@ -346,10 +429,6 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
                         }}
                       />
                     </div>
-                    <CloudinaryUpload
-                      onUploadSuccess={handleImageUploadSuccess}
-                      onUploadError={handleImageUploadError}
-                    />
                   </div>
                 )}
                 {imageError && (
@@ -617,54 +696,58 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
 
 
                 {/* Best Seller & New Arrival */}
-                <div className="flex space-x-4">
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id="isBestSeller"
-                      checked={isBestSeller}
-                      onChange={(e) => setIsBestSeller(e.target.checked)}
-                      className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                    />
-                    <label htmlFor="isBestSeller" className="ml-2 text-sm font-medium text-gray-700">
-                      Best Seller
-                    </label>
+                <div className="flex justify-around ">
+                  <div className='mb-4'>
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id="isBestSeller"
+                        checked={isBestSeller}
+                        onChange={(e) => setIsBestSeller(e.target.checked)}
+                        className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                      />
+                      <label htmlFor="isBestSeller" className="ml-2 text-sm font-medium text-gray-700">
+                        Best Seller
+                      </label>
+                    </div>
+                    <div className="flex items-center mt-3">
+                      <input
+                        type="checkbox"
+                        id="isNewArrival"
+                        checked={isNewArrival}
+                        onChange={(e) => setIsNewArrival(e.target.checked)}
+                        className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                      />
+                      <label htmlFor="isNewArrival" className="ml-2 text-sm font-medium text-gray-700">
+                        Latest Arrivals
+                      </label>
+                    </div>
                   </div>
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id="isNewArrival"
-                      checked={isNewArrival}
-                      onChange={(e) => setIsNewArrival(e.target.checked)}
-                      className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                    />
-                    <label htmlFor="isNewArrival" className="ml-2 text-sm font-medium text-gray-700">
-                      New Arrival
-                    </label>
-                  </div>
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id="isTop10"
-                      checked={isTop10}
-                      onChange={(e) => setIsTop10(e.target.checked)}
-                      className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                    />
-                    <label htmlFor="isNewArrival" className="ml-2 text-sm font-medium text-gray-700">
-                      Trending
-                    </label>
-                  </div>
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id="isLimitted"
-                      checked={isLimitted}
-                      onChange={(e) => setIsLimitted(e.target.checked)}
-                      className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                    />
-                    <label htmlFor="isLimitted" className="ml-2 text-sm font-medium text-gray-700">
-                      Limitted Deal
-                    </label>
+                  <div className='mb-4'>
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id="isTop10"
+                        checked={isTop10}
+                        onChange={(e) => setIsTop10(e.target.checked)}
+                        className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                      />
+                      <label htmlFor="isTop10" className="ml-2 text-sm font-medium text-gray-700">
+                        Trending
+                      </label>
+                    </div>
+                    <div className="flex items-center mt-3">
+                      <input
+                        type="checkbox"
+                        id="isLimitted"
+                        checked={isLimitted}
+                        onChange={(e) => setIsLimitted(e.target.checked)}
+                        className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                      />
+                      <label htmlFor="isLimitted" className="ml-2 text-sm font-medium text-gray-700">
+                        Limitted Deal
+                      </label>
+                    </div>
                   </div>
                 </div>
 
