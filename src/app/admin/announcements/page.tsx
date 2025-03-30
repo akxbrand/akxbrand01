@@ -29,7 +29,7 @@ export default function AnnouncementsPage() {
     message: '',
     startDate: '',
     endDate: '',
-    priority: 0
+    priority: '' as unknown as number
   });
 
   useEffect(() => {
@@ -211,7 +211,7 @@ export default function AnnouncementsPage() {
                   required
                   value={newAnnouncement.message}
                   onChange={(e) => setNewAnnouncement({ ...newAnnouncement, message: e.target.value })}
-                  className="mt-1 text-gray-700 resize-none block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 p-2 text-gray-700 resize-none block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   rows={3}
                 />
               </div>
@@ -227,7 +227,7 @@ export default function AnnouncementsPage() {
                     required
                     value={newAnnouncement.startDate}
                     onChange={(e) => setNewAnnouncement({ ...newAnnouncement, startDate: e.target.value })}
-                    className="mt-1 text-gray-700 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="mt-1 p-2 text-gray-700 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   />
                 </div>
 
@@ -240,7 +240,7 @@ export default function AnnouncementsPage() {
                     id="endDate"
                     value={newAnnouncement.endDate}
                     onChange={(e) => setNewAnnouncement({ ...newAnnouncement, endDate: e.target.value })}
-                    className="mt-1 block text-gray-700 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="mt-1 p-2 block text-gray-700 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   />
                 </div>
 
@@ -253,9 +253,10 @@ export default function AnnouncementsPage() {
                     id="priority"
                     required
                     min="0"
-                    value={newAnnouncement.priority}
+                    placeholder="Enter priority number"
+                    value={newAnnouncement.priority || ''}
                     onChange={(e) => setNewAnnouncement({ ...newAnnouncement, priority: parseInt(e.target.value) })}
-                    className="mt-1 text-gray-700 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="mt-1 p-2 text-gray-700 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                 </div>
               </div>

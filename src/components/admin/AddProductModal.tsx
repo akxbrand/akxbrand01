@@ -304,6 +304,7 @@ export default function AddProductModal({ isOpen, onClose, onAdd }: AddProductMo
                   <input
                     type="text"
                     required
+                    placeholder='Enter Name of the Product'
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="w-full text-gray-700 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -314,6 +315,7 @@ export default function AddProductModal({ isOpen, onClose, onAdd }: AddProductMo
                   <label className="block text-sm font-medium text-gray-700 mb-1">Nick Name (Optional)</label>
                   <input
                     type="text"
+                    placeholder='Enter NickName of the Product'
                     value={nickname}
                     onChange={(e) => setNickname(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -402,6 +404,7 @@ export default function AddProductModal({ isOpen, onClose, onAdd }: AddProductMo
                       <label className="block text-sm font-medium text-gray-700 mb-1">Size *</label>
                       <input
                         type="text"
+                        placeholder='Eg: Double, Single'
                         value={currentSize.size}
                         onChange={(e) => setCurrentSize({ ...currentSize, size: e.target.value })}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md"
@@ -412,27 +415,30 @@ export default function AddProductModal({ isOpen, onClose, onAdd }: AddProductMo
                       <label className="block text-sm font-medium text-gray-700 mb-1">Price *</label>
                       <input
                         type="number"
-                        value={currentSize.price}
+                        placeholder='In rupees'
+                        value={currentSize.price || ''}
                         onChange={(e) => setCurrentSize({ ...currentSize, price: parseFloat(e.target.value) })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Old Price</label>
                       <input
                         type="number"
-                        value={currentSize.oldPrice}
+                        placeholder='In rupees'
+                        value={currentSize.oldPrice || ''}
                         onChange={(e) => setCurrentSize({ ...currentSize, oldPrice: parseFloat(e.target.value) })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Stock *</label>
                       <input
                         type="number"
-                        value={currentSize.stock}
+                        placeholder='In pieces'
+                        value={currentSize.stock || ''}
                         onChange={(e) => setCurrentSize({ ...currentSize, stock: parseInt(e.target.value) })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                     </div>
 
@@ -443,6 +449,7 @@ export default function AddProductModal({ isOpen, onClose, onAdd }: AddProductMo
                     <textarea
                       // type="text"
                       rows={3}
+                      placeholder='Enter product Description'
                       value={currentSize.description}
                       onChange={(e) => setCurrentSize({ ...currentSize, description: e.target.value })}
                       className="w-full text-gray-700 resize-none px-3 py-2 border border-gray-300 rounded-md"
@@ -452,6 +459,7 @@ export default function AddProductModal({ isOpen, onClose, onAdd }: AddProductMo
                     <label className="block text-sm font-medium text-gray-700 mb-1">Unique Features</label>
                     <textarea
                       // type="text"
+                      placeholder='Enter product Unique Features'
                       rows={3}
                       value={currentSize.uniqueFeatures}
                       onChange={(e) => setCurrentSize({ ...currentSize, uniqueFeatures: e.target.value })}
@@ -463,6 +471,7 @@ export default function AddProductModal({ isOpen, onClose, onAdd }: AddProductMo
                     <textarea
                       // type="text"
                       rows={3}
+                      placeholder='Enter product Details'
                       value={currentSize.productDetails}
                       onChange={(e) => setCurrentSize({ ...currentSize, productDetails: e.target.value })} 
                       className="w-full text-gray-700 resize-none px-3 py-2 border border-gray-300 rounded-md"
@@ -473,6 +482,7 @@ export default function AddProductModal({ isOpen, onClose, onAdd }: AddProductMo
                     <textarea
                       // type="text"
                       rows={3}
+                      placeholder='Enter product Care Instructions'
                       value={currentSize.careInstructions}
                       onChange={(e) => setCurrentSize({ ...currentSize, careInstructions: e.target.value })} 
                       className="w-full text-gray-700 resize-none px-3 py-2 border border-gray-300 rounded-md"
@@ -483,6 +493,7 @@ export default function AddProductModal({ isOpen, onClose, onAdd }: AddProductMo
                     <textarea
                       // type="text"
                       rows={3}
+                      placeholder='Enter product Delivery & Returns'
                       value={currentSize.deliveryReturns}
                       onChange={(e) => setCurrentSize({ ...currentSize, deliveryReturns: e.target.value })} 
                       className="w-full text-gray-700 resize-none px-3 py-2 border border-gray-300 rounded-md"
@@ -495,6 +506,7 @@ export default function AddProductModal({ isOpen, onClose, onAdd }: AddProductMo
                     <label className="flex items-center space-x-2">
                       <input
                         type="checkbox"
+
                         checked={currentSize.isLimitedTimeDeal}
                         onChange={(e) => setCurrentSize({ ...currentSize, isLimitedTimeDeal: e.target.checked })}
                         className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
@@ -527,9 +539,10 @@ export default function AddProductModal({ isOpen, onClose, onAdd }: AddProductMo
                         <label className="block text-sm font-medium text-gray-700 mb-1">Deal Quantity Limit</label>
                         <input
                           type="number"
-                          value={currentSize.dealQuantityLimit}
+                          placeholder='In pieces'
+                          value={currentSize.dealQuantityLimit || ''}
                           onChange={(e) => setCurrentSize({ ...currentSize, dealQuantityLimit: parseInt(e.target.value) })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         />
                       </div>
                     </div>

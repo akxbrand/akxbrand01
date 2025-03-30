@@ -78,6 +78,7 @@ export default function AddCouponModal({ isOpen, onClose, onAdd }: AddCouponModa
               <input
                 type="text"
                 required
+                placeholder='Eg. AKX2025'
                 className="mt-1 block w-full text-gray-800 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 value={formData.code}
                 onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
@@ -85,9 +86,10 @@ export default function AddCouponModal({ isOpen, onClose, onAdd }: AddCouponModa
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Description</label>
+              <label className="block text-sm font-medium text-gray-700">Description (Optional) </label>
               <input
                 type="text"
+                placeholder='Enter description'
                 className="mt-1 block w-full text-gray-800 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -117,8 +119,9 @@ export default function AddCouponModal({ isOpen, onClose, onAdd }: AddCouponModa
                   required
                   min="0"
                   max={formData.discountType === 'percentage' ? "100" : undefined}
-                  className="mt-1 block w-full text-gray-800 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  value={formData.discountAmount}
+                  className="mt-1 block w-full text-gray-800 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  value={formData.discountAmount || ''}
+                  placeholder={formData.discountType === 'percentage'? 'Enter percentage' : 'Enter amount'}
                   onChange={(e) => setFormData({ ...formData, discountAmount: Number(e.target.value) })}
                 />
               </div>
@@ -131,8 +134,9 @@ export default function AddCouponModal({ isOpen, onClose, onAdd }: AddCouponModa
                   type="number"
                   required
                   min="0"
-                  className="mt-1 block w-full text-gray-800 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  value={formData.minPurchase}
+                  className="mt-1 block w-full text-gray-800 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  value={formData.minPurchase || ''}
+                  placeholder="Enter minimum purchase amount"
                   onChange={(e) => setFormData({ ...formData, minPurchase: Number(e.target.value) })}
                 />
               </div>
@@ -143,8 +147,9 @@ export default function AddCouponModal({ isOpen, onClose, onAdd }: AddCouponModa
                   <input
                     type="number"
                     min="0"
-                    className="mt-1 block text-gray-800 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    className="mt-1 block text-gray-800 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     value={formData.maxDiscount || ''}
+                    placeholder="Enter maximum discount amount"
                     onChange={(e) => setFormData({ ...formData, maxDiscount: Number(e.target.value) || undefined })}
                   />
                 </div>
@@ -181,8 +186,8 @@ export default function AddCouponModal({ isOpen, onClose, onAdd }: AddCouponModa
                 type="number"
                 required
                 min="1"
-                className="mt-1 block text-gray-800 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                value={formData.usageLimit}
+                className="mt-1 block text-gray-800 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                value={formData.usageLimit || ''}
                 onChange={(e) => setFormData({ ...formData, usageLimit: Number(e.target.value) })}
               />
             </div>

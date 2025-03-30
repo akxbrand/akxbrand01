@@ -9,7 +9,7 @@ import AnnouncementBar from './AnnouncementBar';
 import Image from 'next/image';
 import CategoryMenu from '../ui/CategoryMenu';
 
-import { FiShoppingCart, FiUser, FiPackage } from 'react-icons/fi';
+import { FiPackage } from 'react-icons/fi';
 
 interface HeaderProps {
   onMobileMenuClick: () => void;
@@ -210,7 +210,7 @@ export default function Header({ onMobileMenuClick }: HeaderProps) {
             </Link>
             <Link
               href="/account"
-              className="relative p-2 text-gray-700 hover:text-gray-900 transition-colors duration-200 group"
+              className="relative p-2 text-gray-700 hover:text-gray-900 transition-colors duration-200 group hidden md:block"
               title="Profile"
             >
               <span className="relative z-10" >

@@ -415,9 +415,9 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
                       <label className="block text-sm font-medium text-gray-700">Stock *</label>
                       <input
                         type="number"
-                        value={currentSize.stock}
+                        value={currentSize.stock || ''}
                         onChange={(e) => setCurrentSize({ ...currentSize, stock: Number(e.target.value) })}
-                        className="p-2 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                        className="p-2 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         placeholder="Available quantity"
                         required
                         min="0"
@@ -433,9 +433,9 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
                         </div>
                         <input
                           type="number"
-                          value={currentSize.oldPrice}
+                          value={currentSize.oldPrice || ''}
                           onChange={(e) => setCurrentSize({ ...currentSize, oldPrice: Number(e.target.value) })}
-                          className="p-2 w-full rounded-md border-gray-300 pl-7 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                          className="p-2 w-full rounded-md border-gray-300 pl-7 focus:border-blue-500 focus:ring-blue-500 sm:text-sm [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                           placeholder="0.00"
                           min="0"
                         />
@@ -450,9 +450,9 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
                         </div>
                         <input
                           type="number"
-                          value={currentSize.price}
+                          value={currentSize.price || ''}
                           onChange={(e) => setCurrentSize({ ...currentSize, price: Number(e.target.value) })}
-                          className="p-2 w-full rounded-md border-gray-300 pl-7 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                          className="p-2 w-full rounded-md border-gray-300 pl-7 focus:border-blue-500 focus:ring-blue-500 sm:text-sm [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                           placeholder="0.00"
                           required
                           min="0"
@@ -532,7 +532,7 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
                             type="datetime-local"
                             value={currentSize.dealStartTime}
                             onChange={(e) => setCurrentSize({ ...currentSize, dealStartTime: e.target.value })}
-                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                            className="w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                             required={currentSize.isLimitedTimeDeal}
                           />
                         </div>
@@ -543,7 +543,7 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
                             type="datetime-local"
                             value={currentSize.dealEndTime}
                             onChange={(e) => setCurrentSize({ ...currentSize, dealEndTime: e.target.value })}
-                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                            className="w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                             required={currentSize.isLimitedTimeDeal}
                           />
                         </div>
@@ -552,9 +552,9 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
                           <label className="block text-sm font-medium text-gray-700">Deal Quantity Limit</label>
                           <input
                             type="number"
-                            value={currentSize.dealQuantityLimit}
+                            value={currentSize.dealQuantityLimit || ''}
                             onChange={(e) => setCurrentSize({ ...currentSize, dealQuantityLimit: Number(e.target.value) })}
-                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                            className="w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                             placeholder="Maximum quantity for deal"
                             min="0"
                           />
@@ -606,10 +606,10 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
                   </label>
                   <input
                     type="number"
-                    value={weeklySales}
+                    value={weeklySales || ''}
                     onChange={(e) => setWeeklySales(Number(e.target.value))}
-                    className="w-full px-3 py-2 text-gray-800 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    placeholder="0"
+                    className="w-full px-3 py-2 text-gray-800 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    placeholder="Eg: 32"
                     min="0"
                   />
                 </div>

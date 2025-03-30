@@ -162,7 +162,7 @@ export default function BulkOrdersPage() {
                       id="minQuantity"
                       value={formData.minQuantity}
                       onChange={(e) => setFormData(prev => ({ ...prev, minQuantity: e.target.value }))}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm transition duration-200 ease-in-out hover:border-gray-400 text-gray-900 text-base"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm transition duration-200 ease-in-out hover:border-gray-400 text-gray-900 text-base [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       placeholder="Enter minimum quantity"
                       min="1"
                     />
@@ -176,7 +176,7 @@ export default function BulkOrdersPage() {
                       id="regularPrice"
                       value={formData.regularPrice}
                       onChange={(e) => setFormData(prev => ({ ...prev, regularPrice: e.target.value }))}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm transition duration-200 ease-in-out hover:border-gray-400 text-gray-900 text-base"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm transition duration-200 ease-in-out hover:border-gray-400 text-gray-900 text-base [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       placeholder="Enter regular price per unit"
                       step="0.01"
                       min="0"
@@ -191,7 +191,7 @@ export default function BulkOrdersPage() {
                       id="pricePerUnit"
                       value={formData.pricePerUnit}
                       onChange={(e) => setFormData(prev => ({ ...prev, pricePerUnit: e.target.value }))}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm transition duration-200 ease-in-out hover:border-gray-400 text-gray-900 text-base"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm transition duration-200 ease-in-out hover:border-gray-400 text-gray-900 text-base [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       placeholder="Enter bulk price per unit"
                       step="0.01"
                       min="0"

@@ -3,7 +3,6 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import WhatsAppButton from '@/components/ui/WhatsAppButton';
-import AnnouncementBar from './AnnouncementBar';
 
 interface ClientLayoutProps {
   children: React.ReactNode;

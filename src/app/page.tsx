@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { ChevronRight, Star } from 'lucide-react';
 import Toast from '@/components/ui/Toast';
 import { useCart } from '@/context/CartContext';
 
@@ -63,7 +63,7 @@ export default function Home() {
         }
       } catch (error) {
         console.error('Error fetching featured reviews:', error);
-      } 
+      }
     };
 
     fetchFeaturedReviews();
@@ -224,58 +224,58 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="relative w-full h-[240px] sm:h-[600px] lg:h-[560px] overflow-hidden flex items-center justify-center pt-20">
-      {loading ? (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-        </div>
-      ) : banners.length === 0 ? (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-          <p className="text-gray-500">No banners available</p>
-        </div>
-      ) : (
-        <div className="relative w-full h-full">
-          {banners.map((banner, index) => (
-            <div
-              key={banner.id}
-              className={`absolute inset-0 transition-opacity duration-1000 ${index === currentBanner ? 'opacity-100' : 'opacity-0'}`}
-            >
-              <div className="absolute inset-0 w-full h-full flex items-center justify-center">
-                <Image
-                  src={banner.imageUrl}
-                  alt={banner.title || 'Banner image'}
-                  layout="fill"
-                  objectFit="contain"
-                  priority={index === 0}
-                  loading="eager"
-                  onError={(e) => {
-                    console.error('Error loading banner image:', e);
-                    const target = e.target as HTMLImageElement;
-                    target.src = '/images/banner-second.jpg';
-                  }}
-                />
+        {loading ? (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+          </div>
+        ) : banners.length === 0 ? (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+            <p className="text-gray-500">No banners available</p>
+          </div>
+        ) : (
+          <div className="relative w-full h-full">
+            {banners.map((banner, index) => (
+              <div
+                key={banner.id}
+                className={`absolute inset-0 transition-opacity duration-1000 ${index === currentBanner ? 'opacity-100' : 'opacity-0'}`}
+              >
+                <div className="absolute inset-0 w-full h-full flex items-center justify-center">
+                  <Image
+                    src={banner.imageUrl}
+                    alt={banner.title || 'Banner image'}
+                    layout="fill"
+                    objectFit="contain"
+                    priority={index === 0}
+                    loading="eager"
+                    onError={(e) => {
+                      console.error('Error loading banner image:', e);
+                      const target = e.target as HTMLImageElement;
+                      target.src = '/images/banner-second.jpg';
+                    }}
+                  />
+                </div>
+                <div className="relative h-full flex flex-col items-center justify-center text-white text-center px-4">
+                  {/* Add title and description if needed */}
+                </div>
               </div>
-              <div className="relative h-full flex flex-col items-center justify-center text-white text-center px-4">
-                {/* Add title and description if needed */}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-      
-      {/* Navigation Dots */}
-      {banners.length > 0 && (
-        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2">
-          {banners.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentBanner(index)}
-              className={`w-2 h-2 rounded-full transition-all ${index === currentBanner ? 'bg-white w-4' : 'bg-white/50'}`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
-        </div>
-      )}
-    </section>
+            ))}
+          </div>
+        )}
+
+        {/* Navigation Dots */}
+        {banners.length > 0 && (
+          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2">
+            {banners.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentBanner(index)}
+                className={`w-2 h-2 rounded-full transition-all ${index === currentBanner ? 'bg-white w-4' : 'bg-white/50'}`}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
+          </div>
+        )}
+      </section>
 
       {/* Top Products Section */}
       <TopProducts />
@@ -328,70 +328,69 @@ export default function Home() {
             </div>
 
           ) : newArrivals.length === 0 ? (
-            <div className="text-center text-gray-500">No new arrivals available</div>
+            <div className="text-center text-gray-500">No Latest Arrivals available</div>
           ) : (
             <div className="relative">
               <div className="flex overflow-x-auto scrollbar-hide px-2 scroll-smooth">
                 <div className="flex space-x-4 pb-2 mx-auto">
                   {newArrivals.map((product) => (
                     <div key={product.id} className="flex-none w-[200px] group relative rounded-lg overflow-hidden shadow-sm transition-transform duration-300 hover:scale-105">
-                                            <Link href={`/product/${product.id}`} className="block">
-
-                      <div className="relative h-[200px] w-full">
-                        {product.isLimitted && (
-                          <div className="absolute top-2 right-2 z-10 bg-red-500 text-white px-2 py-1 rounded-md text-xs font-medium transform animate-pulse">
-                            Limited Deal
-                          </div>
-                        )}
-                        <Image
-                          src={product.images[0] || '/images/brand-logo.png'}
-                          alt={product.name}
-                          fill
-                          className="object-cover"
-                        />
-
-                      </div>
-                      <div className="p-3">
-                        <div className="flex text-xs text-gray-500 mb-1 items-center truncate">
-                          {product.category?.name} {product.subCategory?.name && <ChevronRight className="w-3 h-3 text-gray-600 flex-shrink-0" />} {product.subCategory?.name}
-                        </div>
-                        <h3 className="text-sm font-medium text-gray-900 line-clamp-2">{product.name}</h3>
-                        <div className="flex items-center mt-1.5">
-                          <div className="flex items-center">
-                            {[...Array(5)].map((_, i) => (
-                             <Star
-                             key={i}
-                             className={`h-3 w-3 ${i < Math.floor(product.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-                           />
-                            ))}
-                          </div>
-                          <span className="ml-1.5 text-xs text-gray-500">{product.rating.toFixed(1) || 0}</span>
-                        </div>
-                        <div className="mt-1.5 flex items-center">
-                          <span className="text-sm font-bold text-gray-900">₹{product.price}</span>
-                          {product.oldPrice && (
-                            <div className='flex text-center items-center '>
-                              <span className="ml-1.5 text-xs text-gray-500 line-through">₹{product.oldPrice}
-                              </span>
-                              <div className=" text-green-600 px-1.5 py-0.5 rounded text-xs font-medium">
-                                {Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}% off
-                              </div>
+                      <Link href={`/product/${product.id}`} className="block">
+                        <div className="relative h-[200px] w-full">
+                          {product.isLimitted && (
+                            <div className="absolute top-2 right-2 z-10 bg-red-500 text-white px-2 py-1 rounded-md text-xs font-medium transform animate-pulse">
+                              Limited Deal
                             </div>
                           )}
-                          {/* {product.oldPrice && (
+                          <Image
+                            src={product.images[0] || '/images/brand-logo.png'}
+                            alt={product.name}
+                            fill
+                            className="object-cover"
+                          />
+
+                        </div>
+                        <div className="p-3">
+                          <div className="flex text-xs text-gray-500 mb-1 items-center truncate">
+                            {product.category?.name} {product.subCategory?.name && <ChevronRight className="w-3 h-3 text-gray-600 flex-shrink-0" />} {product.subCategory?.name}
+                          </div>
+                          <h3 className="text-sm font-medium text-gray-900 line-clamp-2">{product.name}</h3>
+                          <div className="flex items-center mt-1.5">
+                            <div className="flex items-center">
+                              {[...Array(5)].map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={`h-3 w-3 ${i < Math.floor(product.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                                />
+                              ))}
+                            </div>
+                            <span className="ml-1.5 text-xs text-gray-500">{product.rating.toFixed(1) || 0}</span>
+                          </div>
+                          <div className="mt-1.5 flex items-center">
+                            <span className="text-sm font-bold text-gray-900">₹{product.price}</span>
+                            {product.oldPrice && (
+                              <div className='flex text-center items-center '>
+                                <span className="ml-1.5 text-xs text-gray-500 line-through">₹{product.oldPrice}
+                                </span>
+                                <div className=" text-green-600 px-1.5 py-0.5 rounded text-xs font-medium">
+                                  {Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}% off
+                                </div>
+                              </div>
+                            )}
+                            {/* {product.oldPrice && (
                             <div className="absolute bottom-14 right-10 text-green-600 px-1.5 py-0.5 rounded text-xs font-medium">
                               {Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}% off
                             </div>
                           )} */}
+                          </div>
+                          <button
+                            onClick={() => handleAddToCart(product)}
+                            className="mt-2 w-full bg-gray-900 text-white px-3 py-1.5 rounded text-sm hover:bg-gray-800 transition-colors duration-300"
+                          >
+                            Add to Cart
+                          </button>
                         </div>
-                        <button
-                          onClick={() => handleAddToCart(product)}
-                          className="mt-2 w-full bg-gray-900 text-white px-3 py-1.5 rounded text-sm hover:bg-gray-800 transition-colors duration-300"
-                        >
-                          Add to Cart
-                        </button>
-                      </div>
-                    </Link>
+                      </Link>
                     </div>
                   ))}
                 </div>
@@ -404,7 +403,7 @@ export default function Home() {
       {/* Best Sellers Section */}
       <section className="py-8 sm:py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-6 sm:mb-12">Best Sellers</h2>
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-6 sm:mb-12">Best Sellers</h2>
           {bestSellersLoading ? (
             <div className="flex justify-center items-center h-[300px]">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
@@ -412,29 +411,7 @@ export default function Home() {
           ) : bestSellers.length === 0 ? (
             <div className="text-center text-gray-500">No best sellers available</div>
           ) : (
-            <div className="relative px-4">
-              <button
-                onClick={() => {
-                  const container = document.querySelector('.scroll-container');
-                  if (container) {
-                    container.scrollLeft -= 320;
-                  }
-                }}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white p-2 rounded-full shadow-lg hover:scale-110 transition-all duration-200"
-              >
-                {/* <ChevronLeft className="h-6 w-6 text-gray-600" /> */}
-              </button>
-              <button
-                onClick={() => {
-                  const container = document.querySelector('.scroll-container');
-                  if (container) {
-                    container.scrollLeft += 320;
-                  }
-                }}
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white p-2 rounded-full shadow-lg hover:scale-110 transition-all duration-200"
-              >
-                {/* <ChevronRight className="h-6 w-6 text-gray-600" /> */}
-              </button>
+            <div className="relative">
               <div className="flex overflow-x-auto scrollbar-hide px-2 scroll-smooth scroll-container">
                 <div className="flex space-x-4 pb-2 mx-auto">
                   {bestSellers.map((product) => (
@@ -477,14 +454,14 @@ export default function Home() {
                           <div className="mt-1.5 flex items-center">
                             <span className="text-sm font-bold text-gray-900">₹{product.price}</span>
                             {product.oldPrice && (
-                            <div className='flex text-center items-center '>
-                              <span className="ml-1.5 text-xs text-gray-500 line-through">₹{product.oldPrice}
-                              </span>
-                              <div className=" text-green-600 px-1.5 py-0.5 rounded text-xs font-medium">
-                                {Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}% off
+                              <div className='flex text-center items-center '>
+                                <span className="ml-1.5 text-xs text-gray-500 line-through">₹{product.oldPrice}
+                                </span>
+                                <div className=" text-green-600 px-1.5 py-0.5 rounded text-xs font-medium">
+                                  {Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}% off
+                                </div>
                               </div>
-                            </div>
-                          )}
+                            )}
                           </div>
                           <button
                             onClick={(e) => {

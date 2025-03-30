@@ -4,6 +4,7 @@ import {
   X, 
   Home,
   ShoppingBag, 
+  LayoutGrid,
   Package, 
   Info, 
   Phone, 
@@ -13,6 +14,7 @@ import {
   ChevronRight, 
   User
 } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
@@ -68,7 +70,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
 
   const menuItems = [
     { href: '/', label: 'Home', icon: Home },
-    { href: '#', label: 'Categories', icon: ShoppingBag, isCategory: true },
+    { href: '#', label: 'Categories', icon: LayoutGrid, isCategory: true },
     { href: '/shop', label: 'Shop', icon: ShoppingBag },
     { href: '/bulk-orders', label: 'Bulk Orders', icon: Package },
     { href: '/about', label: 'About', icon: Info },
@@ -76,7 +78,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   ];
 
   const footerItems = [
-    { href: '/login', label: 'Account', icon: User },
+    { href: '/account', label: 'Account', icon: User },
     { href: '/cart', label: 'Cart', icon: ShoppingCart },
   ];
 
@@ -110,7 +112,14 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               className="text-2xl font-bold text-gray-900 transform transition hover:scale-105"
               onClick={onClose}
             >
-              AKX Brand
+              {/* AKX Brand */}
+              <Image
+                src="/images/brand-logo.png"
+                alt="AKX Brand"
+                width={90}
+                height={90}
+                className="flex items-center justify-center"
+              />
             </Link>
             <button
               type="button"
@@ -129,7 +138,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                 const Icon = item.icon;
                 if (item.isCategory) {
                   return (
-                    <div key={item.href} className={`space-y-4 opacity-0 transform transition-all duration-300 ${isAnimating ? 'opacity-100 translate-x-0' : 'translate-x-[-20px]'}`} style={{ transitionDelay: `${150 + index * 50}ms` }}>
+                    <div key={item.href} className={`opacity-0 transform transition-all duration-300 ${isAnimating ? 'opacity-100 translate-x-0' : 'translate-x-[-20px]'}`} style={{ transitionDelay: `${150 + index * 50}ms` }}>
                       <button
                         onClick={() => setShowCategories(!showCategories)}
                         className="flex items-center justify-between w-full text-lg font-medium text-gray-900 group"
@@ -149,7 +158,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                           <div key={category.id} className="group">
                             <button
                               onClick={() => setExpandedCategory(expandedCategory === category.id ? null : category.id)}
-                              className="w-full flex items-center justify-between py-2 text-gray-700 hover:text-gray-900 transition-colors group-hover:bg-gray-50 rounded-lg px-3"
+                              className="w-full flex items-center p-2 justify-between text-gray-700 hover:text-gray-900 transition-colors group-hover:bg-gray-50 rounded-lg px-3"
                             >
                               <span className="text-base font-medium">{category.name}</span>
                               {expandedCategory === category.id ? (
