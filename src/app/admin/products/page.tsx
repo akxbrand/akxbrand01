@@ -320,6 +320,15 @@ export default function ProductsPage() {
             >
               Previous
             </button>
+            {[...Array(totalPages)].map((_, index) => (
+              <button
+                key={index + 1}
+                onClick={() => setPage(index + 1)}
+                className={`relative inline-flex items-center px-4 py-2 border ${page === index + 1 ? 'bg-blue-50 border-blue-500 text-blue-600' : 'border-gray-300 bg-white text-gray-500 hover:bg-gray-50'} text-sm font-medium`}
+              >
+                {index + 1}
+              </button>
+            ))}
             <button
               onClick={() => setPage(p => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
