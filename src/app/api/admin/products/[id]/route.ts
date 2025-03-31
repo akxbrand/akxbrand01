@@ -59,7 +59,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
         nickname: data.nickname,
         images: data.images,
         categoryId: data.categoryId,
-        subCategoryId: data.subCategoryId,
+        subCategoryId: data.subCategoryId || null,
         oldPrice: data.oldPrice,
         price: data.price,
         stock: data.stock,
