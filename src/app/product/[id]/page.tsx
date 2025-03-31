@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
+import ImageZoom from '@/components/shop/ImageZoom';
 import { useRouter, useParams } from 'next/navigation';
 import { Share2, X, Plus } from 'lucide-react';
 import ProductCard from '@/components/shop/ProductCard';
@@ -25,7 +26,8 @@ interface ProductSize {
   size: string;
   description?: string;
   uniqueFeatures?: string;
-  productDetails?: { [key: string]: string };
+  // productDetails?: { [key: string]: string };
+  productDetails?: string;
   careInstructions?: string;
   deliveryReturns?: string;
   oldPrice?: number;
@@ -483,13 +485,10 @@ export default function ProductPage({ params }: { params: { id: string } }) {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Product Images */}
             <div className="relative h-[350px] md:h-[400px] rounded-lg overflow-hidden group">
-              <Image
+              <ImageZoom
                 src={product.images[currentImageIndex]}
                 alt={product.name}
-                fill
-                className="object-contain"
-                sizes="(max-width: 750px) 100vw, 50vw"
-                priority
+                className="h-full"
               />
               {product.images.length > 1 && (
                 <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
@@ -753,44 +752,44 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                       : 'Add to Cart'}
                 </button>
                 <button
-                onClick={async () => {
-                  if (!session) {
-                    router.push('/login');
-                    return;
-                  }
+                  onClick={async () => {
+                    if (!session) {
+                      router.push('/login');
+                      return;
+                    }
 
-                  if (product.sizes && product.sizes.length > 0 && !selectedSize) {
-                    setToastMessage('Please select a size');
-                    setToastType('error');
-                    setShowToast(true);
-                    return;
-                  }
+                    if (product.sizes && product.sizes.length > 0 && !selectedSize) {
+                      setToastMessage('Please select a size');
+                      setToastType('error');
+                      setShowToast(true);
+                      return;
+                    }
 
-                  const sizeInfo = product.sizes?.find(s => s.size === selectedSize);
-                  if (sizeInfo && sizeInfo.stock <= 0) {
-                    setToastMessage(`Sorry, size ${selectedSize} is out of stock`);
-                    setToastType('error');
-                    setShowToast(true);
-                    return;
-                  }
+                    const sizeInfo = product.sizes?.find(s => s.size === selectedSize);
+                    if (sizeInfo && sizeInfo.stock <= 0) {
+                      setToastMessage(`Sorry, size ${selectedSize} is out of stock`);
+                      setToastType('error');
+                      setShowToast(true);
+                      return;
+                    }
 
-                  try {
-                    await addToCart({
-                      id: `${product.id}-${selectedSize}`,
-                      productId: product.id,
-                      name: product.name,
-                      price: sizeInfo?.price || product.price,
-                      image: product.images[0],
-                      size: selectedSize,
-                      quantity: 1
-                    });
-                    router.push('/checkout');
-                  } catch (error) {
-                    setToastMessage('Failed to process your request');
-                    setToastType('error');
-                    setShowToast(true);
-                  }
-                }}
+                    try {
+                      await addToCart({
+                        id: `${product.id}-${selectedSize}`,
+                        productId: product.id,
+                        name: product.name,
+                        price: sizeInfo?.price || product.price,
+                        image: product.images[0],
+                        size: selectedSize,
+                        quantity: 1
+                      });
+                      router.push('/checkout');
+                    } catch (error) {
+                      setToastMessage('Failed to process your request');
+                      setToastType('error');
+                      setShowToast(true);
+                    }
+                  }}
                   disabled={
                     (product.sizes && product.sizes.length > 0 && !selectedSize) ||
                     (selectedSize && product.sizes?.find(s => s.size === selectedSize)?.stock === 0)
@@ -996,31 +995,27 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               </svg>
             </button>
             {activeSection === 'details' && (
-              <>
-               {selectedSize? (
-                    <>
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-900">Size</h3>
-                        <p className="mt-1 text-sm text-gray-500">{selectedSize}</p>
-                      </div>
-                      {product.specifications && Object.entries(product.specifications).map(([key, value]) => (
-                        <div key={key}>
-                          <h3 className="text-sm font-medium text-gray-900">{key.charAt(0).toUpperCase() + key.slice(1)}</h3>
-                          <p className="mt-1 text-sm text-gray-500">{value}</p>
-                        </div>
-                      ))}
-                    </>
+              <div className="pb-6 px-4">
+                <ul className="space-y-2">
+                  {selectedSize && product.sizes.find(s => s.size === selectedSize)?.productDetails ? (
+                    typeof product.sizes.find(s => s.size === selectedSize)?.productDetails === 'string' ? (
+                      product.sizes.find(s => s.size === selectedSize)?.productDetails?.split('\n').map((feature, index) => (
+                        <li key={index} className="flex items-center text-gray-600">
+                          <svg className="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                          {feature}
+                        </li>
+                      ))
+                    ) : (
+                      <li className="text-gray-600">No unique features available for this size</li>
+                    )
                   ) : (
-                    product.specifications && Object.entries(product.specifications).map(([key, value]) => (
-                      <div key={key}>
-                        <h3 className="text-sm font-medium text-gray-900">{key.charAt(0).toUpperCase() + key.slice(1)}</h3>
-                        <p className="mt-1 text-sm text-gray-500">{value}</p>
-                      </div>
-                    ))
+                    <li className="text-gray-600">Select a size to see Product Details</li>
                   )}
-              </>
+                </ul>
+              </div>
             )}
-           
           </div>
 
           {/* Care Instructions */}
@@ -1084,8 +1079,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             {activeSection === 'delivery' && (
               <div className="pb-6 px-4">
                 <div className="space-y-4">
-                  
-                    <ul className="space-y-2 text-sm text-gray-600">
+                  <ul className="space-y-2 text-sm text-gray-600">
                     {selectedSize && product.sizes.find(s => s.size === selectedSize)?.deliveryReturns ? (
                       typeof product.sizes.find(s => s.size === selectedSize)?.deliveryReturns === 'string' ? (
                         product.sizes.find(s => s.size === selectedSize)?.deliveryReturns?.split('\n').map((deliveryReturnsValue, index) => (
@@ -1105,7 +1099,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                       <li className="text-gray-600">Select a size to see care instructions</li>
                     )}
                   </ul>
-                  
+
                 </div>
               </div>
             )}
