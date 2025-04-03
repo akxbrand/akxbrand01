@@ -32,6 +32,11 @@ export async function GET(request: NextRequest) {
         categoryId: {
           in: categories.split(','),
         },
+      }),
+      ...(searchParams.get('subcategories') && {
+        subCategoryId: {
+          in: searchParams.get('subcategories')!.split(','),
+        },
       })
     };
 

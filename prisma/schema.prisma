@@ -58,6 +58,7 @@ model OrderItem {
   quantity  Int
   price     Float
   size      String?
+  nickname  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -79,6 +80,7 @@ model CartItem {
   product   Product  @relation(fields: [productId], references: [id])
   quantity  Int
   size      String?
+  nickname  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

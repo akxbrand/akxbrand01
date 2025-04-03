@@ -10,6 +10,7 @@ interface CartItem {
   image: string;
   quantity: number;
   size?: string;
+  nickname?: string;
 }
 
 interface CartContextType {

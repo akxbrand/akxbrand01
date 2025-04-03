@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import ProductCard from '@/components/shop/ProductCard';
 import Filters from '@/components/shop/Filters';
 import { Filter, Grid, List } from 'lucide-react';
@@ -44,23 +45,36 @@ export default function ShopPage() {
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
+  const searchParams = useSearchParams();
+
   // Get search query from URL on component mount
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const search = params.get('search');
-    const category = params.get('category');
-    const subcategory = params.get('subcategory');
+    const search = searchParams.get('search');
+    const category = searchParams.get('category');
+    const subcategory = searchParams.get('subcategory');
 
     if (search) {
       setSearchQuery(search);
     }
     if (category) {
       setSelectedCategories([category]);
+      // Reset subcategories when changing category
+      if (!subcategory) {
+        setSelectedSubcategories([]);
+      }
+    } else {
+      // Clear categories if no category parameter
+      setSelectedCategories([]);
     }
     if (subcategory) {
       setSelectedSubcategories([subcategory]);
+    } else {
+      // Clear subcategories if no subcategory parameter
+      setSelectedSubcategories([]);
     }
-  }, []);
+    // Reset to first page when filters change
+    setCurrentPage(1);
+  }, [searchParams]);
 
   // Fetch products
   const fetchProducts = async () => {
@@ -70,45 +84,61 @@ export default function ShopPage() {
         page: currentPage.toString(),
         limit: PRODUCTS_PER_PAGE.toString(),
         sortBy,
-        minPrice: priceRange.min.toString(),
-        maxPrice: priceRange.max.toString(),
       });
 
-      if (searchQuery) {
-        queryParams.append('search', searchQuery);
+      // Determine which endpoint to use based on filters
+      let endpoint = '/api/products/all';
+      
+      if (selectedCategories.length > 0 || selectedSubcategories.length > 0 || searchQuery || priceRange.min > 0 || priceRange.max < 100000) {
+        endpoint = '/api/products';
+        queryParams.append('minPrice', priceRange.min.toString());
+        queryParams.append('maxPrice', priceRange.max.toString());
+        
+        if (searchQuery) {
+          queryParams.append('search', searchQuery);
+        }
+
+        if (selectedCategories.length > 0) {
+          queryParams.append('categories', selectedCategories.join(','));
+        }
+
+        if (selectedSubcategories.length > 0) {
+          queryParams.append('subcategories', selectedSubcategories.join(','));
+        }
       }
 
-      if (selectedCategories.length > 0) {
-        queryParams.append('categories', selectedCategories.join(','));
-      }
-
-      if (selectedSubcategories.length > 0) {
-        queryParams.append('subcategories', selectedSubcategories.join(','));
-      }
-
-      const response = await fetch(`/api/products?${queryParams}`);
+      const response = await fetch(`${endpoint}?${queryParams}`);
       const data = await response.json();
 
       if (!response.ok) throw new Error(data.error);
 
-      // If no products match the filters, set empty array instead of showing all products
-      if (data.products.length === 0 && (selectedCategories.length > 0 || selectedSubcategories.length > 0 || searchQuery)) {
-        setProducts([]);
-        setTotalPages(0);
-      } else {
-        setProducts(data.products);
-        setTotalPages(data.totalPages);
-      }
+      setProducts(data.products || []);
+      setTotalPages(data.totalPages || 1);
     } catch (error) {
-      // console.error('Error fetching products:', error);
+      console.error('Error fetching products:', error);
+      setProducts([]);
+      setTotalPages(0);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
+    const applyFilters = () => {
+      setCurrentPage(1); // Reset to first page when filters change
+      fetchProducts();
+    };
+
+    // Create a debounced version of applyFilters for price range changes
+    const timeoutId = setTimeout(applyFilters, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [sortBy, priceRange.min, priceRange.max, selectedCategories, selectedSubcategories, searchQuery]);
+
+  // Separate effect for page changes to avoid resetting the page
+  useEffect(() => {
     fetchProducts();
-  }, [currentPage, sortBy, priceRange.min, priceRange.max, selectedCategories, searchQuery]);
+  }, [currentPage]);
 
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
@@ -168,8 +198,7 @@ export default function ShopPage() {
   const handleClearAll = () => {
     setPriceRange({ min: 0, max: 100000 });
     setSelectedCategories([]);
-    // setSelectedMaterials([]);
-    // setSelectedColors([]);
+    setSelectedSubcategories([]);
     setSelectedSizes([]);
     setCurrentPage(1);
   };

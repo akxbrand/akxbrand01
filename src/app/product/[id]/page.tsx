@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-import ImageZoom from '@/components/shop/ImageZoom';
+
 import { useRouter, useParams } from 'next/navigation';
-import { Share2, X, Plus } from 'lucide-react';
+import { Share2, X, Plus, ZoomIn } from 'lucide-react';
+import ImageModal from '@/components/ui/ImageModal';
 import ProductCard from '@/components/shop/ProductCard';
 import Layout from '@/components/layout/Layout';
 import { Loader2 } from 'lucide-react';
@@ -102,6 +103,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     mediaCount: { photo: 0, video: 0 }
   });
   const [viewerCount, setViewerCount] = useState<number>(Math.floor(Math.random() * 291) + 10);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
 
   const handleRemovePhoto = (index: number) => {
@@ -479,23 +481,41 @@ export default function ProductPage({ params }: { params: { id: string } }) {
         onClose={() => setShowToast(false)}
         duration={2000}
       />
+      <ImageModal
+        isOpen={isImageModalOpen}
+        onClose={() => setIsImageModalOpen(false)}
+        imageUrl={product.images[currentImageIndex]}
+      />
       {/* Rest of the JSX */}
       <div className="min-h-screen bg-white pt-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Product Images */}
-            <div className="relative h-[350px] md:h-[400px] rounded-lg overflow-hidden group">
-              <ImageZoom
-                src={product.images[currentImageIndex]}
-                alt={product.name}
-                className="h-full"
-              />
+            <div className="relative h-[350px] md:h-[400px] rounded-lg overflow-hidden">
+              <div 
+                className="relative w-full h-full cursor-pointer group"
+                onClick={() => setIsImageModalOpen(true)}
+              >
+                <Image
+                  src={product.images[currentImageIndex]}
+                  alt={product.name}
+                  fill
+                  className="object-cover h-full"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+                <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-10 transition-opacity duration-200 flex items-center justify-center">
+                  <ZoomIn className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                </div>
+              </div>
               {product.images.length > 1 && (
-                <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
+                <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2" onClick={(e) => e.stopPropagation()}>
                   {product.images.map((_, index) => (
                     <button
                       key={index}
-                      onClick={() => setCurrentImageIndex(index)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCurrentImageIndex(index);
+                      }}
                       className={`w-2 h-2 rounded-full ${currentImageIndex === index ? 'bg-white' : 'bg-white/50'}`}
                     />
                   ))}
@@ -503,7 +523,10 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               )}
               {currentImageIndex > 0 && (
                 <button
-                  onClick={() => setCurrentImageIndex(prev => prev - 1)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentImageIndex(prev => prev - 1);
+                  }}
                   className="absolute text-gray-500 left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-gray-50/80 rounded-full p-1.5 sm:p-2 opacity-70 hover:opacity-100 transition-opacity"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -513,7 +536,10 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               )}
               {currentImageIndex < product.images.length - 1 && (
                 <button
-                  onClick={() => setCurrentImageIndex(prev => prev + 1)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentImageIndex(prev => prev + 1);
+                  }}
                   className="absolute text-gray-500 right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-gray-50/80 rounded-full p-1.5 sm:p-2 opacity-70 hover:opacity-100 transition-opacity"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1336,9 +1362,9 @@ export default function ProductPage({ params }: { params: { id: string } }) {
           <div className="mt-16 border-t border-gray-200 py-8 px-4 sm:px-6 lg:px-8">
             <h2 className="text-2xl font-medium text-gray-900 mb-6">Related Products</h2>
             <div className="relative">
-              <div className="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory hide-scrollbar">
+              <div className="grid grid-cols-2 md:flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory hide-scrollbar">
                 {relatedProducts.map((relatedProduct) => (
-                  <div key={relatedProduct.id} className="flex-none w-[calc(30%-8px)] sm:w-1/4 lg:w-1/6 snap-start">
+                  <div key={relatedProduct.id} className="flex-none w-full md:w-[calc(30%-8px)] lg:w-1/4 xl:w-1/6 snap-start">
                     <ProductCard
                       viewMode="grid"
                       product={{

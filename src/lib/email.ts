@@ -60,11 +60,10 @@ export const sendOrderConfirmationEmail = async (data: OrderEmailData) => {
     .map(
       (item) =>
         `• Product: ${item.name || 'N/A'}
-        • Product: ${data.productName || 'N/A'}
-  Size: ${item.size || 'N/A'}
-  Quantity: ${item.quantity}
-  Price: ₹${item.price.toFixed(2)}
-  Subtotal: ₹${(item.price * item.quantity).toFixed(2)}`
+  • Size: ${item.size || 'N/A'}
+  • Quantity: ${item.quantity}
+  • Price: ₹${item.price.toFixed(2)}
+  • Subtotal: ₹${(item.price * item.quantity).toFixed(2)}`
     )
     .join('\n\n');
 

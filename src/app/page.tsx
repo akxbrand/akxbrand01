@@ -183,8 +183,8 @@ export default function Home() {
     if (category && category.subCategories.length > 0) {
       setSelectedCategory(categoryName);
       setIsSubCategoryModalOpen(true);
-    } else {
-      router.push(`/shop?category=${encodeURIComponent(categoryName)}`);
+    } else if (category) {
+      router.push(`/shop?category=${encodeURIComponent(category.id)}`);
     }
   };
 
@@ -290,7 +290,11 @@ export default function Home() {
             <div className="flex overflow-x-auto scrollbar-hide px-2 sm:px-4">
               <div className="flex space-x-4 sm:space-x-8 pb-4 mx-auto">
                 {categories.map((category) => (
-                  <div key={category.id} className="flex-none w-[200px] sm:w-[300px] group relative rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105">
+                  <div
+                    key={category.id}
+                    onClick={() => handleCategoryClick(category.name)}
+                    className="flex-none w-[200px] sm:w-[300px] group relative rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 cursor-pointer"
+                  >
                     <div className="relative h-[200px] sm:h-[300px] w-full">
                       <Image
                         src={category.imageUrl}
@@ -300,12 +304,9 @@ export default function Home() {
                       />
                       <div className="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white">
                         <h3 className="text-2xl font-bold mb-4">{category.name}</h3>
-                        <button
-                          onClick={() => handleCategoryClick(category.name)}
-                          className="bg-white text-gray-900 px-6 py-2 rounded-md font-medium hover:bg-gray-100 transition-colors duration-300"
-                        >
+                        <div className="bg-white text-gray-900 px-6 py-2 rounded-md font-medium hover:bg-gray-100 transition-colors duration-300">
                           Shop Now
-                        </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -502,6 +503,7 @@ export default function Home() {
         isOpen={isSubCategoryModalOpen}
         onClose={() => setIsSubCategoryModalOpen(false)}
         categoryName={selectedCategory}
+        categoryId={categories.find(cat => cat.name === selectedCategory)?.id || ''}
         subCategories={categorySubcategories[selectedCategory as keyof typeof categorySubcategories] || []}
       />
       <Footer />

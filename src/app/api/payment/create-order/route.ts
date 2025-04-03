@@ -263,7 +263,8 @@ export async function POST(req: Request) {
               productId: cleanProductId(item.productId), // Clean productId before saving
               quantity: item.quantity,
               price: item.price,
-              size: item.size // Include size information from cart item
+              size: item.size, // Include size information from cart item
+              nickname: item.nickname // Include nickname from cart item
             }))
           },
           total: finalAmount,

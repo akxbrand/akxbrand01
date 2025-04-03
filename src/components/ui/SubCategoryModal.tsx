@@ -18,6 +18,7 @@ interface SubCategoryModalProps {
   isOpen: boolean;
   onClose: () => void;
   categoryName: string;
+  categoryId: string;
   subCategories: SubCategory[];
 }
 
@@ -25,6 +26,7 @@ export default function SubCategoryModal({
   isOpen,
   onClose,
   categoryName,
+  categoryId,
   subCategories,
 }: SubCategoryModalProps) {
   return (
@@ -41,15 +43,15 @@ export default function SubCategoryModal({
         </div>
 
         <div className="overflow-x-auto scrollbar-hide">
-          <div className="flex space-x-4 py-2 px-1">
+          <div className={`flex space-x-4 py-2 px-1 ${subCategories.length === 1 ? 'justify-center' : 'justify-start'}`}>
             {subCategories.map((subCategory) => (
               <Link
                 key={subCategory.id}
-                href={`/shop?subcategory=${subCategory.id}`}
-                className="group flex-shrink-0 w-64 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden border border-gray-100 hover:border-blue-500"
+                href={`/shop?category=${categoryId}&subcategory=${subCategory.id}`}
+                className="group bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden border border-gray-100 hover:border-blue-500 min-w-[180px] max-w-[250px]"
                 onClick={onClose}
               >
-                <div className="relative w-full h-40 bg-gray-100">
+                <div className="relative w-full h-32 sm:h-40 bg-gray-100">
                   {subCategory.imageUrl ? (
                     <Image
                       src={subCategory.imageUrl}
@@ -59,16 +61,16 @@ export default function SubCategoryModal({
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <FolderOpen className="w-12 h-12 text-gray-400" />
+                      <FolderOpen className="w-8 h-8 sm:w-12 sm:h-12 text-gray-400" />
                     </div>
                   )}
                 </div>
-                <div className="p-4">
-                  <h4 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors truncate">
+                <div className="p-3 sm:p-4">
+                  <h4 className="text-base sm:text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors truncate">
                     {subCategory.name}
                   </h4>
                   {subCategory.description && (
-                    <p className="mt-2 text-sm text-gray-500 line-clamp-2">{subCategory.description}</p>
+                    <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-gray-500 line-clamp-2">{subCategory.description}</p>
                   )}
                 </div>
               </Link>

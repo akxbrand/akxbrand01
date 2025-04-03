@@ -50,6 +50,7 @@ export async function GET() {
               select: {
                 id: true,
                 name: true,
+                nickname: true,
                 images: true,
                 price: true,
                 sizes: true

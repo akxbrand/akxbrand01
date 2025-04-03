@@ -63,7 +63,7 @@ export default function CategoryMenu() {
           {categories.map((category) => (
             <div key={category.id} className="relative group/item">
               <a
-                href={category.subCategories.length > 0 ? '#' : `/shop?category=${category.id}`}
+                href={`/shop?category=${category.id}`}
                 className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors flex items-center justify-between"
               >
                 <span>{category.name}</span>

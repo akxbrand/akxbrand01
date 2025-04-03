@@ -81,7 +81,9 @@ export async function POST(req: Request) {
     // Transform items array to match Prisma's expected format
     const cartItems = items.map(item => ({
       productId: item.productId,
-      quantity: item.quantity
+      quantity: item.quantity,
+      nickname: item.nickname,
+      size: item.size
     }));
 
     // Update or create cart with proper nested items structure

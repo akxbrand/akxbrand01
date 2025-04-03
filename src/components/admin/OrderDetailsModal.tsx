@@ -6,6 +6,7 @@ import { X } from 'lucide-react';
 
 interface OrderItem {
   name: string;
+  nickname?: string;
   quantity: number;
   price: number;
   size?: string;
@@ -97,6 +98,7 @@ export default function OrderDetailsModal({ isOpen, onClose, order }: OrderDetai
               <div key={index} className="flex justify-between items-center">
                 <div>
                   <p className="font-medium">{item.name}</p>
+                  {item.nickname && <p className="text-sm text-gray-500">({item.nickname})</p>}
                   {item.size && <p className="text-sm text-gray-500">Size: {item.size}</p>}
                   <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
                 </div>
