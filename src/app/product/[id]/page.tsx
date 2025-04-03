@@ -1362,7 +1362,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
           <div className="mt-12 sm:mt-16 border-t border-gray-200 py-6 sm:py-8 px-2 sm:px-6 lg:px-8">
             <h2 className="text-xl sm:text-2xl font-medium text-gray-900 mb-4 sm:mb-6 px-2">Related Products</h2>
             <div className="relative overflow-hidden">
-              <div className="flex overflow-x-auto gap-3 sm:gap-4 pb-4 sm:pb-6 snap-x snap-mandatory hide-scrollbar px-2 scroll-smooth touch-pan-x">
+              <div className="flex overflow-x-auto gap-3 sm:gap-4 pb-4 sm:pb-6 snap-x snap-mandatory scrollbar-hide px-2 scroll-smooth touch-pan-x">
                 {relatedProducts.map((relatedProduct) => (
                   <div key={relatedProduct.id} className="flex-none w-[160px] xs:w-[180px] sm:w-[220px] snap-start">
                     <ProductCard
