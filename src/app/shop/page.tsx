@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import ProductCard from '@/components/shop/ProductCard';
 import Filters from '@/components/shop/Filters';
@@ -31,7 +31,7 @@ interface Product {
 
 const PRODUCTS_PER_PAGE = 36;
 
-export default function ShopPage() {
+function ShopContent() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState('newest');
   const [priceRange, setPriceRange] = useState({ min: 0, max: 100000 });
@@ -204,9 +204,8 @@ export default function ShopPage() {
   };
 
   return (
-    <Layout>
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
           <div className="flex flex-col mb-8 mt-8">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4">
@@ -397,6 +396,16 @@ export default function ShopPage() {
           </div>
         </div>
       </div>
+    
+  );
+}
+
+export default function ShopPage() {
+  return (
+    <Layout>
+      <Suspense fallback={<Preloader />}>
+        <ShopContent />
+      </Suspense>
     </Layout>
   );
 }

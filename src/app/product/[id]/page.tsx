@@ -161,14 +161,14 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
   const fetchRelatedProducts = async (categoryId: string) => {
     try {
-      const response = await fetch(`/api/products?categories=${categoryId}&limit=4`);
+      const response = await fetch(`/api/products?categories=${categoryId}&limit=20`);
       const data = await response.json();
 
       if (!response.ok) throw new Error(data.error);
 
-      // Filter out the current product
+      // Filter out the current product and get up to 20 related products
       const filtered = data.products.filter((p: Product) => p.id !== productId);
-      setRelatedProducts(filtered.slice(0, 4));
+      setRelatedProducts(filtered.slice(0, 20));
     } catch (error) {
       // console.error('Error fetching related products:', error);
     }
@@ -1359,12 +1359,12 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
         {/* Related Products Section */}
         {relatedProducts.length > 0 && (
-          <div className="mt-16 border-t border-gray-200 py-8 px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-medium text-gray-900 mb-6">Related Products</h2>
-            <div className="relative">
-              <div className="grid grid-cols-2 md:flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory hide-scrollbar">
+          <div className="mt-12 sm:mt-16 border-t border-gray-200 py-6 sm:py-8 px-2 sm:px-6 lg:px-8">
+            <h2 className="text-xl sm:text-2xl font-medium text-gray-900 mb-4 sm:mb-6 px-2">Related Products</h2>
+            <div className="relative overflow-hidden">
+              <div className="flex overflow-x-auto gap-3 sm:gap-4 pb-4 sm:pb-6 snap-x snap-mandatory hide-scrollbar px-2 scroll-smooth touch-pan-x">
                 {relatedProducts.map((relatedProduct) => (
-                  <div key={relatedProduct.id} className="flex-none w-full md:w-[calc(30%-8px)] lg:w-1/4 xl:w-1/6 snap-start">
+                  <div key={relatedProduct.id} className="flex-none w-[160px] xs:w-[180px] sm:w-[220px] snap-start">
                     <ProductCard
                       viewMode="grid"
                       product={{
