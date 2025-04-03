@@ -3,8 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import Modal from '@/components/ui/Modal';
 import { X } from 'lucide-react';
-import Image from 'next/image';
-import CloudinaryUpload from '@/components/common/CloudinaryUpload';
 
 interface Category {
   id: string;
@@ -17,7 +15,6 @@ interface SubCategory {
   description: string;
   categoryId: string;
   status: 'Active' | 'Inactive';
-  image: string;
 }
 
 interface EditSubCategoryModalProps {
@@ -36,32 +33,13 @@ export default function EditSubCategoryModal({
   categories,
 }: EditSubCategoryModalProps) {
   const [formData, setFormData] = useState<SubCategory>(subCategory);
-  const [imagePreview, setImagePreview] = useState<string>(subCategory.image);
-  const [uploadError, setUploadError] = useState('');
 
   useEffect(() => {
     setFormData(subCategory);
-    setImagePreview(subCategory.image);
   }, [subCategory]);
-
-  const handleImageUploadSuccess = (url: string) => {
-    setFormData(prev => ({ ...prev, image: url }));
-    setImagePreview(url);
-    setUploadError('');
-  };
-
-  const handleImageUploadError = (error: string) => {
-    setUploadError(error);
-    setFormData(prev => ({ ...prev, image: '' }));
-    setImagePreview('');
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.image) {
-      setUploadError('Please upload a subcategory image');
-      return;
-    }
     onSave(formData);
   };
 
@@ -79,39 +57,6 @@ export default function EditSubCategoryModal({
 
       <form onSubmit={handleSubmit}>
         <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Subcategory Image <span className="text-red-500">*</span>
-            </label>
-            <CloudinaryUpload
-              onUploadSuccess={handleImageUploadSuccess}
-              onUploadError={handleImageUploadError}
-            />
-            {imagePreview && (
-              <div className="mt-2 relative w-full h-32 border rounded-lg overflow-hidden">
-                <Image
-                  src={imagePreview}
-                  alt="Subcategory preview"
-                  fill
-                  className="object-contain"
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    setFormData(prev => ({ ...prev, image: '' }));
-                    setImagePreview('');
-                  }}
-                  className="absolute top-2 right-2 p-1 bg-white rounded-full shadow-sm hover:bg-gray-100"
-                >
-                  <X className="w-4 h-4 text-gray-500" />
-                </button>
-              </div>
-            )}
-            {uploadError && (
-              <p className="text-red-500 text-xs mt-1">{uploadError}</p>
-            )}
-          </div>
-
           <div>
             <label htmlFor="categoryId" className="block text-sm font-medium text-gray-700">
               Parent Category

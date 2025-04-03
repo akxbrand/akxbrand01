@@ -548,7 +548,7 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
                         // type="text"
                         value={currentSize.description}
                         onChange={(e) => setCurrentSize({ ...currentSize, description: e.target.value })}
-                        className="p-2 resize-none w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                        className="p-2 resize-none h-20 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                         placeholder="description"
                       />
                     </div>
@@ -557,7 +557,7 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
                       <textarea
                         value={currentSize.uniqueFeatures}
                         onChange={(e) => setCurrentSize({ ...currentSize, uniqueFeatures: e.target.value })}
-                        className="p-2 resize-none w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                        className="p-2 resize-none h-20 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                         placeholder="Unique Features"
                       />
                     </div>
@@ -566,7 +566,7 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
                       <textarea
                         value={currentSize.productDetails}
                         onChange={(e) => setCurrentSize({ ...currentSize, productDetails: e.target.value })}
-                        className="p-2 resize-none w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                        className="p-2 resize-none h-20 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                         placeholder="Product Details"
                       />
                     </div>

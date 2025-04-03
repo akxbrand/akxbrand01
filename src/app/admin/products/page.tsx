@@ -88,7 +88,7 @@ export default function ProductsPage() {
       sizes: 'Product sizes',
       price: 'Product price'
     };
-
+  
     for (const [field, label] of Object.entries(requiredFields)) {
       if (!productData[field] || 
           (Array.isArray(productData[field]) && productData[field].length === 0) ||
@@ -99,7 +99,7 @@ export default function ProductsPage() {
         return;
       }
     }
-
+  
     try {
       const response = await fetch('/api/admin/products', {
         method: 'POST',
@@ -109,19 +109,19 @@ export default function ProductsPage() {
           images: productData.images || []
         })
       });
-
+  
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
-
-      setProducts(prevProducts => [{
-        ...data,
-        category: data.category?.name || 'Uncategorized',
-        images: data.images || []
-      }, ...prevProducts]);
+  
+      // Update local state with the new product
+      setProducts(prevProducts => [data.product, ...prevProducts]);
       setIsAddModalOpen(false);
       setToastMessage('Product added successfully');
       setToastType('success');
       setShowToast(true);
+      
+      // Refresh the products list to ensure consistency
+      fetchProducts();
     } catch (error) {
       console.error('Error adding product:', error);
       setToastMessage('Failed to add product');
@@ -137,19 +137,23 @@ export default function ProductsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedData)
       });
-
+  
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
-
+  
+      // Update local state immediately with the updated product
       setProducts(prevProducts =>
         prevProducts.map(product =>
-          product.id === productId ? { ...product, ...data, category: data.category?.name || 'Uncategorized' } : product
+          product.id === productId ? data : product
         )
       );
       setIsEditModalOpen(false);
       setToastMessage('Product updated successfully');
       setToastType('success');
       setShowToast(true);
+      
+      // Refresh the products list to ensure consistency
+      fetchProducts();
     } catch (error) {
       console.error('Error updating product:', error);
       setToastMessage('Failed to update product');
@@ -160,21 +164,25 @@ export default function ProductsPage() {
 
   const handleDeleteProduct = async (productId: string) => {
     if (!confirm('Are you sure you want to delete this product?')) return;
-
+  
     try {
       const response = await fetch(`/api/admin/products/${productId}`, {
         method: 'DELETE'
       });
-
+  
       if (!response.ok) {
         const data = await response.json();
         throw new Error(data.error);
       }
-
+  
+      // Update local state immediately by removing the deleted product
       setProducts(prevProducts => prevProducts.filter(product => product.id !== productId));
       setToastMessage('Product deleted successfully');
       setToastType('success');
       setShowToast(true);
+      
+      // Refresh the products list to ensure consistency
+      fetchProducts();
     } catch (error) {
       console.error('Error deleting product:', error);
       setToastMessage(error instanceof Error ? error.message : 'Failed to delete product');
