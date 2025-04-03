@@ -156,29 +156,41 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                       <div className={`pl-8 space-y-3 overflow-hidden transition-all duration-300 ${showCategories ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
                         {categories.map((category) => (
                           <div key={category.id} className="group">
-                            <button
-                              onClick={() => setExpandedCategory(expandedCategory === category.id ? null : category.id)}
-                              className="w-full flex items-center p-2 justify-between text-gray-700 hover:text-gray-900 transition-colors group-hover:bg-gray-50 rounded-lg px-3"
-                            >
-                              <span className="text-base font-medium">{category.name}</span>
-                              {expandedCategory === category.id ? (
-                                <ChevronDown className="h-4 w-4 text-gray-500 transition-transform duration-200 transform" />
-                              ) : (
-                                <ChevronRight className="h-4 w-4 text-gray-500 transition-transform duration-200 transform" />
-                              )}
-                            </button>
-                            <div className={`pl-4 space-y-2 overflow-hidden transition-all duration-300 ${expandedCategory === category.id ? 'max-h-[500px] opacity-100 mt-2' : 'max-h-0 opacity-0'}`}>
-                              {category.subCategories.map((subCategory) => (
-                                <Link
-                                  key={subCategory.id}
-                                  href={`/shop?category=${category.name.toLowerCase()}&subcategory=${subCategory.name.toLowerCase()}`}
-                                  className="block py-2 px-3 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
-                                  onClick={onClose}
+                            {category.subCategories.length > 0 ? (
+                              <>
+                                <button
+                                  onClick={() => setExpandedCategory(expandedCategory === category.id ? null : category.id)}
+                                  className="w-full flex items-center p-2 justify-between text-gray-700 hover:text-gray-900 transition-colors group-hover:bg-gray-50 rounded-lg px-3"
                                 >
-                                  {subCategory.name}
-                                </Link>
-                              ))}
-                            </div>
+                                  <span className="text-base font-medium">{category.name}</span>
+                                  {expandedCategory === category.id ? (
+                                    <ChevronDown className="h-4 w-4 text-gray-500 transition-transform duration-200 transform" />
+                                  ) : (
+                                    <ChevronRight className="h-4 w-4 text-gray-500 transition-transform duration-200 transform" />
+                                  )}
+                                </button>
+                                <div className={`pl-4 space-y-2 overflow-hidden transition-all duration-300 ${expandedCategory === category.id ? 'max-h-[500px] opacity-100 mt-2' : 'max-h-0 opacity-0'}`}>
+                                  {category.subCategories.map((subCategory) => (
+                                    <Link
+                                      key={subCategory.id}
+                                      href={`/shop?category=${category.id}&subcategory=${subCategory.id}`}
+                                      className="block py-2 px-3 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
+                                      onClick={onClose}
+                                    >
+                                      {subCategory.name}
+                                    </Link>
+                                  ))}
+                                </div>
+                              </>
+                            ) : (
+                              <Link
+                                href={`/shop?category=${category.id}`}
+                                className="w-full flex items-center p-2 text-gray-700 hover:text-gray-900 transition-colors group-hover:bg-gray-50 rounded-lg px-3"
+                                onClick={onClose}
+                              >
+                                <span className="text-base font-medium">{category.name}</span>
+                              </Link>
+                            )}
                           </div>
                         ))}
                       </div>

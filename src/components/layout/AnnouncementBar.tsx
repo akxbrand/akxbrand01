@@ -59,7 +59,7 @@ export default function AnnouncementBar() {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -20, opacity: 0 }}
               transition={{ duration: 0.5 }}
-              className="absolute inset-0 flex items-center justify-center text-sm md:text-sm text-[6px] font-medium tracking-wide"
+              className="absolute inset-0 flex items-center justify-center text-[9px] md:text-sm font-medium tracking-wide"
             >
               {announcements[currentIndex].message}
             </motion.div>
