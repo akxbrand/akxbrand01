@@ -8,40 +8,75 @@ cloudinary.config({
   api_secret: process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET
 });
 
+// Cache duration in seconds (5 minutes)
+const CACHE_DURATION = 300;
+let cachedCategories: any = null;
+let lastCacheTime = 0;
+
 export async function GET() {
   try {
+    const now = Date.now();
+    
+    // Return cached data if it's still valid
+    if (cachedCategories && (now - lastCacheTime) / 1000 < CACHE_DURATION) {
+      return NextResponse.json({ success: true, categories: cachedCategories });
+    }
+
     // Ensure database connection is active
     await prisma.$connect();
 
+    // Optimize query by selecting only needed fields and using a single query
     const categories = await prisma.category.findMany({
-      include: {
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        imageUrl: true,
+        status: true,
+        _count: {
+          select: { products: true }
+        },
         subCategories: {
-          include: {
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            imageUrl: true,
+            status: true,
             _count: {
               select: { products: true }
             }
           }
-        },
-        _count: {
-          select: { products: true }
         }
       }
     });
 
-    if (!categories) {
+    if (!categories || categories.length === 0) {
       console.error('No categories found');
       return NextResponse.json({ success: false, error: 'No categories found' }, { status: 404 });
     }
 
-    // Transform the data to include product counts for both categories and subcategories
+    // Transform the data efficiently using a single map operation
     const formattedCategories = categories.map(category => ({
-      ...category,
+      id: category.id,
+      name: category.name,
+      description: category.description,
+      imageUrl: category.imageUrl,
+      status: category.status,
       count: category._count.products,
       subCategories: category.subCategories.map(sub => ({
-        ...sub,
+        id: sub.id,
+        name: sub.name,
+        description: sub.description,
+        imageUrl: sub.imageUrl,
+        status: sub.status,
         count: sub._count.products
       }))
     }));
+
+    // Update cache
+    cachedCategories = formattedCategories;
+    lastCacheTime = now;
 
     return NextResponse.json({ success: true, categories: formattedCategories });
   } catch (error: any) {
