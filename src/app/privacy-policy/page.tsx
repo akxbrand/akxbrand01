@@ -232,7 +232,7 @@ export default function PrivacyPolicy() {
             <section className="mb-12">
               <h2 className="text-2xl font-semibold mb-4 text-gray-900">Contact</h2>
               <p className="text-gray-600 mb-4">
-                Should you have any questions about our privacy practices or this Privacy Policy, or if you would like to exercise any of the rights available to you, please call at +91-9034366104 or email us at akxbrand@gmail.com or contact us at 33/10 Matta Chowk, Panipat.
+                Should you have any questions about our privacy practices or this Privacy Policy, or if you would like to exercise any of the rights available to you, please call at +91-9034366104 or email us at akxbrand@gmail.com or contact us at AKX Brand, Matta Chowk, Panipat.
               </p>
             </section>
 

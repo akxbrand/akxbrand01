@@ -145,7 +145,7 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-semibold mb-6">Contact</h3>
             <div className="space-y-3 text-sm">
-              <p className="text-gray-300">33/10 Matta Chowk, Rani Mahal</p>
+              <p className="text-gray-300">AKX Brand, Matta Chowk,</p>
               <p className="text-gray-300">Panipat, Haryana - 132103</p>
               <p className="text-gray-300 hover:text-white transition-colors duration-200">
                 <a href="mailto:akxbrand@gmail.com">akxbrand@gmail.com</a>

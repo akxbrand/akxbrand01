@@ -103,7 +103,7 @@ export default function Contact() {
                 </div>
               </div>
               <h3 className="text-lg font-semibold mb-2 text-gray-800">Visit Our Store</h3>
-              <p className="text-gray-600 mb-2">33/10 Matta Chowk, Rani Mahal</p>
+              <p className="text-gray-600 mb-2">AKX Brand, Matta Chowk,</p>
               <p className="text-gray-700">Panipat, Haryana - 132103</p>
             </div>
           </div>

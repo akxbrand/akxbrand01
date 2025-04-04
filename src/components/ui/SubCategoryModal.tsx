@@ -33,7 +33,7 @@ export default function SubCategoryModal({
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className="p-6">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-2xl font-semibold text-gray-900">{categoryName} Categories</h3>
+          <h3 className="text-2xl font-semibold text-gray-900">{categoryName}</h3>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-500 transition-colors"

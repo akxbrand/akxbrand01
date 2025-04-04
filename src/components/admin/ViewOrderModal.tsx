@@ -115,7 +115,7 @@ export default function ViewOrderModal({ isOpen, onClose, order }: ViewOrderModa
             </div>
             <div className="text-right">
               <h3 className="text-lg font-semibold text-gray-900">AKX Brand</h3>
-              <p className="text-gray-600">33/10 Matta Chowk, Rani Mahal</p>
+              <p className="text-gray-600">AKX Brand, Matta Chowk,</p>
               <p className="text-gray-600">Panipat, Haryana 132103</p>
               <p className="text-gray-600">GSTIN: 06BPQPR1739P1ZZ</p>
             </div>
