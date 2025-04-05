@@ -1,5 +1,12 @@
 # *
 User-agent: *
+Disallow: /admin/
+Disallow: /admin-login
+Disallow: /register
+Disallow: /account
+Disallow: /checkout
+Disallow: /orders
+Disallow: /network-error
 Allow: /
 
 
