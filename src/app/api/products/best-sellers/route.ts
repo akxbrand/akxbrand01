@@ -21,7 +21,7 @@ export async function GET() {
       orderBy: {
         createdAt: 'desc'
       },
-      take: 10
+      take: 30
     }).catch(error => {
       console.error('Database query failed:', error);
       return null;
