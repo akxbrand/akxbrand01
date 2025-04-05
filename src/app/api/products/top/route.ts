@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
       orderBy: {
         weeklySales: 'desc'
       },
-      take: 10
+      take: 30
     });
 
     // Calculate average rating for each product
