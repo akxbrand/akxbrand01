@@ -223,7 +223,7 @@ export default function Home() {
       <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
 
       {/* Hero Section */}
-      <section className="relative w-full h-[240px] sm:h-[600px] lg:h-[560px] overflow-hidden flex items-center justify-center pt-20">
+      <section className="relative w-full h-[320px] sm:h-[500px] lg:h-[800px] overflow-hidden flex justify-center pt-20 object-cover" >
         {loading ? (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
@@ -244,7 +244,7 @@ export default function Home() {
                     src={banner.imageUrl}
                     alt={banner.title || 'Banner image'}
                     layout="fill"
-                    objectFit="contain"
+                    // objectFit="contain"
                     priority={index === 0}
                     loading="eager"
                     onError={(e) => {
@@ -302,9 +302,9 @@ export default function Home() {
                         fill
                         className="object-cover"
                       />
-                      <div className="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white">
-                        <h3 className="text-2xl font-bold mb-4">{category.name}</h3>
-                        <div className="bg-white text-gray-900 px-6 py-2 rounded-md font-medium hover:bg-gray-100 transition-colors duration-300">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent sm:bg-black sm:bg-opacity-40 sm:opacity-0 sm:group-hover:opacity-80 transition-opacity duration-300 flex flex-col items-center justify-end sm:justify-center text-white pb-4 sm:pb-0">
+                        <h3 className="text-lg sm:text-2xl font-bold mb-2 sm:mb-4">{category.name}</h3>
+                        <div className="hidden sm:block bg-white text-gray-900 px-6 py-2 rounded-md font-medium hover:bg-gray-100 transition-colors duration-300">
                           Shop Now
                         </div>
                       </div>
