@@ -634,7 +634,7 @@ export default function CheckoutPage() {
               {/* Coupon Section */}
               <div className="mb-4 p-4 border rounded-lg">
                 <h3 className="text-lg text-gray-800 font-medium mb-2">Apply Coupon</h3>
-                <div className="flex space-x-2">
+                <div className="flex space-x-2 flex-col lg:flex-row">
                   <input
                     type="text"
                     value={couponCode}
@@ -646,7 +646,7 @@ export default function CheckoutPage() {
                   {appliedCoupon ? (
                     <button
                       onClick={removeCoupon}
-                      className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                      className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 mt-2"
                       disabled={isValidatingCoupon}
                     >
                       Remove
@@ -654,7 +654,7 @@ export default function CheckoutPage() {
                   ) : (
                     <button
                       onClick={validateCoupon}
-                      className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+                      className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 mt-2 lg:mt-0"
                       disabled={isValidatingCoupon || !couponCode}
                     >
                       {isValidatingCoupon ? 'Validating...' : 'Apply'}
