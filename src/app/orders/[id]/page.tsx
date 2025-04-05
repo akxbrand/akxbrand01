@@ -151,7 +151,7 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
               <div>
-                <h1 className="text-2xl font-semibold text-gray-900">Order #{order.id}</h1>
+                <h1 className="text-xl font-semibold text-gray-900">Order : <span className='text-lg'>{order.id}</span></h1>
                 <p className="text-gray-600 mt-1">Placed on {new Date(order.date).toLocaleDateString()}</p>
               </div>
               <div className="mt-4 sm:mt-0 flex items-center space-x-4">
@@ -210,36 +210,36 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
                   <h2 className="text-lg font-medium text-gray-900 mb-4">Order Items</h2>
                   <div className="divide-y divide-gray-200">
                     {order.items.map((item: any) => (
-                      <div key={item.id} className="py-6 flex items-center">
-                        <div className="relative h-24 w-24 rounded-lg overflow-hidden">
+                      <div key={item.id} className="py-4 sm:py-6 flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0">
+                        <div className="relative w-full h-44 sm:h-28 sm:w-28 rounded-lg overflow-hidden flex-shrink-0 ">
                           <Image
                             src={item.image}
                             alt={item.name}
                             fill
                             className="object-cover"
+                            sizes="(max-width: 640px) 96px, 112px"
                           />
                         </div>
-                        <div className="ml-6 flex-1">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <h3 className="text-lg font-medium text-gray-900">{item.name}</h3>
-                              <p className="mt-1 text-sm text-gray-500">
+                        <div className="sm:ml-6 flex-1 w-full">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
+                            <div className="space-y-1 justify-center">
+                              <h3 className="text-base sm:text-lg font-medium text-gray-900 line-clamp-2">{item.name}</h3>
+                              <p className="text-sm text-gray-500">
                                 Size: {item.size}
                               </p>
-                              
+                              <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
                             </div>
-                            <p className="text-lg font-medium text-gray-900">
-                              ₹{item.price.toFixed(2)}
-                            </p>
-                          </div>
-                          <div className="mt-4 flex items-center justify-between">
-                            <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
-                            <button
-                              onClick={() => handleBuyAgain(item.id)}
-                              className="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors duration-200"
-                            >
-                              Buy Again
-                            </button>
+                            <div className="flex flex-col sm:flex-col-reverse items-start sm:items-end gap-3 sm:gap-4">
+                              <p className="text-lg font-medium text-gray-900">
+                                ₹{item.price.toFixed(2)}
+                              </p>
+                              <button
+                                onClick={() => handleBuyAgain(item.id)}
+                                className="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors duration-200 text-sm w-full sm:w-auto text-center whitespace-nowrap"
+                              >
+                                Buy Again
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
