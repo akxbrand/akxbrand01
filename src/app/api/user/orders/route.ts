@@ -19,7 +19,10 @@ export async function GET() {
         OR: [
           { paymentStatus: 'completed' },
           { status: 'confirmed' },
-          { paymentStatus: 'pending', createdAt: { gte: new Date(Date.now() - 72 * 60 * 60 * 1000) } }
+          {  OR: [
+            { paymentStatus: 'pending' },
+            { paymentStatus: 'failed' }
+          ], createdAt: { gte: new Date(Date.now() - 48 * 60 * 60 * 1000) } }
         ]
       },
       include: {

@@ -280,7 +280,7 @@ export default function OrdersPage() {
                             {order.paymentStatus}
                           </span>
                           <span className="text-xs text-gray-500">{order.paymentMode}</span>
-                          <span className='text-[8px] text-orange-500'>{order.paymentStatus === 'completed' ? null : 'delete Automatic in 24h'}</span>
+                          <span className='text-[8px] text-orange-500'>{order.paymentStatus === 'completed' ? null : 'delete Automatic in 48 h'}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">

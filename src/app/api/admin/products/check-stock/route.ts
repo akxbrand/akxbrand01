@@ -29,16 +29,15 @@ export async function GET() {
 
     // Create notifications for low stock products
     for (const product of lowStockProducts) {
-      // Check if a notification exists and was acknowledged within the last 24 hours
+      // Check for any existing unacknowledged notification for this product
       const existingNotification = await prisma.adminNotification.findFirst({
         where: {
           type: 'low_stock',
           metadata: {
-            equals: {
-              productId: product.id,
-              acknowledged: true
-            }
+            path: ['productId'],
+            equals: product.id
           },
+          isRead: false,
           createdAt: {
             gte: new Date(Date.now() - 24 * 60 * 60 * 1000) // Within last 24 hours
           }

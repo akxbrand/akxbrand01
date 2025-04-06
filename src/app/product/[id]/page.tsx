@@ -167,7 +167,17 @@ export default function ProductPage({ params }: { params: { id: string } }) {
       if (!response.ok) throw new Error(data.error);
 
       // Filter out the current product and get up to 20 related products
-      const filtered = data.products.filter((p: Product) => p.id !== productId);
+      const filtered = data.products
+        .filter((p: Product) => p.id !== productId)
+        .map(product => ({
+          ...product,
+          price: product.sizes && product.sizes.length > 0
+            ? Math.min(...product.sizes.map(s => s.price))
+            : product.price,
+          oldPrice: product.sizes && product.sizes.length > 0
+            ? Math.max(...product.sizes.map(s => s.price))
+            : product.oldPrice
+        }));
       setRelatedProducts(filtered.slice(0, 20));
     } catch (error) {
       // console.error('Error fetching related products:', error);
@@ -1366,6 +1376,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                         id: relatedProduct.id,
                         name: relatedProduct.name,
                         price: relatedProduct.price,
+                        oldPrice: relatedProduct.oldPrice,
                         images: relatedProduct.images,
                         category: relatedProduct.category,
                         description: relatedProduct.description || "",

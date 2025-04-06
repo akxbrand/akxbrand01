@@ -4,7 +4,7 @@ import prisma from '@/lib/prisma';
 export async function GET() {
   try {
     // Find and delete orders that are older than 24 hours and have pending or failed payment status
-    const cutoffTime = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const cutoffTime = new Date(Date.now() - 48 * 60 * 60 * 1000);
 
     const expiredOrders = await prisma.order.deleteMany({
       where: {
