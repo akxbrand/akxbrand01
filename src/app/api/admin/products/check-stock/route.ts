@@ -29,21 +29,28 @@ export async function GET() {
 
     // Create notifications for low stock products
     for (const product of lowStockProducts) {
-      // Check if a notification already exists for this product
+      // Check if a notification exists and was acknowledged within the last 24 hours
       const existingNotification = await prisma.adminNotification.findFirst({
         where: {
           type: 'low_stock',
           metadata: {
             equals: {
-              productId: product.id
+              productId: product.id,
+              acknowledged: true
             }
           },
           createdAt: {
             gte: new Date(Date.now() - 24 * 60 * 60 * 1000) // Within last 24 hours
           }
+        },
+        orderBy: {
+          createdAt: 'desc'
         }
       });
 
+      // Only create a new notification if:
+      // 1. No notification exists for this product in the last 24 hours, or
+      // 2. The last notification was not acknowledged
       if (!existingNotification) {
         const isOutOfStock = product.stock === 0;
         await prisma.adminNotification.create({
@@ -55,7 +62,8 @@ export async function GET() {
               : `${product.name} is running low on stock (${product.stock} remaining)`,
             metadata: {
               productId: product.id,
-              currentStock: product.stock
+              currentStock: product.stock,
+              acknowledged: false
             }
           }
         });

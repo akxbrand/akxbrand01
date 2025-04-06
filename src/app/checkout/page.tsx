@@ -9,6 +9,7 @@ import { useCart } from '@/context/CartContext';
 import Image from 'next/image';
 import { formatCurrency } from '@/utils/currency';
 import Toast from '@/components/ui/Toast';
+import PaymentSuccessModal from '@/components/ui/PaymentSuccessModal';
 
 interface Address {
   id: string;
@@ -22,9 +23,15 @@ interface Address {
   isDefault?: boolean;
 }
 
+interface OrderDetails {
+  orderId: string;
+  total: number;
+  items: any[];
+}
+
 export default function CheckoutPage() {
   const router = useRouter();
-  const { cartItems, cartTotal } = useCart();
+  const { cartItems, cartTotal, clearCart } = useCart();
   const { data: session } = useSession();
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState<string>('');
@@ -58,7 +65,8 @@ export default function CheckoutPage() {
     discountAmount: number;
     maxDiscount?: number;
   } | null>(null);
-
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
 
   const validateCoupon = async () => {
     if (!couponCode) {
@@ -205,97 +213,97 @@ export default function CheckoutPage() {
     }
   };
 
-  const handlePayment = async () => {
-    if (!selectedAddressId) {
-      showToastMessage('Please select a delivery address', 'error');
-      return;
-    }
+  // const handlePayment = async () => {
+  //   if (!selectedAddressId) {
+  //     showToastMessage('Please select a delivery address', 'error');
+  //     return;
+  //   }
 
-    setIsProcessingPayment(true);
-    setPaymentError('');
-    setPaymentError('');
+  //   setIsProcessingPayment(true);
+  //   setPaymentError('');
+  //   setPaymentError('');
 
-    try {
-      const selectedAddress = addresses.find(addr => addr.id === selectedAddressId);
-      const orderData = {
-        items: cartItems,
-        shippingAddress: selectedAddress,
-        couponDiscount: couponDiscount
-      };
+  //   try {
+  //     const selectedAddress = addresses.find(addr => addr.id === selectedAddressId);
+  //     const orderData = {
+  //       items: cartItems,
+  //       shippingAddress: selectedAddress,
+  //       couponDiscount: couponDiscount
+  //     };
 
-      const { orderId, amount, currency, dbOrderId } = await createRazorpayOrder(orderData);
+  //     const { orderId, amount, currency, dbOrderId } = await createRazorpayOrder(orderData);
 
-      const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount: amount,
-        currency: currency,
-        name: 'Himanshi Ecom',
-        description: 'Purchase Payment',
-        order_id: orderId,
-        method: {
-          upi: true,
-          netbanking: true,
-          card: true,
-          wallet: true
-        },
-        config: {
-          display: {
-            blocks: {
-              upi: {
-                name: 'Pay using UPI',
-                instruments: [
-                  { method: 'upi' }
-                ]
-              }
-            },
-            sequence: ['block.upi', 'block.other'],
-            preferences: {
-              show_default_blocks: true
-            }
-          }
-        },
-        handler: async (response: any) => {
-          try {
-            const verificationResponse = await fetch('/api/payment/verify', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_signature: response.razorpay_signature,
-                dbOrderId: dbOrderId
-              })
-            });
+  //     const options = {
+  //       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+  //       amount: amount,
+  //       currency: currency,
+  //       name: 'Himanshi Ecom',
+  //       description: 'Purchase Payment',
+  //       order_id: orderId,
+  //       method: {
+  //         upi: true,
+  //         netbanking: true,
+  //         card: true,
+  //         wallet: true
+  //       },
+  //       config: {
+  //         display: {
+  //           blocks: {
+  //             upi: {
+  //               name: 'Pay using UPI',
+  //               instruments: [
+  //                 { method: 'upi' }
+  //               ]
+  //             }
+  //           },
+  //           sequence: ['block.upi', 'block.other'],
+  //           preferences: {
+  //             show_default_blocks: true
+  //           }
+  //         }
+  //       },
+  //       handler: async (response: any) => {
+  //         try {
+  //           const verificationResponse = await fetch('/api/payment/verify', {
+  //             method: 'POST',
+  //             headers: { 'Content-Type': 'application/json' },
+  //             body: JSON.stringify({
+  //               razorpay_payment_id: response.razorpay_payment_id,
+  //               razorpay_order_id: response.razorpay_order_id,
+  //               razorpay_signature: response.razorpay_signature,
+  //               dbOrderId: dbOrderId
+  //             })
+  //           });
 
-            if (verificationResponse.ok) {
-              router.push(`/orders/${dbOrderId}?success=true`);
-            } else {
-              throw new Error('Payment verification failed');
-            }
-          } catch (error) {
-            console.error('Payment verification error:', error);
-            setPaymentError('Payment verification failed. Please contact support.');
-          }
-        },
-        prefill: {
-          name: selectedAddress?.label,
-          contact: selectedAddress?.phone
-        },
-        theme: {
-          color: '#3B82F6'
-        }
-      };
+  //           if (verificationResponse.ok) {
+  //             router.push(`/orders/${dbOrderId}?success=true`);
+  //           } else {
+  //             throw new Error('Payment verification failed');
+  //           }
+  //         } catch (error) {
+  //           console.error('Payment verification error:', error);
+  //           setPaymentError('Payment verification failed. Please contact support.');
+  //         }
+  //       },
+  //       prefill: {
+  //         name: selectedAddress?.label,
+  //         contact: selectedAddress?.phone
+  //       },
+  //       theme: {
+  //         color: '#3B82F6'
+  //       }
+  //     };
 
-      const razorpayInstance = await initializeRazorpay(options);
-      razorpayInstance.open();
-    } catch (error) {
-      console.error('Payment initialization error:', error);
-      setPaymentError('Failed to initialize payment. Please try again.');
-      showToastMessage('Payment initialization failed', 'error');
-    } finally {
-      setIsProcessingPayment(false);
-    }
-  };
+  //     const razorpayInstance = await initializeRazorpay(options);
+  //     razorpayInstance.open();
+  //   } catch (error) {
+  //     console.error('Payment initialization error:', error);
+  //     setPaymentError('Failed to initialize payment. Please try again.');
+  //     showToastMessage('Payment initialization failed', 'error');
+  //   } finally {
+  //     setIsProcessingPayment(false);
+  //   }
+  // };
 
   const handleAddAddress = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -461,11 +469,23 @@ export default function CheckoutPage() {
               throw new Error('Payment verification failed');
             }
 
-            const verifyData = await verifyResponse.json();
-            if (verifyData.showSuccessModal) {
-              showToastMessage('Payment successful!', 'success');
+            const verificationData = await verifyResponse.json();
+            
+            // Clear cart and show success modal
+            await clearCart();
+            
+            // Show success modal with order details
+            setShowSuccessModal(true);
+            setOrderDetails({
+              orderId: verificationData.order.updatedOrder.id,
+              total: verificationData.order.updatedOrder.total,
+              items: verificationData.order.updatedOrder.items
+            });
+
+            // Redirect to orders page after a delay
+            setTimeout(() => {
               router.push('/orders');
-            }
+            }, 3000);
           } catch (error: any) {
             console.error('Payment verification error:', error);
             showToastMessage(error.message || 'Payment verification failed', 'error');
@@ -600,6 +620,13 @@ export default function CheckoutPage() {
             onClose={() => setShowToast(false)}
           />
         )}
+        {showSuccessModal && orderDetails && (
+          <PaymentSuccessModal
+            isOpen={showSuccessModal}
+            onClose={() => router.push('/orders')}
+            orderDetails={orderDetails}
+          />
+        )}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
           
@@ -646,7 +673,7 @@ export default function CheckoutPage() {
                   {appliedCoupon ? (
                     <button
                       onClick={removeCoupon}
-                      className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 mt-2"
+                      className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
                       disabled={isValidatingCoupon}
                     >
                       Remove
@@ -654,7 +681,7 @@ export default function CheckoutPage() {
                   ) : (
                     <button
                       onClick={validateCoupon}
-                      className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 mt-2 lg:mt-0"
+                      className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
                       disabled={isValidatingCoupon || !couponCode}
                     >
                       {isValidatingCoupon ? 'Validating...' : 'Apply'}

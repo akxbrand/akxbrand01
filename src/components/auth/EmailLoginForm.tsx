@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Layout from '../layout/Layout';
 import Preloader from '../ui/preloader';
+import toast from 'react-hot-toast';
 
 interface EmailLoginFormProps {
     role: 'client' | 'admin';
@@ -40,7 +41,7 @@ export default function EmailLoginForm({ role, redirectPath }: EmailLoginFormPro
     };
 
     const handleUnauthorizedAccess = async () => {
-        setError('Unauthorized access. You are not an admin.');
+        toast.error('Unauthorized access. You are not an admin.');
         await signOut({ redirect: false });
         setTimeout(() => {
             router.push('/login');
@@ -52,7 +53,6 @@ export default function EmailLoginForm({ role, redirectPath }: EmailLoginFormPro
         if (!isFormValid()) return;
 
         setLoading(true);
-        setError('');
 
         try {
             if (!isLogin && role === 'client') {
@@ -73,6 +73,7 @@ export default function EmailLoginForm({ role, redirectPath }: EmailLoginFormPro
                 if (!response.ok) {
                     throw new Error(data.message || 'Registration failed');
                 }
+                toast.success('Registration successful!');
                 // Clear form data after successful registration
                 setFormData({
                     name: '',
@@ -81,6 +82,24 @@ export default function EmailLoginForm({ role, redirectPath }: EmailLoginFormPro
                     phoneNumber: ''
                 });
                 // If registration is successful, proceed with login
+            }
+
+            // Check if user exists before login
+            if (isLogin && role === 'client') {
+                const checkUserResponse = await fetch('/api/auth/check-user', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: formData.email })
+                });
+                const checkUserData = await checkUserResponse.json();
+                
+                if (!checkUserData.exists) {
+                    toast.error('Account not found. Please sign up first.');
+                    setTimeout(() => {
+                        setIsLogin(false);
+                    }, 2000);
+                    return;
+                }
             }
 
             // Handle login
@@ -97,22 +116,39 @@ export default function EmailLoginForm({ role, redirectPath }: EmailLoginFormPro
                     return;
                 }
                 // Display the exact error message from the server
-                setError(result.error);
+                toast.error(result.error);
             } else if (role === 'admin' && result?.ok) {
-                // Additional check for admin role after successful login
-                const userResponse = await fetch('/api/auth/check-role');
-                const userData = await userResponse.json();
-                
-                if (userData.role !== 'admin') {
-                    await handleUnauthorizedAccess();
+                try {
+                    // Additional check for admin role after successful login
+                    const userResponse = await fetch('/api/auth/check-role');
+                    const userData = await userResponse.json();
+
+                    if (!userResponse.ok) {
+                        const errorMessage = userData.error || 'Failed to verify admin role';
+                        toast.error(errorMessage);
+                        await signOut({ redirect: false });
+                        router.push('/admin-login');
+                        return;
+                    }
+                    
+                    if (userData.role !== 'admin') {
+                        await handleUnauthorizedAccess();
+                        return;
+                    }
+                    toast.success('Login successful!');
+                    router.push(redirectPath);
+                } catch (error) {
+                    console.error('Error verifying admin role:', error);
+                    toast.error('Error verifying admin permissions');
+                    await signOut({ redirect: false });
                     return;
                 }
-                router.push(redirectPath);
             } else {
+                toast.success('Login successful!');
                 router.push(redirectPath);
             }
         } catch (error: any) {
-            setError(error.message || 'Authentication failed. Please try again.');
+            toast.error(error.message || 'Authentication failed. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -172,7 +208,7 @@ export default function EmailLoginForm({ role, redirectPath }: EmailLoginFormPro
                             {!isLogin && (
                                 <div>
                                     <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
-                                        Phone Number 
+                                        Phone Number <span className="text-red-500">*</span>
                                     </label>
                                     <div className="relative mt-1">
                                         <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
@@ -278,7 +314,9 @@ export default function EmailLoginForm({ role, redirectPath }: EmailLoginFormPro
                                             onClick={() => {
                                                 setIsLogin(!isLogin);
                                                 setError('');
-                                                setFormData({ name: '', email: '', password: '', phoneNumber: '' });
+                                                // Preserve email when switching to signup
+                                                const currentEmail = formData.email;
+                                                setFormData({ name: '', email: currentEmail, password: '', phoneNumber: '' });
                                                 setTermsAccepted(false);
                                             }}
                                             className="text-gray-700 hover:text-gray-600 font-medium"

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Layout from '../layout/Layout';
 import { Camera } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 interface RegistrationFormProps {
   phoneNumber: string;
@@ -88,14 +89,17 @@ export default function RegistrationForm({ phoneNumber }: RegistrationFormProps)
 
       const data = await response.json();
 
-      if (!response.ok) {
+      if (!response.ok || !data.success) {
+        toast.error(data.message || 'Registration failed');
         throw new Error(data.message || 'Registration failed');
       }
 
       // Registration successful
+      toast.success('Registration successful!');
       await router.push('/');
     } catch (error: any) {
       console.error('Registration error:', error);
+      toast.error(error.message || 'Failed to register. Please try again.');
       setError(error.message || 'Failed to register. Please try again.');
     } finally {
       setLoading(false);

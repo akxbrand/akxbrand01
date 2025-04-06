@@ -12,7 +12,10 @@ export async function POST(request: Request) {
     // Validate required fields
     if (!name || !email || !phoneNumber || !password) {
       return NextResponse.json(
-        { error: 'Please provide all required fields' },
+        { 
+          success: false,
+          message: 'Please provide all required fields'
+        },
         { status: 400 }
       );
     }
@@ -21,15 +24,21 @@ export async function POST(request: Request) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return NextResponse.json(
-        { error: 'Please provide a valid email address' },
+        { 
+          success: false,
+          message: 'Please provide a valid email address'
+        },
         { status: 400 }
       );
     }
 
     // Validate password length
-    if (password.length < 6) {
+    if (password.length < 8) {
       return NextResponse.json(
-        { error: 'Password must be at least 6 characters long' },
+        { 
+          success: false,
+          message: 'Password must be at least 8 characters long'
+        },
         { status: 400 }
       );
     }
@@ -38,7 +47,10 @@ export async function POST(request: Request) {
     const phoneRegex = /^\d{10}$/;
     if (!phoneRegex.test(phoneNumber)) {
       return NextResponse.json(
-        { error: 'Please enter a valid 10-digit phone number' },
+        { 
+          success: false,
+          message: 'Please enter a valid 10-digit phone number'
+        },
         { status: 400 }
       );
     }
@@ -55,7 +67,10 @@ export async function POST(request: Request) {
 
     if (existingUser) {
       return NextResponse.json(
-        { error: 'An account with this email or phone number already exists' },
+        { 
+          success: false,
+          message: 'An account with this email or phone number already exists'
+        },
         { status: 400 }
       );
     }
@@ -103,7 +118,10 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error('Registration error:', error);
     return NextResponse.json(
-      { error: 'An error occurred during registration. Please try again.' },
+      { 
+        success: false,
+        message: 'An error occurred during registration. Please try again.'
+      },
       { status: 500 }
     );
   }

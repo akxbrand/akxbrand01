@@ -46,6 +46,15 @@ export default function ProductCard({ product }: ProductCardProps) {
     setShowSizeModal(false);
   };
 
+  const handleCartButtonClick = () => {
+    // If product has only one size, add to cart directly
+    if (product.sizes && product.sizes.length === 1) {
+      handleAddToCart(product.sizes[0].size);
+    } else {
+      setShowSizeModal(true);
+    }
+  };
+
   const handleAddToCart = async (size: string) => {
     setIsAdding(true);
     try {
@@ -159,7 +168,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       </Link>
       <div className="px-3 sm:px-4 pb-3 sm:pb-4">
         <button
-          onClick={() => setShowSizeModal(true)}
+          onClick={handleCartButtonClick}
           className={`w-full py-2 px-4 rounded-md transition-all duration-200 ${isAdding ? 'bg-gray-500' : 'bg-gray-700 hover:bg-gray-800'} text-white flex items-center justify-center gap-2`}
           disabled={isAdding}
         >

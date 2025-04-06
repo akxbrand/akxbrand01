@@ -2,7 +2,8 @@
 
 import React from 'react';
 import Modal from './Modal';
-import { CheckCircleIcon } from '@heroicons/react/24/outline';
+import { motion } from 'framer-motion';
+import { CheckCircle2, Package, Truck, Mail, CreditCard } from 'lucide-react';
 
 interface PaymentSuccessModalProps {
   isOpen: boolean;
@@ -25,55 +26,117 @@ export default function PaymentSuccessModal({
 }: PaymentSuccessModalProps) {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <div className="text-center">
-        <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
-          <CheckCircleIcon
-            className="h-8 w-8 text-green-600"
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-center max-w-lg mx-auto"
+      >
+        <motion.div 
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: "spring", stiffness: 200, damping: 15 }}
+          className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-r from-green-400 to-green-600 shadow-lg"
+        >
+          <CheckCircle2
+            className="h-10 w-10 text-white"
             aria-hidden="true"
           />
-        </div>
+        </motion.div>
 
-        <div className="mt-3">
-          <h3 className="text-2xl font-semibold text-gray-900">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="mt-6"
+        >
+          <h3 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
             Thank You for Your Order!
           </h3>
-          <div className="mt-2">
+          <div className="mt-3">
             <p className="text-lg text-gray-600">
               Your order has been successfully placed and payment received.
             </p>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="mt-6 bg-gray-50 p-4 rounded-lg">
-          <div className="text-left">
-            <p className="text-sm font-medium text-gray-900">
-              Order ID: {orderDetails.orderId}
-            </p>
-            <p className="mt-1 text-sm text-gray-600">
-              Total Amount: ₹{orderDetails.total.toFixed(2)}
-            </p>
-            <p className="mt-1 text-sm text-gray-600">
-              Items: {orderDetails.items.length}
-            </p>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="mt-8 bg-white p-6 rounded-xl shadow-md border border-gray-100"
+        >
+          <div className="grid grid-cols-2 gap-6">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-indigo-100 rounded-lg">
+                <CreditCard className="h-5 w-5 text-indigo-600" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-900">
+                  Order ID
+                </p>
+                <p className="text-sm text-gray-600">
+                  {orderDetails.orderId}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-green-100 rounded-lg">
+                <Package className="h-5 w-5 text-green-600" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-900">
+                  Items
+                </p>
+                <p className="text-sm text-gray-600">
+                  {orderDetails.items.length} items
+                </p>
+              </div>
+            </div>
+            <div className="col-span-2">
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <Mail className="h-5 w-5 text-purple-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900">
+                    Total Amount
+                  </p>
+                  <p className="text-lg font-semibold text-gray-900">
+                    ₹{orderDetails.total.toFixed(2)}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="mt-6">
-          <p className="text-sm text-gray-600">
-            We'll send you shipping confirmation and an order update via email.
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+          className="mt-6 flex items-center justify-center space-x-2 text-gray-600"
+        >
+          <Truck className="h-5 w-5" />
+          <p className="text-sm">
+            We'll send you shipping confirmation and order updates soon
           </p>
-        </div>
-
-        <div className="mt-6">
+        </motion.div>
+{/* 
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          className="mt-8"
+        >
           <button
             type="button"
-            className="inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 bg-indigo-600 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm"
+            className="w-full px-6 py-3 text-base font-medium text-white bg-gradient-to-r from-indigo-600 to-indigo-700 rounded-xl shadow-lg hover:from-indigo-700 hover:to-indigo-800 transform transition-all duration-200 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             onClick={onClose}
           >
             Continue Shopping
           </button>
-        </div>
-      </div>
+        </motion.div> */}
+      </motion.div>
     </Modal>
   );
 }

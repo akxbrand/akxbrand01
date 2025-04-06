@@ -78,13 +78,28 @@ export default function NotificationDropdown() {
     }
   };
 
-  const markAsRead = async (notificationIds: string[]) => {
+  const markAsRead = async (notificationIds: string[], productId?: string) => {
     try {
+      // Mark notification as read
       const response = await fetch('/api/admin/notifications', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ notificationIds, markAs: 'read' })
       });
+
+      // If this is a stock notification, also acknowledge it
+      if (productId) {
+        await fetch('/api/admin/notifications/preferences', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            notificationId: notificationIds[0],
+            productId,
+            acknowledged: true
+          })
+        });
+      }
+
       if (response.ok) {
         await fetchNotifications();
       }
@@ -187,7 +202,7 @@ export default function NotificationDropdown() {
                     <div className="flex items-center space-x-2">
                       {!notification.isRead && (
                         <button
-                          onClick={() => markAsRead([notification.id])}
+                          onClick={() => markAsRead([notification.id], notification.type === 'low_stock' ? notification.metadata?.productId : undefined)}
                           className="text-blue-600 hover:text-blue-800"
                           title="Mark as read"
                         >

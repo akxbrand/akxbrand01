@@ -590,24 +590,28 @@ export default function AccountPage() {
                         <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
                           Phone Number
                         </label>
-                        <input
-                          type="tel"
-                          id="phoneNumber"
-                          name="phoneNumber"
-                          value={profileSettings.phoneNumber}
-                          onChange={handleProfileChange}
-                          maxLength={10}
-                          className="w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ease-in-out placeholder-gray-400 hover:border-gray-400 ${validationErrors.phoneNumber ? 'border-red-500 focus:ring-red-500' : ''}"
-                          placeholder="Enter your phone number"
-                          aria-label="Phone Number"
-                          aria-invalid={!!validationErrors.phoneNumber}
-                          aria-describedby={validationErrors.phoneNumber ? 'phone-error' : undefined}
-                        />
-                        {validationErrors.phoneNumber && (
-                          <p id="phone-error" className="mt-1 text-sm text-red-600">{validationErrors.phoneNumber}</p>
-                        )}
+                        <div className="relative mt-1">
+                          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                            +91
+                          </span>
+                          <input
+                            type="tel"
+                            id="phoneNumber"
+                            name="phoneNumber"
+                            value={profileSettings.phoneNumber}
+                            onChange={handleProfileChange}
+                            maxLength={10}
+                            className="w-full px-4 pr-3 pl-12 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ease-in-out placeholder-gray-400 hover:border-gray-400 ${validationErrors.phoneNumber ? 'border-red-500 focus:ring-red-500' : ''}"
+                            placeholder="Enter your phone number"
+                            aria-label="Phone Number"
+                            aria-invalid={!!validationErrors.phoneNumber}
+                            aria-describedby={validationErrors.phoneNumber ? 'phone-error' : undefined}
+                          />
+                          {validationErrors.phoneNumber && (
+                            <p id="phone-error" className="mt-1 text-sm text-red-600">{validationErrors.phoneNumber}</p>
+                          )}
+                        </div>
                       </div>
-
                       <div className="flex justify-end">
                         <button
                           type="button"

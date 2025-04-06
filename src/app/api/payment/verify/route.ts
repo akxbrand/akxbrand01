@@ -46,7 +46,11 @@ export async function POST(req: Request) {
     const existingOrder = await prisma.order.findUnique({
       where: { id: dbOrderId },
       include: {
-        items: true
+        items: {
+          include: {
+            product: true
+          }
+        }
       }
     });
 
@@ -157,7 +161,7 @@ export async function POST(req: Request) {
         customerName: order.userDetails.name || 'Valued Customer',
         customerEmail: order.userDetails.email,
         items: existingOrder.items.map(item => ({
-          name: item.name,
+          name: item.product.name,
           quantity: item.quantity,
           price: item.price,
           size: item.size
@@ -171,33 +175,20 @@ export async function POST(req: Request) {
       // Continue with the order process even if email fails
     }
 
-    // If there's a coupon used in this order, record its usage
-    if (existingOrder.couponCode) {
-      const coupon = await prisma.coupon.findUnique({
-        where: { code: existingOrder.couponCode }
-      });
-
-      if (coupon) {
-        await prisma.couponUsage.create({
-          data: {
-            couponId: coupon.id,
-            userId: session.user.id,
-            orderId: dbOrderId
-          }
-        });
-
-        await prisma.coupon.update({
-          where: { id: coupon.id },
-          data: { usedCount: { increment: 1 } }
-        });
-      }
-    }
-
-
+    // Return order details needed for success modal
     return NextResponse.json({
       message: 'Payment verified successfully',
-      order,
-      showSuccessModal: true
+      order: {
+        updatedOrder: {
+          id: order.updatedOrder.id,
+          total: existingOrder.total,
+          items: existingOrder.items.map(item => ({
+            productId: item.productId,
+            quantity: item.quantity,
+            price: item.price
+          }))
+        }
+      }
     });
   } catch (error: any) {
     console.error('Error verifying payment:', error);

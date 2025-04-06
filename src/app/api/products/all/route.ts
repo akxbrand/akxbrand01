@@ -41,6 +41,7 @@ export async function GET(request: NextRequest) {
         include: {
           category: true,
           subCategory: true,
+          sizes: true,
           reviews: {
             select: {
               rating: true
@@ -49,13 +50,42 @@ export async function GET(request: NextRequest) {
         },
         orderBy
       }).then(products => {
-        return products.map(product => ({
-          ...product,
-          rating: product.reviews.length > 0
-            ? product.reviews.reduce((sum, review) => sum + review.rating, 0) / product.reviews.length
-            : 0,
-          reviews: undefined
-        }));
+        return products.map(product => {
+          const baseProduct = {
+            ...product,
+            rating: product.reviews.length > 0
+              ? product.reviews.reduce((sum, review) => sum + review.rating, 0) / product.reviews.length
+              : 0,
+            reviews: undefined
+          };
+
+          // Handle product pricing based on sizes
+          if (product.sizes && product.sizes.length > 0) {
+            if (product.sizes.length === 1) {
+              // For single size products, directly use the size's price and oldPrice
+              const size = product.sizes[0];
+              if (size.price > 0) {
+                baseProduct.price = size.price;
+                if (size.oldPrice && size.oldPrice > size.price) {
+                  baseProduct.oldPrice = size.oldPrice;
+                }
+              }
+            } else {
+              // For multiple sizes, find the lowest and highest prices
+              const prices = product.sizes.map(s => s.price).filter(p => p > 0);
+              if (prices.length > 0) {
+                const minPrice = Math.min(...prices);
+                const maxPrice = Math.max(...prices);
+                baseProduct.price = minPrice;
+                if (maxPrice > minPrice) {
+                  baseProduct.oldPrice = maxPrice;
+                }
+              }
+            }
+          }
+
+          return baseProduct;
+        });
       }),
       prisma.product.count({ where })
     ]);

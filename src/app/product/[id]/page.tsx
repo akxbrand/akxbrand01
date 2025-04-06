@@ -492,7 +492,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Product Images */}
             <div className="relative h-[350px] md:h-[400px] rounded-lg overflow-hidden">
-              <div 
+              <div
                 className="relative w-full h-full cursor-pointer group"
                 onClick={() => setIsImageModalOpen(true)}
               >
@@ -939,71 +939,6 @@ export default function ProductPage({ params }: { params: { id: string } }) {
         </div>
 
         <div className="mt-16 px-4 sm:px-6 lg:px-8">
-          {/* Description Section */}
-          <div className="border-t border-gray-200">
-            <button
-              className="w-full py-4 flex justify-between items-center focus:outline-none"
-              onClick={() => setActiveSection(activeSection === 'description' ? '' : 'description')}
-            >
-              <h2 className="text-xl font-medium text-gray-900">Description</h2>
-              <svg
-                className={`w-5 h-5 transform transition-transform ${activeSection === 'description' ? 'rotate-180' : ''}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            {activeSection === 'description' && (
-              <div className="pb-6 px-4">
-                <p className="text-gray-600">
-                  {selectedSize && product.sizes.find(s => s.size === selectedSize)?.description || product.description}
-                </p>
-              </div>
-            )}
-          </div>
-
-          {/* Unique Features */}
-          <div className="border-t border-gray-200">
-            <button
-              className="w-full py-4 flex justify-between items-center focus:outline-none"
-              onClick={() => setActiveSection(activeSection === 'features' ? '' : 'features')}
-            >
-              <h2 className="text-xl font-medium text-gray-900">Unique Features</h2>
-              <svg
-                className={`w-5 h-5 transform transition-transform ${activeSection === 'features' ? 'rotate-180' : ''}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            {activeSection === 'features' && (
-              <div className="pb-6 px-4">
-                <ul className="space-y-2">
-                  {selectedSize && product.sizes.find(s => s.size === selectedSize)?.uniqueFeatures ? (
-                    typeof product.sizes.find(s => s.size === selectedSize)?.uniqueFeatures === 'string' ? (
-                      product.sizes.find(s => s.size === selectedSize)?.uniqueFeatures?.split('\n').map((feature, index) => (
-                        <li key={index} className="flex items-center text-gray-600">
-                          <svg className="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                          {feature}
-                        </li>
-                      ))
-                    ) : (
-                      <li className="text-gray-600">No unique features available for this size</li>
-                    )
-                  ) : (
-                    <li className="text-gray-600">Select a size to see unique features</li>
-                  )}
-                </ul>
-              </div>
-            )}
-          </div>
-
           {/* Product Details */}
           <div className="border-t border-gray-200">
             <button
@@ -1043,7 +978,69 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               </div>
             )}
           </div>
-
+          {/* Description Section */}
+          <div className="border-t border-gray-200">
+            <button
+              className="w-full py-4 flex justify-between items-center focus:outline-none"
+              onClick={() => setActiveSection(activeSection === 'description' ? '' : 'description')}
+            >
+              <h2 className="text-xl font-medium text-gray-900">Description</h2>
+              <svg
+                className={`w-5 h-5 transform transition-transform ${activeSection === 'description' ? 'rotate-180' : ''}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {activeSection === 'description' && (
+              <div className="pb-6 px-4">
+                <p className="text-gray-600">
+                  {selectedSize && product.sizes.find(s => s.size === selectedSize)?.description || product.description}
+                </p>
+              </div>
+            )}
+          </div>
+          {/* Unique Features */}
+          <div className="border-t border-gray-200">
+            <button
+              className="w-full py-4 flex justify-between items-center focus:outline-none"
+              onClick={() => setActiveSection(activeSection === 'features' ? '' : 'features')}
+            >
+              <h2 className="text-xl font-medium text-gray-900">Unique Features</h2>
+              <svg
+                className={`w-5 h-5 transform transition-transform ${activeSection === 'features' ? 'rotate-180' : ''}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {activeSection === 'features' && (
+              <div className="pb-6 px-4">
+                <ul className="space-y-2">
+                  {selectedSize && product.sizes.find(s => s.size === selectedSize)?.uniqueFeatures ? (
+                    typeof product.sizes.find(s => s.size === selectedSize)?.uniqueFeatures === 'string' ? (
+                      product.sizes.find(s => s.size === selectedSize)?.uniqueFeatures?.split('\n').map((feature, index) => (
+                        <li key={index} className="flex items-center text-gray-600">
+                          <svg className="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                          {feature}
+                        </li>
+                      ))
+                    ) : (
+                      <li className="text-gray-600">No unique features available for this size</li>
+                    )
+                  ) : (
+                    <li className="text-gray-600">Select a size to see unique features</li>
+                  )}
+                </ul>
+              </div>
+            )}
+          </div>
           {/* Care Instructions */}
           <div className="border-t border-gray-200">
             <button
@@ -1130,8 +1127,6 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               </div>
             )}
           </div>
-
-
         </div>
 
         {/* Reviews Section */}

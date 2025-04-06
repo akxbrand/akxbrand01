@@ -239,13 +239,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Invalid coupon code' }, { status: 400 });
       }
 
-      if (coupon.usedBy.length > 0) {
-        return NextResponse.json({ error: 'Coupon already used by this user' }, { status: 400 });
-      }
-
-      if (coupon.usageLimit && coupon.usedCount >= coupon.usageLimit) {
-        return NextResponse.json({ error: 'Coupon usage limit exceeded' }, { status: 400 });
-      }
+      // Removed coupon usage validation to allow unlimited use
 
       const now = new Date();
       if (now < coupon.startDate || now > coupon.endDate) {

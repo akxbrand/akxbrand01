@@ -295,20 +295,23 @@ export default function Home() {
                     onClick={() => handleCategoryClick(category.name)}
                     className="flex-none w-[200px] sm:w-[300px] group relative rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 cursor-pointer"
                   >
-                    <div className="relative h-[200px] sm:h-[300px] w-full">
-                      <Image
-                        src={category.imageUrl}
-                        alt={category.name}
-                        fill
-                        className="object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent sm:bg-black sm:bg-opacity-40 sm:opacity-0 sm:group-hover:opacity-80 transition-opacity duration-300 flex flex-col items-center justify-end sm:justify-center text-white pb-4 sm:pb-0">
-                        <h3 className="text-lg sm:text-2xl font-bold mb-2 sm:mb-4">{category.name}</h3>
-                        <div className="hidden sm:block bg-white text-gray-900 px-6 py-2 rounded-md font-medium hover:bg-gray-100 transition-colors duration-300">
-                          Shop Now
+                    <div>
+                      <div className="relative h-[200px] sm:h-[300px] w-full">
+                        <Image
+                          src={category.imageUrl}
+                          alt={category.name}
+                          fill
+                          className="object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent sm:bg-black sm:bg-opacity-40 sm:opacity-0 sm:group-hover:opacity-80 transition-opacity duration-300 flex flex-col items-center justify-end sm:justify-center text-white pb-4 sm:pb-0">
+                          <h3 className="text-lg sm:text-2xl font-bold mb-2 sm:mb-4">{category.name}</h3>
+                          <div className="hidden sm:block bg-white text-gray-900 px-6 py-2 rounded-md font-medium hover:bg-gray-100 transition-colors duration-300">
+                            Shop Now
+                          </div>
                         </div>
                       </div>
                     </div>
+                    {/* <h3 className="text-lg text-gray-800 text-center sm:text-2xl font-bold mb-2 sm:mb-4">{category.name}</h3> */}
                   </div>
                 ))}
               </div>
