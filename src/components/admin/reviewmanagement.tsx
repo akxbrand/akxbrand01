@@ -4,6 +4,7 @@ import { Star, Flag, Trash2, MessageSquare, ImageIcon, Video } from 'lucide-reac
 
 import Toast from '@/components/ui/Toast';
 import Image from 'next/image';
+import ImageModal from '@/components/ui/ImageModal';
 
 interface ReviewManagementProps {
   productId: string;
@@ -33,6 +34,7 @@ export default function ReviewManagement({
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error'>('success');
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   // Update local reviews when prop changes
   React.useEffect(() => {
@@ -196,12 +198,17 @@ export default function ReviewManagement({
                     {review.photos.map((photoUrl, index) => (
                       <div key={index} className="relative">
                         <div className="w-24 h-24 relative rounded-lg overflow-hidden">
-                          <Image
-                            src={photoUrl}
-                            alt="Review photo"
-                            fill
-                            className="object-cover"
-                          />
+                          <div
+                            onClick={() => setSelectedImage(photoUrl)}
+                            className="cursor-pointer"
+                          >
+                            <Image
+                              src={photoUrl}
+                              alt="Review photo"
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -292,6 +299,13 @@ export default function ReviewManagement({
           type={toastType}
           show={showToast}
           onClose={() => setShowToast(false)}
+        />
+      )}
+      {selectedImage && (
+        <ImageModal
+          isOpen={true}
+          onClose={() => setSelectedImage(null)}
+          imageUrl={selectedImage}
         />
       )}
     </div>

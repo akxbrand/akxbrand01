@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-
 import { useRouter, useParams } from 'next/navigation';
 import { Share2, X, Plus, ZoomIn } from 'lucide-react';
 import ImageModal from '@/components/ui/ImageModal';
@@ -104,6 +103,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   });
   const [viewerCount, setViewerCount] = useState<number>(Math.floor(Math.random() * 291) + 10);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [currentImageUrl, setCurrentImageUrl] = useState('');
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
 
   const handleRemovePhoto = (index: number) => {
@@ -493,8 +493,11 @@ export default function ProductPage({ params }: { params: { id: string } }) {
       />
       <ImageModal
         isOpen={isImageModalOpen}
-        onClose={() => setIsImageModalOpen(false)}
-        imageUrl={product.images[currentImageIndex]}
+        onClose={() => {
+          setIsImageModalOpen(false);
+          setCurrentImageUrl('');
+        }}
+        imageUrl={currentImageUrl || product.images[currentImageIndex]}
       />
       {/* Rest of the JSX */}
       <div className="min-h-screen bg-white pt-6">
@@ -1350,7 +1353,11 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                   {review.media && review.media.length > 0 && (
                     <div className="flex gap-4 mb-4 px-4">
                       {review.media.map((media, index) => (
-                        <div key={media.id} className="w-20 h-20 relative rounded-lg overflow-hidden">
+                        <div onClick={() => {
+                          setCurrentImageIndex(0); // Reset to first image when opening review image
+                          setIsImageModalOpen(true);
+                          setCurrentImageUrl(media.url);
+                        }} key={media.id} className="w-20 h-20 relative rounded-lg overflow-hidden">
                           <Image src={media.url} alt={`Review image ${index + 1}`} fill className="object-cover" />
                         </div>
                       ))}
