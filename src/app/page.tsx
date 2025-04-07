@@ -501,7 +501,12 @@ export default function Home() {
           />
         </div>
       </section>
+
+
+      {/* Featured Videos Section */}
       <FeatureVideos />
+
+      
       {/* Customer Top Review Section */}
       <CustomerReviews reviews={featuredReviews} />
 
