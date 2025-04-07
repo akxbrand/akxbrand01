@@ -27,6 +27,7 @@ interface Order {
   status: string;
   orderDate: string;
   paymentMethod: string;
+  paymentStatus: string;
 }
 
 interface NewInvoiceTemplateProps {
@@ -48,7 +49,7 @@ const NewInvoiceTemplate: React.FC<NewInvoiceTemplateProps> = ({ order }) => {
             />
           </div>
           <div className="text-gray-600">
-          <p className="text-sm">AKX Brand, Matta Chowk</p>
+            <p className="text-sm">AKX Brand, Matta Chowk</p>
             <p className="text-sm">Panipat, Haryana </p>
             <p className="text-sm">132103, India</p>
             <p className="text-sm mt-2">GSTIN: 06BPQPR1739P1ZZ</p>
@@ -57,7 +58,7 @@ const NewInvoiceTemplate: React.FC<NewInvoiceTemplateProps> = ({ order }) => {
         <div className="text-right">
           <div className="inline-block bg-gradient-to-r from-gray-600 to-gray-800 text-white px-6 py-3 rounded-lg">
             <h3 className="text-2xl font-bold">INVOICE</h3>
-            <p className="text-sm opacity-90 mt-1">Order Id: <br/>#{order.id}</p>
+            <p className="text-sm opacity-90 mt-1">Order Id: <br />#{order.id}</p>
           </div>
           <p className="text-gray-600 mt-4">Date: {new Date(order.orderDate).toLocaleDateString('en-US', {
             year: 'numeric',
@@ -90,11 +91,8 @@ const NewInvoiceTemplate: React.FC<NewInvoiceTemplateProps> = ({ order }) => {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Status</span>
-              <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                order.status === 'completed' ? 'bg-green-100 text-green-800' : 
-                'bg-yellow-100 text-yellow-800'
-              }`}>
-                {order.status}
+              <span className={`px-3 py-1 rounded-full text-sm font-medium ${order.paymentStatus === 'completed' ? 'bg-green-100 text-green-800' : order.paymentStatus === 'failed' ? 'bg-red-100 text-red-800' : order.paymentStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800'}`}>
+                {order.paymentStatus === 'completed' ? 'Paid' : order.paymentStatus === 'failed' ? 'Failed' : order.paymentStatus === 'pending' ? 'Pending' : order.paymentStatus.charAt(0).toUpperCase() + order.paymentStatus.slice(1)}
               </span>
             </div>
           </div>
@@ -128,14 +126,17 @@ const NewInvoiceTemplate: React.FC<NewInvoiceTemplateProps> = ({ order }) => {
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-900">{item.name}</p>
-                      {item.nickname && (
-                        <p className="text-sm text-gray-500">({item.nickname})</p>
-                      )}
+
                     </div>
                   </div>
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-600">
+                {item.nickname && (
+                    <p className="text-sm text-gray-700 mb-1">Nickname: {item.nickname}</p>
+                  )}
+                  <hr />
                   <p>Size: {item.size}</p>
+                 
                 </td>
                 <td className="px-6 py-4 text-center text-sm text-gray-900">{item.quantity}</td>
                 <td className="px-6 py-4 text-right text-sm text-gray-900">₹{item.price.toFixed(2)}</td>

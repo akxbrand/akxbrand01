@@ -131,6 +131,7 @@ export default function OrdersPage() {
           items: data.items.map((item: any) => ({
             id: item.id,
             name: item.product.name,
+            nickname: item.product.nickname,
             price: item.price,
             size: item.size,
             quantity: item.quantity,
@@ -408,7 +409,7 @@ export default function OrdersPage() {
                     </button>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${order.paymentStatus === 'confirmed' ? 'bg-green-100 text-green-800' : order.paymentStatus === 'failed' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${order.paymentStatus === 'completed' ? 'bg-green-100 text-green-800' : order.paymentStatus === 'failed' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}`}>
                       {order.paymentStatus.charAt(0).toUpperCase() + order.paymentStatus.slice(1)}
                     </span>
                   </td>
