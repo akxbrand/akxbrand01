@@ -1,8 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay, EffectCoverflow } from 'swiper/modules';
+import ImageModal from '@/components/ui/ImageModal';
 import '@/styles/review-carousel.css';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -25,6 +27,7 @@ interface Review {
 }
 
 export default function CustomerReviews({ reviews }: { reviews: Review[] }) {
+  const [selectedImage, setSelectedImage] = useState<{ url: string; alt: string } | null>(null);
   return (
     <section className="py-16 bg-gradient-to-b from-white to-gray-50">
       <div className="container mx-auto px-2 sm:px-4">
@@ -104,7 +107,11 @@ export default function CustomerReviews({ reviews }: { reviews: Review[] }) {
                 {review.media && review.media.length > 0 && (
                   <div className="review-media-grid">
                     {review.media.map((media) => (
-                      <div key={media.id} className="review-media-item">
+                      <div
+                        key={media.id}
+                        className="review-media-item cursor-pointer"
+                        onClick={() => setSelectedImage({ url: media.url, alt: 'Review media' })}
+                      >
                         <Image
                           src={media.url}
                           alt="Review media"
@@ -119,6 +126,14 @@ export default function CustomerReviews({ reviews }: { reviews: Review[] }) {
             </SwiperSlide>
           ))}
         </Swiper>
+        {selectedImage && (
+          <ImageModal
+            isOpen={true}
+            onClose={() => setSelectedImage(null)}
+            imageUrl={selectedImage.url}
+            alt={selectedImage.alt}
+          />
+        )}
       </div>
     </section>
   );

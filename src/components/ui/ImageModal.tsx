@@ -7,9 +7,10 @@ interface ImageModalProps {
   isOpen: boolean;
   onClose: () => void;
   imageUrl: string;
+  alt: string;
 }
 
-export default function ImageModal({ isOpen, onClose, imageUrl }: ImageModalProps) {
+export default function ImageModal({ isOpen, onClose, imageUrl, alt }: ImageModalProps) {
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -18,13 +19,6 @@ export default function ImageModal({ isOpen, onClose, imageUrl }: ImageModalProp
   const [lastTapTime, setLastTapTime] = useState(0);
   const [lastScale, setLastScale] = useState(1);
 
-  const handleZoomIn = () => {
-    setScale(prev => Math.min(prev + 0.5, 4));
-  };
-
-  const handleZoomOut = () => {
-    setScale(prev => Math.max(prev - 0.5, 1));
-  };
 
   const handleWheel = useCallback((e: WheelEvent) => {
     if (e.ctrlKey) {
