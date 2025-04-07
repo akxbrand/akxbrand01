@@ -5,8 +5,7 @@ import Toast from '@/components/ui/Toast';
 import AdminLayout from '@/components/admin/AdminLayout';
 import OrderStatusModal from '@/components/admin/OrderStatusModal';
 import ViewOrderModal from '@/components/admin/ViewOrderModal';
-import { Eye, Download, FileSpreadsheet } from 'lucide-react';
-import prisma from '@/lib/prisma';
+import { Eye, FileSpreadsheet } from 'lucide-react';
 
 type OrderStatus = 'Delivered' | 'Processing' | 'Shipping' | 'Pending' | 'Failed';
 
@@ -115,18 +114,7 @@ export default function OrdersPage() {
     document.body.removeChild(link);
   };
 
-  const handleDownloadInvoice = (orderId: string) => {
-    try {
-      // Simulating invoice download
-      setToastMessage('Invoice downloaded successfully');
-      setToastType('success');
-      setShowToast(true);
-    } catch (error) {
-      setToastMessage('Error downloading invoice');
-      setToastType('error');
-      setShowToast(true);
-    }
-  };
+ 
 
   const handleViewOrder = async (orderId: string) => {
     try {
@@ -149,7 +137,11 @@ export default function OrdersPage() {
             image: item.product.images[0] || '/images/placeholder.jpg'
           })),
           total: data.total,
-          orderDate: new Date(data.createdAt).toLocaleDateString(),
+          orderDate: new Date(data.createdAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+          }),
           status: data.status,
           paymentMethod: data.paymentMode || 'Not specified',
           paymentStatus: data.paymentStatus

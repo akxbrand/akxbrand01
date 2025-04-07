@@ -11,8 +11,9 @@ const printStyles = `
 import React from 'react';
 import Modal from '@/components/ui/Modal';
 import { X, Download } from 'lucide-react';
-import InvoiceTemplate from '../ui/InvoiceTemplate';
-import { log } from 'console';
+import NewInvoiceTemplate from '../ui/NewInvoiceTemplate';
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
 
 interface OrderItem {
   id: string;
@@ -52,25 +53,145 @@ interface ViewOrderModalProps {
 export default function ViewOrderModal({ isOpen, onClose, order }: ViewOrderModalProps) {
   console.log('ViewOrderModal:', { isOpen, order });
 
-  const handleDownloadInvoice = () => {
+  const handleDownloadInvoice = async () => {
     console.log('Downloading invoice...');
-    const printWindow = window.open('', '_blank');
-    printWindow?.document.write(`
-      <html>
-        <head>
-          <title>Invoice</title>
-          <style>
-            ${printStyles}
-          </style>
-        </head>
-        <body>
-          ${printableContent.innerHTML}
-        </body>
-      </html>
-    `);
-    printWindow?.document.close();
-    printWindow?.print();
-    printWindow?.close();
+    const invoiceElement = document.getElementById('printable-content');
+    if (!invoiceElement) {
+      console.error('Invoice template element not found');
+      return;
+    }
+
+    let tempContainer = null;
+    try {
+      // Create a temporary container with fixed dimensions
+      tempContainer = document.createElement('div');
+      tempContainer.style.position = 'absolute';
+      tempContainer.style.left = '-9999px';
+      tempContainer.style.width = '794px'; // A4 width in pixels at 96 DPI
+      tempContainer.style.backgroundColor = '#ffffff';
+      document.body.appendChild(tempContainer);
+
+      // Clone the invoice element into the temporary container
+      const invoiceClone = invoiceElement.cloneNode(true) as HTMLElement;
+      invoiceClone.style.display = 'block';
+      invoiceClone.style.visibility = 'visible';
+      invoiceClone.style.width = '100%';
+      invoiceClone.style.margin = '0';
+      invoiceClone.style.padding = '40px'; // Add padding for better layout
+      tempContainer.appendChild(invoiceClone);
+
+      // Remove any fixed positioning and transform styles that might affect rendering
+      const elements = invoiceClone.getElementsByTagName('*');
+      for (let i = 0; i < elements.length; i++) {
+        const el = elements[i] as HTMLElement;
+        if (el.style.position === 'fixed') el.style.position = 'absolute';
+        if (el.style.transform) el.style.transform = 'none';
+      }
+
+      // Ensure all images are loaded
+      const images = invoiceClone.getElementsByTagName('img');
+      await Promise.all(Array.from(images).map(img => {
+        if (img.complete && img.naturalWidth !== 0) return Promise.resolve();
+        return new Promise<void>((resolve, reject) => {
+          img.onload = () => resolve();
+          img.onerror = () => reject(new Error(`Failed to load image: ${img.src}`));
+        });
+      }));
+
+      // Wait for fonts and other resources to load
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      const canvas = await html2canvas(invoiceClone, {
+        scale: 2, // Higher scale for better quality
+        logging: false,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        width: 794, // A4 width in pixels
+        height: invoiceClone.offsetHeight,
+        windowWidth: 794,
+        onclone: (doc) => {
+          // Additional styling for better PDF output
+          const content = doc.getElementById('printable-content');
+          if (content) {
+            content.style.minHeight = '1123px'; // A4 height in pixels
+          }
+        }
+      });
+
+      if (!canvas || !canvas.toDataURL) {
+        throw new Error('Failed to create canvas context');
+      }
+
+      const imgData = canvas.toDataURL('image/jpeg', 1.0);
+      if (!imgData || imgData === 'data:,') {
+        throw new Error('Canvas is empty or failed to generate image data');
+      }
+
+      // Create PDF with A4 dimensions and margins
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+        compress: true
+      });
+
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const margin = 10; // 10mm margins
+      const contentWidth = pdfWidth - (2 * margin);
+      const contentHeight = pdfHeight - (2 * margin);
+
+      // Calculate the number of pages needed based on content height
+      const pixelContentHeight = invoiceClone.offsetHeight;
+      const pixelPageHeight = 1123; // A4 height in pixels at 96 DPI
+      const totalPages = Math.ceil(pixelContentHeight / (pixelPageHeight - 40)); // Subtract margins
+
+      // Add each page to the PDF
+      for (let i = 0; i < totalPages; i++) {
+        if (i > 0) pdf.addPage();
+
+        // Calculate the vertical offset for current page
+        const yOffset = -i * (pixelPageHeight - 40);
+
+        // Create canvas for current page section
+        const pageCanvas = await html2canvas(invoiceClone, {
+          scale: 2,
+          logging: false,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#ffffff',
+          width: 794 - 20, // Subtract horizontal margins
+          height: pixelPageHeight - 40, // Subtract vertical margins
+          windowWidth: 794 - 20,
+          y: i * (pixelPageHeight - 40),
+          onclone: (doc) => {
+            const content = doc.getElementById('printable-content');
+            if (content) {
+              content.style.transform = `translateY(${yOffset}px)`;
+              // Add extra spacing between sections
+              const sections = content.querySelectorAll('.page-break-inside-avoid');
+              sections.forEach(section => {
+                (section as HTMLElement).style.marginBottom = '20px';
+              });
+            }
+          }
+        });
+
+        const pageImgData = pageCanvas.toDataURL('image/jpeg', 1.0);
+        pdf.addImage(pageImgData, 'JPEG', margin, margin, contentWidth, contentHeight);
+      }
+
+      pdf.save(`invoice-${order.id}.pdf`);
+    } catch (error) {
+      console.error('Error generating invoice:', error);
+      alert('Failed to generate invoice. Please try again.');
+    } finally {
+      // Ensure cleanup of temporary elements
+      if (tempContainer && document.body.contains(tempContainer)) {
+        document.body.removeChild(tempContainer);
+      }
+    }
   }
 
   return (
@@ -79,163 +200,37 @@ export default function ViewOrderModal({ isOpen, onClose, order }: ViewOrderModa
       {isOpen && (
         <Modal isOpen={isOpen} onClose={onClose}>
           {/* <div className="inline-block w-full max-w-4xl p-6 my-8 text-left align-middle transition-all transform bg-white shadow-xl rounded-lg"> */}
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-medium leading-6 text-gray-900">Order Details</h3>
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={handleDownloadInvoice}
-              className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
-            >
-              <Download className="w-4 h-4 mr-2" />
-              Download Invoice
-            </button>
-            {/* <button
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-medium leading-6 text-gray-900">Order Details</h3>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={handleDownloadInvoice}
+                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Download Invoice
+              </button>
+              {/* <button
               onClick={handlePrint}
               className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
             >
               <Printer className="w-4 h-4 mr-2" />
               Print
             </button> */}
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-500"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-
-        <div className="print:block" id="printable-content">
-          {/* Invoice Header */}
-          <div className="flex justify-between mb-8 border-b pb-4">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">INVOICE</h2>
-              <p className="text-gray-600">Order #{order.id}</p>
-              <p className="text-gray-600">Date: {order.orderDate}</p>
-            </div>
-            <div className="text-right">
-              <h3 className="text-lg font-semibold text-gray-900">AKX Brand</h3>
-              <p className="text-gray-600">AKX Brand, Matta Chowk,</p>
-              <p className="text-gray-600">Panipat, Haryana 132103</p>
-              <p className="text-gray-600">GSTIN: 06BPQPR1739P1ZZ</p>
+              <button
+                onClick={onClose}
+                className="text-gray-400 hover:text-gray-500"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
           </div>
 
-          {/* Customer Information */}
-            <div className="grid grid-cols-2 gap-8 mb-8">
-            <div>
-              <div className="mb-4 not-printable">
-              <h4 className="text-gray-600 text-sm font-medium mb-2">Customer Details:</h4>
-              <p className="font-medium text-gray-900">{order.customerName}</p>
-              
-                
-              
-              </div>
-              <div className="print:block">
-              <h4 className="text-gray-600 text-sm font-medium mb-2">Bill To:</h4>
-              <p className="font-medium text-gray-900">{order.customerName}</p>
-              <p className="text-gray-600">{order.email}</p>
-              <p className="text-gray-600">{order.phone}</p>
-              <p className="text-gray-600">{order.address.street}</p>
-              <p className="text-gray-600">
-                {order.address.city}, {order.address.state} {order.address.zipCode}
-              </p>
-              </div>
-            </div>
-            <div>
-              <h4 className="text-gray-600 text-sm font-medium mb-2">Payment Information:</h4>
-              <p className="text-gray-600">Method: {order.paymentMethod}</p>
-              <p className="text-gray-600">Status: {order.status}</p>
-            </div>
+          <div className="print:block" id="printable-content">
+            <NewInvoiceTemplate order={order} />
           </div>
-
-          {/* Order Items */}
-          <div className="mb-8">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead>
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Item
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Details
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Quantity
-                  </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Price
-                  </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Total
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {order.items.map((item) => (
-                  <tr key={item.id}>
-                    <td className="px-4 py-4">
-                      <div className="flex items-center">
-                        <div className="h-10 w-10 relative flex-shrink-0">
-                          <img
-                            src={item.image}
-                            alt={item.name}
-                            className="w-full h-full object-cover rounded"
-                          />
-                        </div>
-                        <div className="ml-2 flex-1 min-w-0">
-                          <div className="text-sm font-medium text-gray-900 break-words">{item.name}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <div>Size: {item.size}</div>
-                      {item.nickname && <div>Nickname: {item.nickname}</div>}
-                    </td>
-                    <td className="px-4 text-center py-4 whitespace-nowrap text-sm text-gray-500">
-                      {item.quantity}
-                    </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
-                      ₹{item.price.toFixed(2)}
-                    </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
-                      ₹{(item.price * item.quantity).toFixed(2)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Order Summary */}
-          <div className="border-t pt-4">
-            <div className="flex justify-end">
-              <div className="w-64">
-                <div className="flex justify-between py-2">
-                  <span className="text-gray-600">Subtotal:</span>
-                  <span className="text-gray-800 font-medium">₹{order.total.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between py-2">
-                  {/* <span className="text-gray-600">Tax (18% GST):</span> */}
-                  <span className="text-gray-600">Shipping Fee:</span>
-                  <span className="text-gray-800 font-medium">₹0 (Free)</span>
-                </div>
-                <div className="flex justify-between py-2 text-lg font-bold">
-                  <span className="text-gray-600">Total:</span>
-                  <span className="text-gray-800">₹{(order.total).toFixed(2)}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Footer */}
-          <div className="mt-8 text-center text-gray-500 text-sm">
-            <p>Thanks for your order!</p>
-            <p>For any queries, please contact us at akxbrand@gmail.com</p>
-          </div>
-        </div>
-        {/* </div> */}
-      </Modal>
+          {/* </div> */}
+        </Modal>
       )}
     </>
   );
