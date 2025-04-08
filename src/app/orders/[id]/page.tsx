@@ -304,7 +304,7 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
                   <address className="text-sm text-gray-600 not-italic">
                     {order.shippingAddress.name}<br />
                     {order.shippingAddress.street}<br />
-                    {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zip}<br />
+                    {order.shippingAddress.city}, {order.shippingAddress.state} - {order.shippingAddress.pincode || order.shippingAddress.zip}<br />
                     {order.shippingAddress.country}
                   </address>
                 </div>

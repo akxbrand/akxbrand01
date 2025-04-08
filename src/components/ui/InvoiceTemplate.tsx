@@ -28,6 +28,7 @@ interface InvoiceTemplateProps {
       city: string;
       state: string;
       zip: string;
+      pincode:string;
       country: string;
     };
     customerInfo: {
@@ -79,7 +80,7 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ order }) => {
           <div className="text-gray-600 space-y-1">
             <p className="font-medium text-gray-800">{order.customerInfo.name}</p>
             <p>{order.shippingAddress.street}</p>
-            <p>{order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zip}</p>
+            <p>{order.shippingAddress.city}, {order.shippingAddress.state} - {order.shippingAddress.pincode ||order.shippingAddress.zip}</p>
             <p>{order.shippingAddress.country}</p>
             <div className="mt-3 pt-3 border-t border-gray-200">
               <p className="text-sm">{order.customerInfo.email}</p>

@@ -76,7 +76,7 @@ const NewInvoiceTemplate: React.FC<NewInvoiceTemplateProps> = ({ order }) => {
           <div className="text-gray-600">
             <p className="font-medium text-gray-900">{order.customerName}</p>
             <p>{order.address.street}</p>
-            <p>{order.address.city}, {order.address.state} {order.address.pincode || order.address.zipCode}</p>
+            <p>{order.address.city}, {order.address.state} - {order.address.pincode || order.address.zipCode}</p>
             <div className="pt-1 mt-1 border-t border-gray-100">
               <p className="text-sm break-words">{order.email}</p>
               <p className="text-sm">{order.phone}</p>
