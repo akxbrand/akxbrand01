@@ -2,17 +2,26 @@
 
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
-import Image from 'next/image';
 import { 
   ShoppingCart, 
-  Package, 
   Flag, 
-  BarChart3,
   Users,
   IndianRupee,
   TrendingUp,
-  Activity
 } from 'lucide-react';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  LineChart,
+  Line
+} from 'recharts';
 
 interface DashboardData {
   totalOrders: number;
@@ -129,10 +138,48 @@ export default function AdminDashboard() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* Revenue Growth */}
+          {/* Revenue Growth Chart */}
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-lg text-gray-600 font-semibold mb-4">Revenue Growth</h3>
-            <div className="flex text-gray-800 items-center space-x-4">
+            <div className="h-[200px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart
+                  data={[{
+                    name: 'Previous',
+                    value: (dashboardData?.recentRevenue || 0) / (1 + (dashboardData?.revenueGrowth || 0) / 100)
+                  }, {
+                    name: 'Current',
+                    value: dashboardData?.recentRevenue || 0
+                  }]}
+                  margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                >
+                  <defs>
+                    <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#22C55E" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#22C55E" stopOpacity={0.1}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+                  <XAxis dataKey="name" stroke="#666" />
+                  <YAxis stroke="#666" />
+                  <Tooltip
+                    formatter={(value) => `₹${value.toLocaleString('en-IN')}`}
+                    contentStyle={{ background: 'rgba(255, 255, 255, 0.9)', border: '1px solid #ddd' }}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="value"
+                    stroke="#22C55E"
+                    fillOpacity={1}
+                    fill="url(#colorRevenue)"
+                    animationDuration={1500}
+                  />
+                  
+                {/* </BarChart> */}
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="flex text-gray-800 items-center space-x-4 mt-4">
               <TrendingUp className={`h-8 w-8 ${(dashboardData?.revenueGrowth ?? 0) >= 0 ? 'text-green-500' : 'text-red-500'}`} />
               <div>
                 <p className="text-2xl font-bold">
@@ -143,15 +190,44 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* Recent Performance */}
+          {/* User Growth Chart */}
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg text-gray-600 font-semibold mb-4">Recent Performance</h3>
-            <div className="grid grid-cols-2 gap-4">
+            <h3 className="text-lg text-gray-600 font-semibold mb-4">User Growth</h3>
+            <div className="h-[200px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart
+                  data={[{
+                    name: 'Previous',
+                    value: dashboardData?.totalUsers - (dashboardData?.recentUsers || 0) || 0
+                  }, {
+                    name: 'Current',
+                    value: dashboardData?.totalUsers || 0
+                  }]}
+                  margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+                  <XAxis dataKey="name" stroke="#666" />
+                  <YAxis stroke="#666" />
+                  <Tooltip
+                    contentStyle={{ background: 'rgba(255, 255, 255, 0.9)', border: '1px solid #ddd' }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="value"
+                    stroke="#F59E0B"
+                    strokeWidth={2}
+                    dot={{ stroke: '#F59E0B', strokeWidth: 2, r: 4, fill: '#fff' }}
+                    activeDot={{ r: 6, stroke: '#F59E0B', strokeWidth: 2, fill: '#fff' }}
+                    animationDuration={1500}
+                  />
+                  </LineChart>
+            
+              </ResponsiveContainer>
+            </div>
+            <div className="grid grid-cols-2 gap-4 mt-4">
               <div>
-                <p className="text-gray-600 text-sm">Recent Revenue</p>
-                <p className="text-2xl text-gray-800 font-bold">
-                  ₹{(dashboardData?.recentRevenue || 0).toLocaleString('en-IN')}
-                </p>
+                <p className="text-gray-600 text-sm">Total Users</p>
+                <p className="text-2xl text-gray-800 font-bold">{dashboardData?.totalUsers || 0}</p>
               </div>
               <div>
                 <p className="text-gray-600 text-sm">New Users</p>
@@ -161,10 +237,40 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Order Status Distribution */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
+        {/* Order Status Distribution Chart */}
+        <div className="bg-white p-6 rounded-lg shadow-md mb-8">
           <h3 className="text-lg text-gray-600 font-semibold mb-4">Order Status Distribution</h3>
-          <div className="grid grid-cols-1 text-gray-800 md:grid-cols-3 gap-4">
+          <div className="h-[300px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={Object.entries(dashboardData?.orderStatusCounts || {}).map(([status, count]) => ({
+                  status,
+                  count
+                }))}
+                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+              >
+                <defs>
+                  <linearGradient id="colorOrders" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#4F46E5" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#4F46E5" stopOpacity={0.4}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+                <XAxis dataKey="status" stroke="#666" />
+                <YAxis stroke="#666" />
+                <Tooltip
+                  contentStyle={{ background: 'rgba(255, 255, 255, 0.9)', border: '1px solid #ddd' }}
+                />
+                <Bar
+                  dataKey="count"
+                  fill="url(#colorOrders)"
+                  radius={[4, 4, 0, 0]}
+                  animationDuration={1500}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="grid grid-cols-1 text-gray-800 md:grid-cols-3 gap-4 mt-4">
             {Object.entries(dashboardData?.orderStatusCounts || {}).map(([status, count]) => (
               <div key={status} className="bg-gray-50 p-4 rounded-lg">
                 <p className="text-gray-500 text-sm capitalize">{status}</p>
