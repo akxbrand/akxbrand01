@@ -498,6 +498,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
           setCurrentImageUrl('');
         }}
         imageUrl={currentImageUrl || product.images[currentImageIndex]}
+        alt={product.name}
       />
       {/* Rest of the JSX */}
       <div className="min-h-screen bg-white pt-6">
