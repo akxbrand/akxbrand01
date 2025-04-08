@@ -117,7 +117,7 @@ export default function FeatureVideos() {
         </p>
         <div className="relative">
           <div className="overflow-hidden rounded-xl" ref={emblaRef}>
-            <div className="flex -ml-3">
+            <div className={`flex -ml-3 ${(videos.length > 4) ? null : 'justify-center'}`}>
               {videos.map((video) => (
                 <div
                   key={video.id}
@@ -130,7 +130,7 @@ export default function FeatureVideos() {
                   >
                     <video
                       ref={(el) => { videoRefs.current[video.id] = el }}
-                      className="w-full aspect-[9/16] object-cover"
+                      className="w-full aspect-[9/16] object-contain"
                       src={video.videoUrl}
                       poster={video.thumbnailUrl}
                       muted={videoMuteStates[video.id]}
