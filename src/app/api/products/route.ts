@@ -22,12 +22,10 @@ export async function GET(request: NextRequest) {
 
     // Build filter conditions
     const where: any = {
-      OR: [
-        { name: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } },
-        { category: { name: { contains: search, mode: 'insensitive' } } },
-        { subCategory: { name: { contains: search, mode: 'insensitive' } } },
-        { tags: { has: search } }
+      OR: [{name: { contains: search, mode: 'insensitive' }},
+        {description: { contains: search, mode: 'insensitive' }},
+        {category: { name: { contains: search, mode: 'insensitive' }}},
+        {subCategory: { name: { contains: search, mode: 'insensitive' }}}
       ],
       price: {
         gte: minPrice,
