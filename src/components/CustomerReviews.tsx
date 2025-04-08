@@ -7,6 +7,13 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import useEmblaCarousel from 'embla-carousel-react';
 import AutoPlay from 'embla-carousel-autoplay';
+import ImageModal from '@/components/ui/ImageModal';
+
+interface ReviewMedia {
+  id: string;
+  url: string;
+  type: string;
+}
 
 interface Review {
   id: string;
@@ -16,13 +23,11 @@ interface Review {
   date: string;
   image?: string;
   isFeatured?: boolean;
-  media?: Array<{
-    id: string;
-    url: string;
-  }>;
+  media?: ReviewMedia[];
 }
 
 export default function CustomerReviews() {
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
       loop: true,
@@ -140,14 +145,14 @@ export default function CustomerReviews() {
                       </div>
                     </div>
                   </div>
-                  <p className="text-gray-700 leading-relaxed italic">"{review.comment}"</p>
+                  <p className="text-gray-700 leading-relaxed italic mb-4">"{review.comment}"</p>
                   {review.media && review.media.length > 0 && (
-                    <div className="review-media-grid">
+                    <div className={`mt-4 grid grid-cols-3 sm:grid-cols-3 gap-4`}>
                       {review.media.map((media) => (
                         <div
                           key={media.id}
-                          className="review-media-item cursor-pointer"
-                          onClick={() => window.open(media.url)}
+                          className="relative aspect-square rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
+                          onClick={() => setSelectedImage(media.url)}
                         >
                           <Image
                             src={media.url}
@@ -181,6 +186,12 @@ export default function CustomerReviews() {
           </button>
         </div>
       </div>
+      <ImageModal
+        isOpen={!!selectedImage}
+        onClose={() => setSelectedImage(null)}
+        imageUrl={selectedImage || ''}
+        alt="Review media"
+      />
     </section>
   );
 }

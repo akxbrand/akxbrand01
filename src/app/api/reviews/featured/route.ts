@@ -26,6 +26,11 @@ export async function GET() {
         rating: review.rating,
         comment: review.text,
         date: review.createdAt.toLocaleDateString(),
+        media: review.photos.map(url => ({
+          id: url,
+          url: url,
+          type: 'image'
+        })),
         isFeatured: true
       }))
     });
