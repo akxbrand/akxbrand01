@@ -21,15 +21,12 @@ export async function GET() {
       success: true,
       reviews: reviews.map(review => ({
         id: review.id,
-        userName: review.user.name,
-        userImage: '/images/user.png',
+        name: review.user.name,
+        image: '/images/user.png',
         rating: review.rating,
-        text: review.text,
-        media: review.photos.map(url => ({
-          id: url,
-          url: url,
-          type: 'image'
-        }))
+        comment: review.text,
+        date: review.createdAt.toLocaleDateString(),
+        isFeatured: true
       }))
     });
   } catch (error) {

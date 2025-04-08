@@ -67,9 +67,9 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
 
       // Ensure all images are loaded
       const images = invoiceClone.getElementsByTagName('img');
-      await Promise.all([...images].map(img => {
+      await Promise.all(Array.from(images).map(img => {
         if (img.complete && img.naturalWidth !== 0) return Promise.resolve();
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
           img.onload = () => resolve();
           img.onerror = () => reject(new Error(`Failed to load image: ${img.src}`));
         });
@@ -258,7 +258,7 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
                     <div className="py-4 flex items-center justify-between">
                       <dt className="text-gray-600">Subtotal</dt>
                       <dd className="font-medium text-gray-900">
-                        ₹{(order.subtotal || order.items.reduce((sum:number, item:number) => sum + (item.price * item.quantity), 0)).toFixed(2)}
+                        ₹{(order.subtotal || order.items.reduce((sum: number, item: { price: number; quantity: number }) => sum + (item.price * item.quantity), 0)).toFixed(2)}
                       </dd>
                     </div>
                     <div className="py-4 flex items-center justify-between">
@@ -274,7 +274,7 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
                     <div className="py-4 flex items-center justify-between">
                       <dt className="text-lg font-medium text-gray-900">Total</dt>
                       <dd className="text-lg font-medium text-gray-900">
-                        ₹{(order.total || (order.subtotal || order.items.reduce((sum:number, item:number) => sum + (item.price * item.quantity), 0)) + (order.shipping || 0) + (order.tax || 0)).toFixed(2)}
+                        ₹{(order.total || (order.subtotal || order.items.reduce((sum:number, item:{ price: number; quantity: number }) => sum + (item.price * item.quantity), 0)) + (order.shipping || 0) + (order.tax || 0)).toFixed(2)}
                       </dd>
                     </div>
                   </dl>

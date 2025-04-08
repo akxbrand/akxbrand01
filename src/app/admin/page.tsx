@@ -8,6 +8,10 @@ import {
   Users,
   IndianRupee,
   TrendingUp,
+  Megaphone,
+  Package,
+  Ticket,
+  Video
 } from 'lucide-react';
 import {
   BarChart,
@@ -32,6 +36,10 @@ interface DashboardData {
   totalUsers: number;
   recentUsers: number;
   orderStatusCounts: Record<string, number>;
+  activeAnnouncements: number;
+  activeProducts: number;
+  activeCoupons: number;
+  activeFeatureVideos: number;
 }
 
 export default function AdminDashboard() {
@@ -135,6 +143,50 @@ export default function AdminDashboard() {
               <Users className="text-orange-500 h-8 w-8" />
             </div>
           </div>
+
+          {/* Active Announcements */}
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm">Active Announcements</p>
+                <h2 className="text-3xl text-gray-800 font-bold">{dashboardData?.activeAnnouncements || 0}</h2>
+              </div>
+              <Megaphone className="text-pink-500 h-8 w-8" />
+            </div>
+          </div>
+
+          {/* Active Products */}
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm">Active Products</p>
+                <h2 className="text-3xl text-gray-800 font-bold">{dashboardData?.activeProducts || 0}</h2>
+              </div>
+              <Package className="text-indigo-500 h-8 w-8" />
+            </div>
+          </div>
+
+          {/* Active Coupons */}
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm">Active Coupons</p>
+                <h2 className="text-3xl text-gray-800 font-bold">{dashboardData?.activeCoupons || 0}</h2>
+              </div>
+              <Ticket className="text-yellow-500 h-8 w-8" />
+            </div>
+          </div>
+
+          {/* Feature Videos */}
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm">Feature Videos</p>
+                <h2 className="text-3xl text-gray-800 font-bold">{dashboardData?.activeFeatureVideos || 0}</h2>
+              </div>
+              <Video className="text-cyan-500 h-8 w-8" />
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
@@ -142,7 +194,7 @@ export default function AdminDashboard() {
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-lg text-gray-600 font-semibold mb-4">Revenue Growth</h3>
             <div className="h-[200px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" className="text-gray-700">
                 <AreaChart
                   data={[{
                     name: 'Previous',
@@ -194,7 +246,7 @@ export default function AdminDashboard() {
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-lg text-gray-600 font-semibold mb-4">User Growth</h3>
             <div className="h-[200px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" className="text-gray-700">
                 <LineChart
                   data={[{
                     name: 'Previous',
@@ -241,7 +293,7 @@ export default function AdminDashboard() {
         <div className="bg-white p-6 rounded-lg shadow-md mb-8">
           <h3 className="text-lg text-gray-600 font-semibold mb-4">Order Status Distribution</h3>
           <div className="h-[300px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" className="text-gray-700">
               <BarChart
                 data={Object.entries(dashboardData?.orderStatusCounts || {}).map(([status, count]) => ({
                   status,

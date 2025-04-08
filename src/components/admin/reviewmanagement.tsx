@@ -27,7 +27,7 @@ export default function ReviewManagement({
   const [adminNote, setAdminNote] = useState('');
   const [filterOptions, setFilterOptions] = useState({
     rating: 'all',
-    hasPhoto: false,
+    hasMedia: false,
     isHidden: false,
     isReported: false,
   });
@@ -56,40 +56,7 @@ export default function ReviewManagement({
     }
   };
 
-  const handleFeatureToggle = async (review: Review) => {
-    try {
-      const newFeatureState = !review.isFeatured;
-      const response = await fetch(`/api/admin/reviews/${review.id}/feature`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isFeatured: newFeatureState })
-      });
-      
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to update review');
-      }
-      
-      const updatedReviews = reviews.map(r =>
-        r.id === review.id ? { ...r, isFeatured: newFeatureState } : r
-      );
-      
-      setReviews(updatedReviews);
-      if (typeof onUpdateReview === 'function') {
-        onUpdateReview(updatedReviews);
-      }
-      
-      setToastMessage(`Review ${newFeatureState ? 'featured' : 'unfeatured'} successfully`);
-      setToastType('success');
-      setShowToast(true);
-    } catch (error) {
-      console.error('Error updating review:', error);
-      setToastMessage('Failed to update review status');
-      setToastType('error');
-      setShowToast(true);
-    }
-  };
+
 
   return (
     <div className="bg-white rounded-lg shadow">
@@ -223,13 +190,6 @@ export default function ReviewManagement({
                 )}
               </div>
               <div className="flex items-center space-x-2 ml-4">
-                <button
-                  onClick={() => handleFeatureToggle(review)}
-                  className={`p-1 ${review.isFeatured ? 'text-yellow-400' : 'text-gray-400'} hover:text-yellow-600`}
-                  title={review.isFeatured ? 'Remove from Featured' : 'Mark as Featured'}
-                >
-                  <Star className={`w-5 h-5 ${review.isFeatured ? 'fill-current' : ''}`} />
-                </button>
                 <button
                   onClick={() => {
                     setSelectedReview(review);

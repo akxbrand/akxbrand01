@@ -60,6 +60,31 @@ export async function GET() {
       return acc;
     }, {} as Record<string, number>);
 
+    // Get active announcements count
+    const activeAnnouncements = await prisma.announcement.count({
+      where: { status: 'active' }
+    });
+
+    // Get active products count
+    const activeProducts = await prisma.product.count({
+      where: { status: 'active' }
+    });
+
+    // Get active coupons count
+    const activeCoupons = await prisma.coupon.count({
+      where: {
+        isActive: true,
+        endDate: {
+          gte: new Date()
+        }
+      }
+    });
+
+    // Get active feature videos count
+    const activeFeatureVideos = await prisma.featureVideo.count({
+      where: { isActive: true }
+    });
+
     return NextResponse.json({
       success: true,
       data: {
@@ -70,7 +95,11 @@ export async function GET() {
         activeBanners,
         totalUsers,
         recentUsers,
-        orderStatusCounts
+        orderStatusCounts,
+        activeAnnouncements,
+        activeProducts,
+        activeCoupons,
+        activeFeatureVideos
       }
     });
 
