@@ -1,10 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
-interface TopProduct {
-  name: string;
-  orderCount: number;
-}
+
 
 export async function GET() {
   try {

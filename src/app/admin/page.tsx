@@ -102,7 +102,7 @@ export default function AdminDashboard() {
 
   return (
     <AdminLayout title='Admin Page'>
-      <div className="p-6">
+      <div className="p-6 pt-0">
         <h1 className="text-2xl text-gray-900 font-bold mb-6">Dashboard Overview</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
