@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
+interface TopProduct {
+  name: string;
+  orderCount: number;
+}
+
 export async function GET() {
   try {
     // Fetch total orders and calculate revenue
@@ -85,6 +90,33 @@ export async function GET() {
       where: { isActive: true }
     });
 
+    // Get most ordered products
+    const topProducts = await prisma.orderItem.groupBy({
+      by: ['productId'],
+      _sum: {
+        quantity: true
+      },
+      orderBy: {
+        _sum: {
+          quantity: 'desc'
+        }
+      },
+      take: 5
+    });
+
+    const topProductsWithNames = await Promise.all(
+      topProducts.map(async (item) => {
+        const product = await prisma.product.findUnique({
+          where: { id: item.productId },
+          select: { name: true }
+        });
+        return {
+          name: product?.name || 'Unknown Product',
+          orderCount: item._sum.quantity || 0
+        };
+      })
+    );
+
     return NextResponse.json({
       success: true,
       data: {
@@ -99,7 +131,8 @@ export async function GET() {
         activeAnnouncements,
         activeProducts,
         activeCoupons,
-        activeFeatureVideos
+        activeFeatureVideos,
+        topProducts: topProductsWithNames
       }
     });
 

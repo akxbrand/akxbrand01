@@ -24,7 +24,10 @@ import {
   AreaChart,
   Area,
   LineChart,
-  Line
+  Line,
+  PieChart,
+  Pie,
+  Cell
 } from 'recharts';
 
 interface DashboardData {
@@ -40,6 +43,10 @@ interface DashboardData {
   activeProducts: number;
   activeCoupons: number;
   activeFeatureVideos: number;
+  topProducts: Array<{
+    name: string;
+    orderCount: number;
+  }>;
 }
 
 export default function AdminDashboard() {
@@ -331,6 +338,78 @@ export default function AdminDashboard() {
             ))}
           </div>
         </div>
+         {/* Most Ordered Products Donut Chart */}
+         <div className="bg-white p-6 rounded-lg shadow-md mb-8 mt-8">
+            <h3 className="text-lg text-gray-600 font-semibold mb-4">Most Ordered Products</h3>
+            <div className="h-[300px] w-full">
+              <ResponsiveContainer width="100%" height="100%" className="text-gray-700">
+                <PieChart>
+                  <Pie
+                    data={(dashboardData?.topProducts || []).map(product => ({
+                      name: product.name,
+                      value: product.orderCount
+                    }))}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={100}
+                    fill="#8884d8"
+                    paddingAngle={2}
+                    dataKey="value"
+                  >
+                    {(dashboardData?.topProducts || []).map((_, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={[
+                          '#4F46E5',
+                          '#22C55E',
+                          '#F59E0B',
+                          '#EC4899',
+                          '#06B6D4'
+                        ][index % 5]}
+                      />
+                    ))}
+                  </Pie>
+                  <text
+                    x="50%"
+                    y="50%"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    className="text-lg font-semibold text-gray-700"
+                  >
+                    {"Products"}
+                  </text>
+                  {/* <text
+                    x="50%"
+                    y="60%"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    className="text-sm text-gray-500"
+                  >
+                    {dashboardData?.topProducts?.[0]?.orderCount || 0} orders
+                  </text> */}
+                  <Tooltip
+                    formatter={(value, name) => [`${value} orders`, name]}
+                    contentStyle={{ background: 'rgba(255, 255, 255, 0.9)', border: '1px solid #ddd' }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-5 gap4 mt-4">
+              {dashboardData?.topProducts.map((product, index) => (
+                <div key={index} className="flex items-center space-x-2">
+                  <div className={`w-3 h-3 rounded-full ${[
+                    'bg-indigo-600',
+                    'bg-green-500',
+                    'bg-amber-500',
+                    'bg-pink-500',
+                    'bg-cyan-500'
+                  ][index % 5]}`}></div>
+                  <p className="text-sm text-gray-600 truncate">{product.name}</p>
+                </div>
+              ))}
+            </div>
+          </div>
       </div>
     </AdminLayout>
   );
