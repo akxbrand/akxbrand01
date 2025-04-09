@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
-import { 
-  ShoppingCart, 
-  Flag, 
+import {
+  ShoppingCart,
+  Flag,
   Users,
   IndianRupee,
   TrendingUp,
@@ -46,6 +46,7 @@ interface DashboardData {
   topProducts: Array<{
     name: string;
     orderCount: number;
+    paymentStatus: 'pending' | 'completed' | 'failed';
   }>;
 }
 
@@ -103,7 +104,7 @@ export default function AdminDashboard() {
     <AdminLayout title='Admin Page'>
       <div className="p-6">
         <h1 className="text-2xl text-gray-900 font-bold mb-6">Dashboard Overview</h1>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {/* Total Orders */}
           <div className="bg-white p-6 rounded-lg shadow-md">
@@ -214,8 +215,8 @@ export default function AdminDashboard() {
                 >
                   <defs>
                     <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#22C55E" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="#22C55E" stopOpacity={0.1}/>
+                      <stop offset="5%" stopColor="#22C55E" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="#22C55E" stopOpacity={0.1} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
@@ -233,8 +234,8 @@ export default function AdminDashboard() {
                     fill="url(#colorRevenue)"
                     animationDuration={1500}
                   />
-                  
-                {/* </BarChart> */}
+
+                  {/* </BarChart> */}
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -279,8 +280,8 @@ export default function AdminDashboard() {
                     activeDot={{ r: 6, stroke: '#F59E0B', strokeWidth: 2, fill: '#fff' }}
                     animationDuration={1500}
                   />
-                  </LineChart>
-            
+                </LineChart>
+
               </ResponsiveContainer>
             </div>
             <div className="grid grid-cols-2 gap-4 mt-4">
@@ -310,8 +311,8 @@ export default function AdminDashboard() {
               >
                 <defs>
                   <linearGradient id="colorOrders" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#4F46E5" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#4F46E5" stopOpacity={0.4}/>
+                    <stop offset="5%" stopColor="#4F46E5" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#4F46E5" stopOpacity={0.4} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
@@ -338,48 +339,48 @@ export default function AdminDashboard() {
             ))}
           </div>
         </div>
-         {/* Most Ordered Products Donut Chart */}
-         <div className="bg-white p-6 rounded-lg shadow-md mb-8 mt-8">
-            <h3 className="text-lg text-gray-600 font-semibold mb-4">Most Ordered Products</h3>
-            <div className="h-[300px] w-full">
-              <ResponsiveContainer width="100%" height="100%" className="text-gray-700">
-                <PieChart>
-                  <Pie
-                    data={(dashboardData?.topProducts || []).map(product => ({
-                      name: product.name,
-                      value: product.orderCount
-                    }))}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={100}
-                    fill="#8884d8"
-                    paddingAngle={2}
-                    dataKey="value"
-                  >
-                    {(dashboardData?.topProducts || []).map((_, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={[
-                          '#4F46E5',
-                          '#22C55E',
-                          '#F59E0B',
-                          '#EC4899',
-                          '#06B6D4'
-                        ][index % 5]}
-                      />
-                    ))}
-                  </Pie>
-                  <text
-                    x="50%"
-                    y="50%"
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    className="text-lg font-semibold text-gray-700"
-                  >
-                    {"Products"}
-                  </text>
-                  {/* <text
+        {/* Most Ordered Products Donut Chart */}
+        <div className="bg-white p-6 rounded-lg shadow-md mb-8 mt-8">
+          <h3 className="text-lg text-gray-600 font-semibold mb-4">Most Ordered Products</h3>
+          <div className="h-[300px] w-full">
+            <ResponsiveContainer width="100%" height="100%" className="text-gray-700">
+              <PieChart>
+                <Pie
+                  data={(dashboardData?.topProducts || []).filter(product => product.paymentStatus === 'completed').map(product => ({
+                    name: product.name,
+                    value: product.orderCount
+                  }))}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={100}
+                  fill="#8884d8"
+                  paddingAngle={2}
+                  dataKey="value"
+                >
+                  {(dashboardData?.topProducts || []).map((_, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={[
+                        '#4F46E5',
+                        '#22C55E',
+                        '#F59E0B',
+                        '#EC4899',
+                        '#06B6D4'
+                      ][index % 5]}
+                    />
+                  ))}
+                </Pie>
+                <text
+                  x="50%"
+                  y="50%"
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  className="text-lg font-semibold text-gray-700"
+                >
+                  {"Products"}
+                </text>
+                {/* <text
                     x="50%"
                     y="60%"
                     textAnchor="middle"
@@ -388,28 +389,28 @@ export default function AdminDashboard() {
                   >
                     {dashboardData?.topProducts?.[0]?.orderCount || 0} orders
                   </text> */}
-                  <Tooltip
-                    formatter={(value, name) => [`${value} orders`, name]}
-                    contentStyle={{ background: 'rgba(255, 255, 255, 0.9)', border: '1px solid #ddd' }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-5 gap4 mt-4">
-              {dashboardData?.topProducts.map((product, index) => (
-                <div key={index} className="flex items-center space-x-2">
-                  <div className={`w-3 h-3 rounded-full ${[
-                    'bg-indigo-600',
-                    'bg-green-500',
-                    'bg-amber-500',
-                    'bg-pink-500',
-                    'bg-cyan-500'
-                  ][index % 5]}`}></div>
-                  <p className="text-sm text-gray-600 truncate">{product.name}</p>
-                </div>
-              ))}
-            </div>
+                <Tooltip
+                  formatter={(value, name) => [`${value} orders`, name]}
+                  contentStyle={{ background: 'rgba(255, 255, 255, 0.9)', border: '1px solid #ddd' }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
           </div>
+          <div className="grid grid-cols-1 md:grid-cols-5 gap4 mt-4">
+            {dashboardData?.topProducts.filter(product => product.paymentStatus === 'completed').map((product, index) => (
+              <div key={index} className="flex items-center space-x-2">
+                <div className={`w-3 h-3 rounded-full ${[
+                  'bg-indigo-600',
+                  'bg-green-500',
+                  'bg-amber-500',
+                  'bg-pink-500',
+                  'bg-cyan-500'
+                ][index % 5]}`}></div>
+                <p className="text-sm text-gray-600 truncate">{product.name}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </AdminLayout>
   );

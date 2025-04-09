@@ -90,9 +90,14 @@ export async function GET() {
       where: { isActive: true }
     });
 
-    // Get most ordered products
+    // Get most ordered products with completed payments
     const topProducts = await prisma.orderItem.groupBy({
       by: ['productId'],
+      where: {
+        order: {
+          paymentStatus: 'completed'
+        }
+      },
       _sum: {
         quantity: true
       },
@@ -112,7 +117,8 @@ export async function GET() {
         });
         return {
           name: product?.name || 'Unknown Product',
-          orderCount: item._sum.quantity || 0
+          orderCount: item._sum.quantity || 0,
+          paymentStatus: 'completed'
         };
       })
     );
