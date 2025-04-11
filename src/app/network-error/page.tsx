@@ -1,52 +1,21 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Layout from '@/components/layout/Layout';
 import { motion } from 'framer-motion';
+import { useNetworkStatus } from '@/components/providers/NetworkStatusProvider';
 
 export default function NetworkError() {
   const router = useRouter();
-  const [isOnline, setIsOnline] = useState(true);
-
-  useEffect(() => {
-    const handleOnline = () => {
-      setIsOnline(true);
-      router.back();
-    };
-
-    const handleOffline = () => {
-      setIsOnline(false);
-    };
-
-    // Set up network status check interval
-    const checkConnection = () => {
-      if (navigator.onLine && !isOnline) {
-        handleOnline();
-      } else if (!navigator.onLine && isOnline) {
-        handleOffline();
-      }
-    };
-
-    // Check connection status every 3 seconds
-    const intervalId = setInterval(checkConnection, 3000);
-
-    // Add event listeners for online/offline events
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
-    // Initial check
-    setIsOnline(navigator.onLine);
-
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-      clearInterval(intervalId);
-    };
-  }, [router, isOnline]);
+  const { isOnline, hasVisitedBefore } = useNetworkStatus();
 
   const handleRetry = () => {
-    router.push('/');
+    if (isOnline) {
+      router.back();
+    } else {
+      // If still offline, attempt to refresh the page
+      window.location.reload();
+    }
   };
 
   return (
@@ -72,7 +41,7 @@ export default function NetworkError() {
               <div className="absolute inset-0 bg-indigo-100 rounded-full animate-ping opacity-20"></div>
               <div className="absolute inset-0 bg-indigo-50 rounded-full animate-pulse"></div>
               <svg
-                className="relative z-10 w-full h-full text-indigo-600"
+                className="relative z-10 w-full h-full text-gray-700"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -82,7 +51,7 @@ export default function NetworkError() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15zm9-9.5l6 6m0-6l-6 6"
                 />
               </svg>
             </div>
@@ -95,16 +64,18 @@ export default function NetworkError() {
             className="space-y-6"
           >
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">
-              Network Connection Error
+              {hasVisitedBefore ? "Connection Lost" : "Network Connection Error"}
             </h2>
             <p className="text-gray-600 text-base sm:text-lg md:text-xl max-w-md mx-auto">
-              We're having trouble connecting to our servers. Please check your internet connection and try again.
+              {hasVisitedBefore
+                ? "Looks like we lost connection to our servers. Don't worry, this happens sometimes."
+                : "We're having trouble connecting to our servers. Please check your internet connection and try again."}
             </p>
             <motion.button
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
               onClick={handleRetry}
-              className="inline-flex items-center justify-center bg-indigo-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-all duration-200 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-lg hover:shadow-xl"
+              className="inline-flex items-center justify-center bg-gray-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-all duration-200 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-lg hover:shadow-xl"
             >
               <svg
                 className="w-5 h-5 mr-2"

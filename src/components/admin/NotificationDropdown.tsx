@@ -128,15 +128,25 @@ export default function NotificationDropdown() {
       case 'new_user':
         return '👤';
       case 'newsletter_subscription':
-        return '📧';
+        return '📨';
       case 'bulk_order':
         return '📦';
       case 'new_order':
-        return '🛍️';
+        return '🛒';
       case 'coupon_expiring':
         return '🎫';
       case 'low_stock':
-        return '📦';
+        return '⚠️';
+      case 'review':
+        return '⭐';
+      case 'announcement':
+        return '📢';
+      case 'deal':
+        return '💰';
+      case 'announcement_expiring':
+        return '📢';
+      case 'deal_expiring':
+        return '⚡';
       default:
         return '🔔';
     }

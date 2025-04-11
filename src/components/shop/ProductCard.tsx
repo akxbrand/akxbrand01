@@ -29,6 +29,7 @@ interface ProductCardProps {
     };
   };
   viewMode: 'grid' | 'list';
+  isLimitted?: boolean;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
