@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ChevronRight, Star } from 'lucide-react';
+import { ChevronRight, Star, X } from 'lucide-react';
 import Toast from '@/components/ui/Toast';
 import { useCart } from '@/context/CartContext';
 
@@ -188,16 +188,63 @@ export default function Home() {
     }
   };
 
-  const handleAddToCart = async (product: any) => {
+  const [showSizeModal, setShowSizeModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [selectedSize, setSelectedSize] = useState('');
+  const [addingProducts, setAddingProducts] = useState<Record<string, boolean>>({});
+
+  const calculateDiscount = (sizeInfo: { price: number; oldPrice?: number }) => {
+    if (!sizeInfo.oldPrice) return null;
+    const discount = Math.round(((sizeInfo.oldPrice - sizeInfo.price) / sizeInfo.oldPrice) * 100);
+    return discount;
+  };
+
+  const handleSizeSelect = async (product: any, size: string) => {
+    setSelectedSize(size);
+    await handleAddToCart(product, size);
+    setShowSizeModal(false);
+    setSelectedProduct(null);
+  };
+
+  const handleCartButtonClick = (product: any) => {
+    if (product.sizes && product.sizes.length === 1) {
+      handleAddToCart(product, product.sizes[0].size);
+    } else {
+      setSelectedProduct(product);
+      setShowSizeModal(true);
+    }
+  };
+
+  const handleAddToCart = async (product: any, size?: string) => {
+    setAddingProducts(prev => ({ ...prev, [product.id]: true }));
     try {
-      await addToCart({
-        id: product.id,
-        productId: product.id,
-        name: product.name,
-        price: product.price,
-        image: product.images[0],
-        quantity: 1
-      });
+      if (size) {
+        const sizeInfo = (product.sizes || []).find(s => s.size === size);
+
+        if (!sizeInfo || sizeInfo.stock <= 0) {
+          setToastMessage(`Sorry, size ${size} is out of stock`);
+          setToastType('error');
+          setShowToast(true);
+          return;
+        }
+
+        await addToCart({
+          id: `${product.id}-${size}`,
+          productId: product.id,
+          name: product.name,
+          price: sizeInfo.price || product.price,
+          image: product.images[0],
+          size: size
+        });
+      } else {
+        await addToCart({
+          id: product.id,
+          productId: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.images[0]
+        });
+      }
       setToastMessage('Product added to cart successfully');
       setToastType('success');
       setShowToast(true);
@@ -206,6 +253,12 @@ export default function Home() {
       setToastMessage('Failed to add product to cart');
       setToastType('error');
       setShowToast(true);
+    } finally {
+      setAddingProducts(prev => {
+        const newState = { ...prev };
+        delete newState[product.id];
+        return newState;
+      });
     }
   };
 
@@ -373,16 +426,28 @@ export default function Home() {
                             </div>
                             <span className="ml-1.5 text-xs text-gray-500">{product.rating.toFixed(1) || 0}</span>
                           </div>
-                          <div className="mt-1.5 flex items-center">
-                            <span className="text-sm font-bold text-gray-900">₹{product.price}</span>
-                            {product.oldPrice && (
-                              <div className='flex text-center items-center '>
-                                <span className="ml-1.5 text-xs text-gray-500 line-through">₹{product.oldPrice}
+                          <div className="mt-1.5 flex items-center gap-2 flex-wrap">
+                            {product.sizes && product.sizes.length > 0 ? (
+                              <>
+                                <span className="text-sm font-bold text-gray-900">
+                                  ₹{Math.min(...product.sizes.map(s => s.price)).toLocaleString('en-IN')}
                                 </span>
-                                <div className=" text-green-600 px-1.5 py-0.5 rounded text-xs font-medium">
-                                  {Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}% off
-                                </div>
-                              </div>
+                                {product.sizes.some(s => s.oldPrice) && (
+                                  <>
+                                    <span className="text-xs text-gray-500 line-through">
+                                      ₹{Math.min(...product.sizes.filter(s => s.oldPrice).map(s => s.oldPrice!)).toLocaleString('en-IN')}
+                                    </span>
+                                    <span className="text-xs text-green-600">
+                                      {calculateDiscount({
+                                        price: Math.min(...product.sizes.map(s => s.price)),
+                                        oldPrice: Math.min(...product.sizes.filter(s => s.oldPrice).map(s => s.oldPrice!))
+                                      })}% off
+                                    </span>
+                                  </>
+                                )}
+                              </>
+                            ) : (
+                              <span className="text-sm font-bold text-gray-900">₹{product.price.toLocaleString('en-IN')}</span>
                             )}
                             {/* {product.oldPrice && (
                             <div className="absolute bottom-14 right-10 text-green-600 px-1.5 py-0.5 rounded text-xs font-medium">
@@ -391,10 +456,14 @@ export default function Home() {
                           )} */}
                           </div>
                           <button
-                            onClick={() => handleAddToCart(product)}
-                            className="mt-2 w-full bg-gray-900 text-white px-3 py-1.5 rounded text-sm hover:bg-gray-800 transition-colors duration-300"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleCartButtonClick(product);
+                            }}
+                            className={`mt-2 w-full bg-gray-900 text-white px-3 py-1.5 rounded text-sm hover:bg-gray-800 transition-colors duration-300 ${addingProducts[product.id] ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            disabled={addingProducts[product.id]}
                           >
-                            Add to Cart
+                            {addingProducts[product.id] ? 'Adding...' : 'Add to Cart'}
                           </button>
                         </div>
                       </Link>
@@ -458,26 +527,39 @@ export default function Home() {
                             </div>
                             <span className="ml-1.5 text-xs text-gray-500">{product.rating.toFixed(1) || 0}</span>
                           </div>
-                          <div className="mt-1.5 flex items-center">
-                            <span className="text-sm font-bold text-gray-900">₹{product.price}</span>
-                            {product.oldPrice && (
-                              <div className='flex text-center items-center '>
-                                <span className="ml-1.5 text-xs text-gray-500 line-through">₹{product.oldPrice}
+                          <div className="mt-1.5 flex items-center gap-2 flex-wrap">
+                            {product.sizes && product.sizes.length > 0 ? (
+                              <>
+                                <span className="text-sm font-bold text-gray-900">
+                                  ₹{Math.min(...product.sizes.map(s => s.price)).toLocaleString('en-IN')}
                                 </span>
-                                <div className=" text-green-600 px-1.5 py-0.5 rounded text-xs font-medium">
-                                  {Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}% off
-                                </div>
-                              </div>
+                                {product.sizes.some(s => s.oldPrice) && (
+                                  <>
+                                    <span className="text-xs text-gray-500 line-through">
+                                      ₹{Math.min(...product.sizes.filter(s => s.oldPrice).map(s => s.oldPrice!)).toLocaleString('en-IN')}
+                                    </span>
+                                    <span className="text-xs text-green-600">
+                                      {calculateDiscount({
+                                        price: Math.min(...product.sizes.map(s => s.price)),
+                                        oldPrice: Math.min(...product.sizes.filter(s => s.oldPrice).map(s => s.oldPrice!))
+                                      })}% off
+                                    </span>
+                                  </>
+                                )}
+                              </>
+                            ) : (
+                              <span className="text-sm font-bold text-gray-900">₹{product.price.toLocaleString('en-IN')}</span>
                             )}
                           </div>
                           <button
                             onClick={(e) => {
                               e.preventDefault();
-                              handleAddToCart(product);
+                              handleCartButtonClick(product);
                             }}
-                            className="mt-2 w-full bg-gray-900 text-white px-3 py-1.5 rounded text-sm hover:bg-gray-800 transition-colors duration-300"
+                            className={`mt-2 w-full bg-gray-900 text-white px-3 py-1.5 rounded text-sm hover:bg-gray-800 transition-colors duration-300 ${addingProducts[product.id] ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            disabled={addingProducts[product.id]}
                           >
-                            Add to Cart
+                            {addingProducts[product.id] ? 'Adding...' : 'Add to Cart'}
                           </button>
                         </div>
                       </Link>
@@ -489,6 +571,47 @@ export default function Home() {
           )}
         </div>
       </section>
+
+      {showSizeModal && selectedProduct && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 text-gray-800" onClick={() => setShowSizeModal(false)}>
+          <div className="relative bg-white rounded-lg p-6 max-w-sm w-full mx-4" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => setShowSizeModal(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors"
+              aria-label="Close modal"
+            >
+              <X size={20} />
+            </button>
+            <h3 className="text-lg font-semibold mb-4">Select Size</h3>
+            <div className="grid grid-cols-2 gap-2">
+              {(selectedProduct.sizes || []).map((sizeInfo: any) => {
+                const isOutOfStock = sizeInfo.stock <= 0;
+                return (
+                  <button
+                    key={sizeInfo.size}
+                    onClick={() => !isOutOfStock && handleSizeSelect(selectedProduct, sizeInfo.size)}
+                    className={`py-2 px-4 rounded border relative ${isOutOfStock ? 'border-gray-200 bg-gray-100 cursor-not-allowed' : 'border-gray-300 hover:border-gray-700'} ${selectedSize === sizeInfo.size ? 'border-gray-700 bg-gray-100' : ''}`}
+                    disabled={isOutOfStock}
+                  >
+                    <div className="text-sm font-medium">{sizeInfo.size}</div>
+                    <div className="text-sm font-medium">₹{sizeInfo.price.toLocaleString('en-IN')} <span className="text-xs text-gray-500 line-through"> ₹{sizeInfo.oldPrice.toLocaleString('en-IN')}</span></div>
+                    {sizeInfo.oldPrice && (
+                        <div className="text-xs text-green-600">
+                          {calculateDiscount(sizeInfo)}% off
+                        </div>
+                     
+                    )}
+                    <div className={`text-xs ${isOutOfStock ? 'text-red-500 font-medium' : 'text-gray-500'}`}>
+                      {isOutOfStock ? 'Out of stock' : 'available'}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Special Offer Section */}
       <section className="relative h-[270px] sm:h-[40em] flex items-center justify-center px-4 sm:px-6 lg:px-8">
         <div className="absolute inset-0 max-w-7xl mx-auto">

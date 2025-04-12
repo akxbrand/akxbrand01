@@ -20,7 +20,7 @@ interface ProductCardProps {
     isBestSeller?: boolean;
     isLimitted?: boolean;
     stock: number;
-    sizes: { size: string; stock: number; price: number }[];
+    sizes: { size: string; stock: number; price: number; oldPrice?:number }[];
     category: {
       name: string;
     };
@@ -102,9 +102,9 @@ export default function ProductCard({ product }: ProductCardProps) {
     }
   };
 
-  const calculateDiscount = () => {
-    if (!product.oldPrice) return null;
-    const discount = Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100);
+  const calculateDiscount = (sizeInfo: { price: number; oldPrice?: number }) => {
+    if (!sizeInfo.oldPrice) return null;
+    const discount = Math.round(((sizeInfo.oldPrice - sizeInfo.price) / sizeInfo.oldPrice) * 100);
     return discount;
   };
 
@@ -157,12 +157,27 @@ export default function ProductCard({ product }: ProductCardProps) {
           <h3 className="text-sm sm:text-base text-gray-800 font-medium mb-2 line-clamp-2">{product.name}</h3>
           {renderStars()}
           <div className="flex items-center gap-2 mt-2 flex-wrap">
-            <span className="text-base sm:text-lg text-gray-800 font-medium">₹{product.price.toLocaleString('en-IN')}</span>
-            {product.oldPrice && (
+            {product.sizes && product.sizes.length > 0 ? (
               <>
-                <span className="text-xs sm:text-sm text-gray-500 line-through">₹{product.oldPrice.toLocaleString('en-IN')}</span>
-                <span className="text-xs sm:text-sm text-green-600">{calculateDiscount()}% off</span>
+                <span className="text-base sm:text-lg text-gray-800 font-medium">
+                  ₹{Math.min(...product.sizes.map(s => s.price)).toLocaleString('en-IN')}
+                </span>
+                {product.sizes.some(s => s.oldPrice) && (
+                  <>
+                    <span className="text-xs sm:text-sm text-gray-500 line-through">
+                      ₹{Math.min(...product.sizes.filter(s => s.oldPrice).map(s => s.oldPrice!)).toLocaleString('en-IN')}
+                    </span>
+                    <span className="text-xs sm:text-sm text-green-600">
+                      {calculateDiscount({
+                        price: Math.min(...product.sizes.map(s => s.price)),
+                        oldPrice: Math.min(...product.sizes.filter(s => s.oldPrice).map(s => s.oldPrice!))
+                      })}% off
+                    </span>
+                  </>
+                )}
               </>
+            ) : (
+              <span className="text-base sm:text-lg text-gray-800 font-medium">₹{product.price.toLocaleString('en-IN')}</span>
             )}
           </div>
         </div>
@@ -207,7 +222,12 @@ export default function ProductCard({ product }: ProductCardProps) {
                       disabled={isOutOfStock}
                     >
                       <div className="text-sm font-medium">{sizeInfo.size}</div>
-                      <div className="text-sm font-medium">₹{sizeInfo.price || product.price}</div>
+                      <div className="text-sm font-medium">₹{sizeInfo.price.toLocaleString('en-IN')}</div>
+                      {sizeInfo.oldPrice && (
+                        <div className="text-xs text-green-600">
+                          {calculateDiscount(sizeInfo)}% off
+                        </div>
+                      )}
                       <div className={`text-xs ${isOutOfStock ? 'text-red-500 font-medium' : isStockLow ? 'text-orange-500' : 'text-gray-500'}`}>
                         {isOutOfStock ? 'Out of stock' : 
                          isStockLow ? `Only ${remainingStock} left!` :
