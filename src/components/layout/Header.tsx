@@ -183,9 +183,9 @@ export default function Header({ onMobileMenuClick }: HeaderProps) {
             <button
               onClick={() => setIsSearchOpen(true)}
               title="Search Products"
-              className="relative p-2 text-gray-700 hover:text-gray-900 transition-colors duration-200 group"
+              className="relative p-2 pb-0 text-gray-700 hover:text-gray-900 transition-colors duration-200 group"
             >
-              <span className="relative z-10">
+              <span className="relative z-10 inline-block">
                 <Search className="h-5 w-5" />
               </span>
               <span className="absolute inset-0 w-full h-full rounded-full bg-gray-100 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
@@ -194,11 +194,11 @@ export default function Header({ onMobileMenuClick }: HeaderProps) {
             <Link
               href="/cart"
               title="My Cart"
-              className="relative p-2 text-gray-700 hover:text-gray-900 transition-colors duration-200 group"
+              className="relative p-2 pb-0 text-gray-700 hover:text-gray-900 transition-colors duration-200 group"
             >
-              <span className="relative z-10">
+              <span className="relative z-10 inline-block">
                 <ShoppingCart className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center transform translate-z-0">
                   {cartCount}
                 </span>
               </span>
@@ -210,10 +210,10 @@ export default function Header({ onMobileMenuClick }: HeaderProps) {
             </Link>
             <Link
               href="/account"
-              className="relative p-2 text-gray-700 hover:text-gray-900 transition-colors duration-200 group hidden md:block"
+              className="relative p-2 pb-0 text-gray-700 hover:text-gray-900 transition-colors duration-200 group hidden md:block"
               title="Profile"
             >
-              <span className="relative z-10" >
+              <span className="relative z-10 inline-block" >
                 <User className="h-5 w-5"  />
               </span>
               <span className="absolute inset-0 w-full h-full rounded-full bg-gray-100 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
