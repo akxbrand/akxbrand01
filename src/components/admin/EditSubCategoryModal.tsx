@@ -161,6 +161,7 @@ interface SubCategory {
   categoryId: string;
   status: 'Active' | 'Inactive';
   imageUrl: string;
+  image: string;
 }
 
 interface EditSubCategoryModalProps {
@@ -179,12 +180,12 @@ export default function EditSubCategoryModal({
   categories,
 }: EditSubCategoryModalProps) {
   const [formData, setFormData] = useState<SubCategory>(subCategory);
-  const [imagePreview, setImagePreview] = useState<string>(subCategory.imageUrl);
+  const [imagePreview, setImagePreview] = useState<string>(subCategory.imageUrl || subCategory.image);
   const [uploadError, setUploadError] = useState('');
 
   useEffect(() => {
     setFormData(subCategory);
-    setImagePreview(subCategory.imageUrl);
+    setImagePreview(subCategory.imageUrl || subCategory.image);
   }, [subCategory]);
 
   const handleImageUploadSuccess = (url: string) => {
@@ -201,7 +202,10 @@ export default function EditSubCategoryModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.imageUrl) {
+    if(!formData.imageUrl){
+      formData.imageUrl = formData.image
+    }
+    if (!formData.imageUrl && !formData.image) {
       setUploadError('Please upload a subcategory image');
       return;
     }

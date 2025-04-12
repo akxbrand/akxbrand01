@@ -51,11 +51,11 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
   const [stock, setStock] = useState(product.stock);
   const [weeklySales, setWeeklySales] = useState(product.weeklySales || 0);
   type ProductStatus = 'In Stock' | 'Limited Stock' | 'Out of Stock';
-  const [status, setStatus] = useState<ProductStatus>(product.status as ProductStatus);
+  // const [status, setStatus] = useState<ProductStatus>(product.status as ProductStatus);
   const [isLimitedTimeDeal, setIsLimitedTimeDeal] = useState(product.isLimitedTimeDeal || false);
   const [dealStartTime, setDealStartTime] = useState(product.dealStartTime || '');
   const [dealEndTime, setDealEndTime] = useState(product.dealEndTime || '');
-  const [dealQuantityLimit, setDealQuantityLimit] = useState(product.dealQuantityLimit || 0);
+  // const [dealQuantityLimit, setDealQuantityLimit] = useState(product.dealQuantityLimit || 0);
   const [isBestSeller, setIsBestSeller] = useState(product.isBestSeller || false);
   const [isNewArrival, setIsNewArrival] = useState(product.isNewArrival || false);
   const [imagePreviews, setImagePreviews] = useState<string[]>(product.images);
@@ -108,11 +108,11 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
     setPrice(product.price);
     setStock(product.stock);
     setWeeklySales(product.weeklySales || 0);
-    setStatus(product.status);
+    // setStatus(product.status);
     setIsLimitedTimeDeal(product.isLimitedTimeDeal || false);
     setDealStartTime(product.dealStartTime || '');
     setDealEndTime(product.dealEndTime || '');
-    setDealQuantityLimit(product.dealQuantityLimit || 0);
+    // setDealQuantityLimit(product.dealQuantityLimit || 0);
     setIsTop10(product.isTop10 || false);
     setIsLimitted(product.isLimitted || false);
     setImagePreviews(product.images);
@@ -253,7 +253,7 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
       price,
       stock,
       weeklySales,
-      status,
+      // status,
       images: imagePreviews,
       sizes: sizes.map(size => ({
         size: size.size,

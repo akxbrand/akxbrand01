@@ -58,10 +58,7 @@ export async function POST(request: Request) {
     // Check if user already exists
     const existingUser = await prisma.user.findFirst({
       where: {
-        OR: [
-          { phoneNumber },
-          { email }
-        ]
+           email 
       }
     });
 
@@ -69,7 +66,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { 
           success: false,
-          message: 'An account with this email or phone number already exists'
+          message: 'An account with this email already exists'
         },
         { status: 400 }
       );
