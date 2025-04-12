@@ -37,6 +37,8 @@ export default function OrdersPage() {
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/login');
+      setIsLoading(false);
+      // setError('Please login to view your orders');
       return;
     }
 
@@ -77,8 +79,16 @@ export default function OrdersPage() {
       <Layout>
         <div className="min-h-screen bg-gray-50 py-8">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-center items-center h-64">
-              <p className="text-red-600">{error}</p>
+            <div className="flex flex-col items-center justify-center h-64 space-y-4">
+              <XCircle className="w-16 h-16 text-gray-400" />
+              <h3 className="text-lg font-medium text-gray-900">Access Restricted</h3>
+              <p className="text-gray-600">{error}</p>
+              <Link 
+                href="/login"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+              >
+                Login to Continue
+              </Link>
             </div>
           </div>
         </div>
