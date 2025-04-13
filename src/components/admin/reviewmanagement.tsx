@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Review, ReviewStats } from '@/types/review';
-import { Star, Flag, Trash2, MessageSquare, ImageIcon, Video } from 'lucide-react';
+import { Star, Flag, Trash2, MessageSquare, ImageIcon, Star as StarIcon } from 'lucide-react';
 
 import Toast from '@/components/ui/Toast';
 import Image from 'next/image';
@@ -38,7 +38,9 @@ export default function ReviewManagement({
 
   // Update local reviews when prop changes
   React.useEffect(() => {
-    setReviews(initialReviews);
+    if (initialReviews) {
+      setReviews(initialReviews);
+    }
   }, [initialReviews]);
 
   const filteredReviews = (reviews || []).filter((review) => {
@@ -53,6 +55,46 @@ export default function ReviewManagement({
   const handleDeleteReview = (reviewId: string) => {
     if (window.confirm('Are you sure you want to delete this review? This action cannot be undone.')) {
       onDeleteReview(reviewId);
+    }
+  };
+
+  const handleToggleFeatured = async (reviewId: string, currentStatus: boolean) => {
+    try {
+      const response = await fetch('/api/reviews/toggle-featured', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reviewId, currentStatus}),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        const updatedReview = data.review;
+        const updatedReviews = reviews.map(review =>
+          review.id === reviewId
+            ? {
+                ...review,
+                isFeatured: updatedReview.isFeatured,
+                userName: updatedReview.name,
+                text: updatedReview.comment,
+                photos: updatedReview.media?.map(m => m.url) || [],
+                rating: updatedReview.rating,
+                createdAt: updatedReview.date
+              }
+            : review
+        );
+        setReviews(updatedReviews);
+        if (onUpdateReview) onUpdateReview(updatedReviews);
+        setToastMessage(`Review ${updatedReview.isFeatured ? 'featured' : 'unfeatured'} successfully`);
+        setToastType('success');
+        setShowToast(true);
+      } else {
+        throw new Error(data.error);
+      }
+    } catch (error) {
+      console.error('Error updating review featured status:', error);
+      setToastMessage('Failed to update review featured status');
+      setToastType('error');
+      setShowToast(true);
     }
   };
 
@@ -158,6 +200,11 @@ export default function ReviewManagement({
                       Hidden
                     </span>
                   )}
+                  {review.isFeatured && (
+                    <span className="px-2 py-1 text-xs font-medium text-yellow-700 bg-yellow-100 rounded-full">
+                      Featured
+                    </span>
+                  )}
                 </div>
                 <p className="mt-2 text-gray-700">{review.text}</p>
                 {review.photos && review.photos.length > 0 && (
@@ -190,6 +237,13 @@ export default function ReviewManagement({
                 )}
               </div>
               <div className="flex items-center space-x-2 ml-4">
+                <button
+                  onClick={() => handleToggleFeatured(review.id, review.isFeatured || false)}
+                  className={`p-1 ${review.isFeatured ? 'text-yellow-400 hover:text-yellow-500' : 'text-gray-400 hover:text-gray-600'}`}
+                  title={`${review.isFeatured ? 'Remove from Featured' : 'Add to Featured'}`}
+                >
+                  <StarIcon className={`w-5 h-5 ${review.isFeatured ? 'fill-current' : ''}`} />
+                </button>
                 <button
                   onClick={() => {
                     setSelectedReview(review);
@@ -266,6 +320,7 @@ export default function ReviewManagement({
           isOpen={true}
           onClose={() => setSelectedImage(null)}
           imageUrl={selectedImage}
+          altText="Selected Review Photo"
         />
       )}
     </div>
