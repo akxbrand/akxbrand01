@@ -27,7 +27,7 @@ export default function AdminProfileModal() {
           <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center">
             <span className="text-sm font-medium text-white">{avatarLetter}</span>
           </div>
-          <span className="text-sm font-medium text-gray-900">{user.name}</span>
+          {/* <span className="text-sm font-medium text-gray-900">Admin</span> */}
         </div>
       </SheetTrigger>
       <SheetContent className="!bg-white w-[400px] sm:w-[540px]">
@@ -41,7 +41,7 @@ export default function AdminProfileModal() {
             </div>
             <div>
               <h3 className="text-xl font-semibold text-gray-800">{user.name}</h3>
-              <p className="text-sm text-gray-600">Super Administrator</p>
+              <p className="text-sm text-gray-600">Administrator</p>
             </div>
           </div>
           

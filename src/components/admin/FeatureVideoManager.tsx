@@ -334,7 +334,7 @@ export default function FeatureVideoManager() {
                 <Button
                   variant="destructive"
                   size="icon"
-                  className='text-red-500 hover:bg-red-100 hover:text-red-600'
+                  className='bg-white text-red-600 hover:bg-red-600 hover:text-white ease-in-out duration-300'
                   onClick={() => handleDeleteVideo(video.id)}
                 >
                   <Trash2 className="w-4 h-4" />

@@ -51,7 +51,8 @@ export const authOptions: NextAuthOptions = {
           id: user.id,
           email: user.email,
           name: user.name,
-          role: user.role
+          role: user.role,
+          phoneNumber: user.phoneNumber
         };
       }
     })
@@ -73,7 +74,8 @@ export const authOptions: NextAuthOptions = {
         user: {
           ...session.user,
           id: token.id as string,
-          role: token.role as string
+          role: token.role as string,
+          phoneNumber: token.phoneNumber as string
         }
       };
     }

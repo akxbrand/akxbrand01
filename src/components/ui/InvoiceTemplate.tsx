@@ -185,9 +185,9 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ order }) => {
           </div>
         </div>
         <div className="text-center text-gray-500 text-sm border-t border-gray-200 pt-6">
-          <p className="font-medium text-gray-700">Thank you for shopping with Himanshi Ecom!</p>
-          <p className="mt-2">For any queries, please contact us at support@himanshiecom.com</p>
-          <p className="mt-1">© {new Date().getFullYear()} Himanshi Ecom. All rights reserved.</p>
+          <p className="font-medium text-gray-700">Thank you for shopping with AKX Brand!</p>
+          <p className="mt-2">For any queries, please contact us at akxbrand@gmail.com</p>
+          <p className="mt-1">© {new Date().getFullYear()} AKX brand. All rights reserved.</p>
         </div>
       </div>
     </div>

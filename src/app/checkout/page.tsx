@@ -237,7 +237,7 @@ export default function CheckoutPage() {
   //       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
   //       amount: amount,
   //       currency: currency,
-  //       name: 'Himanshi Ecom',
+  //       name: 'AKX Brand',
   //       description: 'Purchase Payment',
   //       order_id: orderId,
   //       method: {
@@ -447,7 +447,11 @@ export default function CheckoutPage() {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: orderData.amount,
         currency: orderData.currency,
-        name: 'Himanshi Ecom',
+        image: '/images/brand-logo.png',
+        name: 'AKX Brand',
+        theme: {
+          color: '#3B82F6'
+        },
         description: 'Payment for your order',
         order_id: orderData.orderId,
         handler: async function (response: any) {
@@ -495,9 +499,6 @@ export default function CheckoutPage() {
           name: session?.user?.name || selectedAddress?.label || '',
           email: session?.user?.email || ''
         },
-        theme: {
-          color: '#F37254'
-        }
       };
 
       const razorpay = await initializeRazorpay(options);

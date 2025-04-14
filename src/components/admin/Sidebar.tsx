@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
@@ -16,8 +16,27 @@ import {
   Megaphone
 } from 'lucide-react';
 
-export default function Sidebar() {
+interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
+  const sidebarRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isOpen && sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, onClose]);
 
   const menuItems = [
     {
@@ -84,17 +103,28 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className="w-64 h-screen bg-white border-r border-gray-100 fixed left-0 top-0 flex flex-col">
-      <div className="flex items-center space-x-2 px-2 py-2 border-b border-gray-100 items-center justify-center">
+    <>
+      {/* Backdrop for mobile */}
+      <div
+        className={`fixed inset-0 bg-gray-600 bg-opacity-75 transition-opacity duration-300 ease-in-out md:hidden ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        onClick={onClose}
+      />
+      <div
+        className={`w-64 h-[100dvh] bg-white border-r border-gray-100 fixed left-0 top-0 flex flex-col transform transition-transform duration-300 ease-in-out md:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'} z-20 overflow-hidden`}
+        ref={sidebarRef}
+        onClick={(e) => e.stopPropagation()}
+      >
+      <div className="flex items-center space-x-2 px-2 py-2 border-b border-gray-100 items-center justify-center sticky top-0 bg-white z-10">
         <Image
           src="/images/brand-logo.png"
           alt="AKX Brand Logo"
           width={110}
           height={100}
           className="flex items-center justify-center"
+          priority
         />
       </div>
-      <nav className="py-4 flex-1 overflow-y-auto">
+      <nav className="py-4 flex-1 overflow-y-auto webkit-overflow-scrolling-touch">
         {menuItems.map((item) => {
           const isActive = pathname === item.href;
           return (
@@ -112,5 +142,6 @@ export default function Sidebar() {
         })}
       </nav>
     </div>
+    </>
   );
 }
