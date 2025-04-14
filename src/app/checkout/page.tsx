@@ -469,11 +469,19 @@ export default function CheckoutPage() {
               }),
             });
 
+            const verificationData = await verifyResponse.json();
+
             if (!verifyResponse.ok) {
-              throw new Error('Payment verification failed');
+              const errorMessage = verificationData.error || verificationData.message || 'Payment verification failed';
+              if (errorMessage.includes('User email not found')) {
+                throw new Error('Please ensure you are logged in with a valid email address');
+              }
+              throw new Error(errorMessage);
             }
 
-            const verificationData = await verifyResponse.json();
+            if (!verificationData.order?.updatedOrder) {
+              throw new Error('Invalid response from payment verification');
+            }
             
             // Clear cart and show success modal
             await clearCart();
