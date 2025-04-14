@@ -9,7 +9,7 @@ async function createReviewNotification(review: any) {
     data: {
       type: 'review',
       title: 'New Product Review',
-      message: `A new review has been submitted for ${review.product.name}`,
+      message: `A new review has been submitted for ${review.product.name} by ${review.user.name || 'Anonymous'}`,
       isRead: false,
       metadata: {
         reviewId: review.id,
