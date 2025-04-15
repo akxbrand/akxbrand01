@@ -613,14 +613,13 @@ export default function Home() {
       )}
 
       {/* Special Offer Section */}
-      <section className="relative h-[270px] sm:h-[40em] flex items-center justify-center px-4 sm:px-6 lg:px-8">
-        <div className="absolute inset-0 max-w-7xl mx-auto">
+      <section className="relative w-full h-[270px] sm:h-[40em] flex items-center justify-center px-4 sm:px-6 lg:px-8">
+        <div className="absolute inset-0 w-full mx-auto">
           <Image
             src="/images/banner-second.jpg"
             alt="Special Offer"
-            width={2000}
-            height={5000}
-            className="object-cover brightness-80 "
+            layout='fill'
+            className="brightness-80"
           />
         </div>
       </section>
