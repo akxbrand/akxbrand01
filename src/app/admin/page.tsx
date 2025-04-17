@@ -447,7 +447,15 @@ export default function AdminDashboard() {
           </div>
 
           {/* Summary Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="bg-green-50 p-4 rounded-lg">
+              <p className="text-green-600 font-semibold">Today's Visits</p>
+              <p className="text-2xl font-bold text-green-900">
+                {(dashboardData?.dailyVisits || []).find(visit => 
+                  new Date(visit.date).toDateString() === new Date().toDateString()
+                )?.visits || 0}
+              </p>
+            </div>
             <div className="bg-indigo-50 p-4 rounded-lg">
               <p className="text-indigo-600 font-semibold">Average Daily Visits</p>
               <p className="text-2xl font-bold text-indigo-900">
@@ -466,6 +474,7 @@ export default function AdminDashboard() {
                 {(dashboardData?.dailyVisits || []).reduce((acc, curr) => acc + curr.visits, 0)}
               </p>
             </div>
+           
           </div>
         </div>
 
