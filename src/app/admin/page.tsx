@@ -29,6 +29,7 @@ import {
   Pie,
   Cell
 } from 'recharts';
+import { fontStyle } from 'html2canvas/dist/types/css/property-descriptors/font-style';
 
 interface DashboardData {
   totalOrders: number;
@@ -365,7 +366,18 @@ export default function AdminDashboard() {
                   />
                   <YAxis
                     stroke="#666"
-                    label={{ value: 'Number of Visits', angle: -90, position: 'insideLeft', offset: 0 }}
+                    label={{
+                      value: 'Number of Visits',
+                      angle: -90,
+                      position: 'insideLeft',
+                      offset: -5,
+                      style: {
+                        textAnchor: 'middle',
+                        fill: '#666',
+                        fontSize: 14,
+                        fontStyle:'italic'
+                      }
+                    }}
                   />
                   <Tooltip
                     labelFormatter={(date) => new Date(date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
