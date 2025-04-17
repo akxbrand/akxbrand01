@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
-
-
 export async function GET() {
   try {
     // Fetch total orders and calculate revenue
@@ -87,6 +85,25 @@ export async function GET() {
       where: { isActive: true }
     });
 
+    // Get daily visits for the last 30 days
+    const dailyVisits = await prisma.dailyVisit.findMany({
+      where: {
+        date: {
+          gte: thirtyDaysAgo
+        }
+      },
+      orderBy: {
+        date: 'asc'
+      }
+    });
+
+    // Transform the data for frontend
+    const formattedVisits = dailyVisits.map(visit => ({
+      date: visit.date,
+      visits: visit.count
+      }
+    ));
+
     // Get most ordered products with completed payments
     const topProducts = await prisma.orderItem.groupBy({
       by: ['productId'],
@@ -135,6 +152,7 @@ export async function GET() {
         activeProducts,
         activeCoupons,
         activeFeatureVideos,
+        dailyVisits: formattedVisits,
         topProducts: topProductsWithNames
       }
     });

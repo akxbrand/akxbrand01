@@ -43,6 +43,10 @@ interface DashboardData {
   activeProducts: number;
   activeCoupons: number;
   activeFeatureVideos: number;
+  dailyVisits: Array<{
+    date: string;
+    visits: number;
+  }>;
   topProducts: Array<{
     name: string;
     orderCount: number;
@@ -332,13 +336,127 @@ export default function AdminDashboard() {
           </div>
           <div className="grid grid-cols-1 text-gray-800 md:grid-cols-3 gap-4 mt-4">
             {Object.entries(dashboardData?.orderStatusCounts || {}).map(([status, count]) => (
-              <div key={status} className="bg-gray-50 p-4 rounded-lg">
-                <p className="text-gray-500 text-sm capitalize">{status}</p>
+              <div key={status} className={`bg-gray-50 p-4 rounded-lg ${status === 'confirmed' ? 'text-indigo-800 bg-indigo-50' : status === 'Pending' ? 'bg-yellow-50 text-yellow-800' : status === 'Delivered' ? 'bg-green-50 text-green-800' : status === 'Shipping' ? 'bg-purple-50 text-purple-800' : 'bg-red-50 text-red-800'}`}>
+                <p className="text-sm capitalize">{status}</p>
                 <p className="text-2xl font-bold">{count}</p>
               </div>
             ))}
           </div>
         </div>
+        {/* Daily Website Visits Chart */}
+        <div className="bg-white p-6 rounded-lg shadow-md mb-8">
+          <h3 className="text-lg text-gray-600 font-semibold mb-4">Daily Website Visits</h3>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
+            {/* Area Chart */}
+            <div className="h-[300px] w-full">
+              <ResponsiveContainer width="100%" height="100%" className="text-gray-700">
+                <AreaChart
+                  data={dashboardData?.dailyVisits || []}
+                  margin={{ top: 10, right: 30, left: 20, bottom: 20 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+                  <XAxis
+                    dataKey="date"
+                    tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    angle={-45}
+                    textAnchor="end"
+                    height={60}
+                    stroke="#666"
+                  />
+                  <YAxis
+                    stroke="#666"
+                    label={{ value: 'Number of Visits', angle: -90, position: 'insideLeft', offset: 0 }}
+                  />
+                  <Tooltip
+                    labelFormatter={(date) => new Date(date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                    formatter={(value) => [`${value} visits`, 'Visits']}
+                    contentStyle={{ background: 'rgba(255, 255, 255, 0.9)', border: '1px solid #ddd' }}
+                  />
+                  <defs>
+                    <linearGradient id="colorVisits" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.1} />
+                    </linearGradient>
+                  </defs>
+                  <Area
+                    type="monotone"
+                    dataKey="visits"
+                    stroke="#3B82F6"
+                    fillOpacity={1}
+                    fill="url(#colorVisits)"
+                    animationDuration={1500}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Bar Chart */}
+            <div className="h-[300px] w-full">
+              <ResponsiveContainer width="100%" height="100%" className="text-gray-700">
+                <BarChart
+                  data={dashboardData?.dailyVisits || []}
+                  margin={{ top: 10, right: 30, left: 20, bottom: 20 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+                  <XAxis
+                    dataKey="date"
+                    tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    angle={-45}
+                    textAnchor="end"
+                    height={60}
+                    stroke="#666"
+                  />
+                  <YAxis
+                    stroke="#666"
+                  />
+                  <Tooltip
+                    labelFormatter={(date) => new Date(date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                    formatter={(value) => [`${value} visits`, 'Daily Visits']}
+                    contentStyle={{ background: 'rgba(255, 255, 255, 0.9)', border: '1px solid #ddd' }}
+                  />
+                  <Bar
+                    dataKey="visits"
+                    fill="#4F46E5"
+                    radius={[4, 4, 0, 0]}
+                    animationDuration={1500}
+                  >
+                    {(dashboardData?.dailyVisits || []).map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={entry.visits > (dashboardData?.dailyVisits || []).reduce((acc, curr) => acc + curr.visits, 0) / (dashboardData?.dailyVisits || []).length
+                          ? '#4F46E5'
+                          : '#818CF8'}
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Summary Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-indigo-50 p-4 rounded-lg">
+              <p className="text-indigo-600 font-semibold">Average Daily Visits</p>
+              <p className="text-2xl font-bold text-indigo-900">
+                {Math.round((dashboardData?.dailyVisits || []).reduce((acc, curr) => acc + curr.visits, 0) / (dashboardData?.dailyVisits || []).length)}
+              </p>
+            </div>
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <p className="text-blue-600 font-semibold">Peak Visits</p>
+              <p className="text-2xl font-bold text-blue-900">
+                {Math.max(...(dashboardData?.dailyVisits || []).map(visit => visit.visits))}
+              </p>
+            </div>
+            <div className="bg-purple-50 p-4 rounded-lg">
+              <p className="text-purple-600 font-semibold">Total Visits</p>
+              <p className="text-2xl font-bold text-purple-900">
+                {(dashboardData?.dailyVisits || []).reduce((acc, curr) => acc + curr.visits, 0)}
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Most Ordered Products Donut Chart */}
         <div className="bg-white p-6 rounded-lg shadow-md mb-8 mt-8">
           <h3 className="text-lg text-gray-600 font-semibold mb-4">Most Ordered Products</h3>

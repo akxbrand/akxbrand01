@@ -283,6 +283,15 @@ model Newsletter {
   updatedAt    DateTime @updatedAt
 }
 
+model DailyVisit {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  date       DateTime @unique
+  count      Int      @default(0)
+  visitorIds String[] @default([]) // Array to store unique visitor IDs
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
 
 
 model AdminNotification {
