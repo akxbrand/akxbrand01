@@ -190,12 +190,12 @@ export default function Footer() {
             © {new Date().getFullYear()} AKX Brand. All rights reserved.
           </p>
           <div className="flex justify-center space-x-6">
-            <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
+            <a href="https://facebook.com/profile.php?id=61574944210057" className="text-gray-400 hover:text-white transition-colors duration-200">
               <FaFacebookF className="w-5 h-5" />
             </a>
-            <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
+            {/* <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
               <FaTwitter className="w-5 h-5" />
-            </a>
+            </a> */}
             <a href="https://www.instagram.com/akxbrand/" className="text-gray-400 hover:text-white transition-colors duration-200">
               <FaInstagram className="w-5 h-5" />
             </a>

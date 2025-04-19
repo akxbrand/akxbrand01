@@ -101,8 +101,49 @@ export async function GET() {
     const formattedVisits = dailyVisits.map(visit => ({
       date: visit.date,
       visits: visit.count
+    }));
+
+    // Get daily user registrations for the last 30 days
+    const dailyUsers = await prisma.user.groupBy({
+      by: ['createdAt'],
+      where: {
+        createdAt: {
+          gte: thirtyDaysAgo
+        }
+      },
+      _count: true,
+      orderBy: {
+        createdAt: 'asc'
       }
-    ));
+    });
+
+    // Transform user growth data
+    const userGrowth = dailyUsers.map(day => ({
+      date: day.createdAt,
+      users: day._count
+    }));
+
+    // Calculate daily revenue for the last 30 days
+    const dailyRevenue = await prisma.order.groupBy({
+      by: ['createdAt'],
+      where: {
+        createdAt: {
+          gte: thirtyDaysAgo
+        },
+        paymentStatus: 'completed'
+      },
+      _sum: {
+        total: true
+      }
+    });
+
+    // Transform and sort daily revenue data by amount
+    const formattedDailyRevenue = dailyRevenue
+      .map(day => ({
+        date: day.createdAt,
+        revenue: day._sum.total || 0
+      }))
+      .sort((a, b) => b.revenue - a.revenue); // Sort by revenue in descending order
 
     // Get most ordered products with completed payments
     const topProducts = await prisma.orderItem.groupBy({
@@ -153,6 +194,8 @@ export async function GET() {
         activeCoupons,
         activeFeatureVideos,
         dailyVisits: formattedVisits,
+        dailyRevenue: formattedDailyRevenue,
+        userGrowth,
         topProducts: topProductsWithNames
       }
     });

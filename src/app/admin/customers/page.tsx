@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import CustomerStatusBadge from '@/components/admin/CustomerStatusBadge';
 import { Customer, CustomerStatus } from '@/types/customer';
-import { Eye, Mail, Phone, ExternalLink, Trash2 } from 'lucide-react';
+import { Mail, Phone, Trash2 } from 'lucide-react';
 import Toast from '@/components/ui/Toast';
 
 export default function CustomersPage() {

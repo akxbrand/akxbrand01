@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
+// import IndiaMap from '@/components/admin/IndiaMap';
 import {
   ShoppingCart,
   Flag,
@@ -11,7 +12,8 @@ import {
   Megaphone,
   Package,
   Ticket,
-  Video
+  Video,
+  Map
 } from 'lucide-react';
 import {
   BarChart,
@@ -27,9 +29,9 @@ import {
   Line,
   PieChart,
   Pie,
-  Cell
+  Cell,
+  ComposedChart
 } from 'recharts';
-import { fontStyle } from 'html2canvas/dist/types/css/property-descriptors/font-style';
 
 interface DashboardData {
   totalOrders: number;
@@ -44,9 +46,24 @@ interface DashboardData {
   activeProducts: number;
   activeCoupons: number;
   activeFeatureVideos: number;
+  stateWiseData: Array<{
+    name: string;
+    value: number;
+    orders: number;
+    revenue: number;
+    customers: number;
+  }>;
   dailyVisits: Array<{
     date: string;
     visits: number;
+  }>;
+  dailyRevenue: Array<{
+    date: string;
+    revenue: number;
+  }>;
+  userGrowth: Array<{
+    date: string;
+    users: number;
   }>;
   topProducts: Array<{
     name: string;
@@ -107,10 +124,10 @@ export default function AdminDashboard() {
 
   return (
     <AdminLayout title='Admin Page'>
-      <div className="p-6 pt-0">
-        <h1 className="text-2xl text-gray-900 font-bold mb-6">Dashboard Overview</h1>
+      <div className="p-4 sm:p-6 lg:p-8 pt-0 max-w-[2000px] mx-auto">
+        <h1 className="text-2xl sm:text-3xl text-gray-900 font-bold mb-6 sm:mb-8">Dashboard Overview</h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8">
           {/* Total Orders */}
           <div className="bg-white p-6 rounded-lg shadow-md">
             <div className="flex items-center justify-between">
@@ -202,45 +219,58 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
           {/* Revenue Growth Chart */}
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-lg text-gray-600 font-semibold mb-4">Revenue Growth</h3>
-            <div className="h-[200px] w-full">
+            <div className="h-[200px] sm:h-[250px] w-full">
               <ResponsiveContainer width="100%" height="100%" className="text-gray-700">
                 <AreaChart
-                  data={[{
-                    name: 'Previous',
-                    value: (dashboardData?.recentRevenue || 0) / (1 + (dashboardData?.revenueGrowth || 0) / 100)
-                  }, {
-                    name: 'Current',
-                    value: dashboardData?.recentRevenue || 0
-                  }]}
-                  margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                  data={dashboardData?.dailyRevenue || []}
+                  margin={{ top: 10, right: 30, left: 20, bottom: 20 }}
                 >
                   <defs>
                     <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#22C55E" stopOpacity={0.8} />
-                      <stop offset="95%" stopColor="#22C55E" stopOpacity={0.1} />
+                      <stop offset="5%" stopColor="#4F46E5" stopOpacity={0.9} />
+                      <stop offset="95%" stopColor="#4F46E5" stopOpacity={0.1} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                  <XAxis dataKey="name" stroke="#666" />
-                  <YAxis stroke="#666" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#eee" opacity={0.5} />
+                  <XAxis
+                    dataKey="date"
+                    tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    angle={-45}
+                    textAnchor="end"
+                    height={60}
+                    stroke="#666"
+                  />
+                  <YAxis
+                    stroke="#666"
+                    tickFormatter={(value) => `₹${(value / 1000).toFixed(1)}K`}
+                    label={{
+                      value: 'Revenue (₹)',
+                      angle: -90,
+                      position: 'insideLeft',
+                      offset: -12,
+                      style: { textAnchor: 'middle', fill: '#666', fontStyle: 'italic' }
+                    }}
+                  />
                   <Tooltip
-                    formatter={(value) => `₹${value.toLocaleString('en-IN')}`}
-                    contentStyle={{ background: 'rgba(255, 255, 255, 0.9)', border: '1px solid #ddd' }}
+                    labelFormatter={(date) => new Date(date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                    formatter={(value) => [`₹${value.toLocaleString('en-IN')}`, 'Revenue']}
+                    contentStyle={{ background: 'rgba(255, 255, 255, 0.95)', border: 'none', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' }}
+                    cursor={{ stroke: '#4F46E5', strokeWidth: 1 }}
                   />
                   <Area
                     type="monotone"
-                    dataKey="value"
-                    stroke="#22C55E"
+                    dataKey="revenue"
+                    stroke="#4F46E5"
+                    strokeWidth={3}
                     fillOpacity={1}
                     fill="url(#colorRevenue)"
                     animationDuration={1500}
+                    // dot={{ r: 4, fill: "#4F46E5", strokeWidth: 2, stroke: "#fff" }}
                   />
-
-                  {/* </BarChart> */}
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -258,35 +288,46 @@ export default function AdminDashboard() {
           {/* User Growth Chart */}
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-lg text-gray-600 font-semibold mb-4">User Growth</h3>
-            <div className="h-[200px] w-full">
+            <div className="h-[200px] sm:h-[250px] w-full">
               <ResponsiveContainer width="100%" height="100%" className="text-gray-700">
                 <LineChart
-                  data={[{
-                    name: 'Previous',
-                    value: dashboardData?.totalUsers - (dashboardData?.recentUsers || 0) || 0
-                  }, {
-                    name: 'Current',
-                    value: dashboardData?.totalUsers || 0
-                  }]}
-                  margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                  data={dashboardData?.userGrowth || []}
+                  margin={{ top: 10, right: 30, left: 20, bottom: 20 }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                  <XAxis dataKey="name" stroke="#666" />
-                  <YAxis stroke="#666" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#eee" opacity={0.5} />
+                  <XAxis
+                    dataKey="date"
+                    tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    angle={-45}
+                    textAnchor="end"
+                    height={60}
+                    stroke="#666"
+                  />
+                  <YAxis
+                    stroke="#666"
+                    label={{
+                      value: 'Number of Users',
+                      angle: -90,
+                      position: 'insideLeft',
+                      offset: -5,
+                      style: { textAnchor: 'middle', fill: '#666', fontStyle: 'italic' }
+                    }}
+                  />
                   <Tooltip
-                    contentStyle={{ background: 'rgba(255, 255, 255, 0.9)', border: '1px solid #ddd' }}
+                    labelFormatter={(date) => new Date(date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                    formatter={(value) => [`${value} users`, 'Total Users']}
+                    contentStyle={{ background: 'rgba(255, 255, 255, 0.95)', border: 'none', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' }}
+                    cursor={{ stroke: '#8B5CF6', strokeWidth: 1 }}
                   />
                   <Line
                     type="monotone"
-                    dataKey="value"
-                    stroke="#F59E0B"
-                    strokeWidth={2}
-                    dot={{ stroke: '#F59E0B', strokeWidth: 2, r: 4, fill: '#fff' }}
-                    activeDot={{ r: 6, stroke: '#F59E0B', strokeWidth: 2, fill: '#fff' }}
+                    dataKey="users"
+                    stroke="#8B5CF6"
+                    strokeWidth={3}
+                    dot={{ r: 4, fill: "#8B5CF6" }}
                     animationDuration={1500}
                   />
                 </LineChart>
-
               </ResponsiveContainer>
             </div>
             <div className="grid grid-cols-2 gap-4 mt-4">
@@ -305,7 +346,7 @@ export default function AdminDashboard() {
         {/* Order Status Distribution Chart */}
         <div className="bg-white p-6 rounded-lg shadow-md mb-8">
           <h3 className="text-lg text-gray-600 font-semibold mb-4">Order Status Distribution</h3>
-          <div className="h-[300px] w-full">
+          <div className="h-[250px] sm:h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%" className="text-gray-700">
               <BarChart
                 data={Object.entries(dashboardData?.orderStatusCounts || {}).map(([status, count]) => ({
@@ -316,20 +357,21 @@ export default function AdminDashboard() {
               >
                 <defs>
                   <linearGradient id="colorOrders" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#4F46E5" stopOpacity={0.8} />
-                    <stop offset="95%" stopColor="#4F46E5" stopOpacity={0.4} />
+                    <stop offset="5%" stopColor="#6D28D9" stopOpacity={0.9} />
+                    <stop offset="95%" stopColor="#6D28D9" stopOpacity={0.2} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                <XAxis dataKey="status" stroke="#666" />
-                <YAxis stroke="#666" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#eee" opacity={0.5} />
+                <XAxis dataKey="status" stroke="#666" tickLine={false} />
+                <YAxis stroke="#666" tickLine={false} />
                 <Tooltip
-                  contentStyle={{ background: 'rgba(255, 255, 255, 0.9)', border: '1px solid #ddd' }}
+                  contentStyle={{ background: 'rgba(255, 255, 255, 0.95)', border: 'none', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' }}
+                  cursor={{ fill: 'rgba(109, 40, 217, 0.1)' }}
                 />
                 <Bar
                   dataKey="count"
-                  fill="url(#colorOrders)"
-                  radius={[4, 4, 0, 0]}
+                  fill="#4F46E5"
+                  radius={[8, 8, 0, 0]}
                   animationDuration={1500}
                 />
               </BarChart>
@@ -347,15 +389,24 @@ export default function AdminDashboard() {
         {/* Daily Website Visits Chart */}
         <div className="bg-white p-6 rounded-lg shadow-md mb-8">
           <h3 className="text-lg text-gray-600 font-semibold mb-4">Daily Website Visits</h3>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
+          <div className="grid grid-cols-1 lg:grid-cols-1 gap-6 mb-4">
             {/* Area Chart */}
-            <div className="h-[300px] w-full">
+            <div className="h-[250px] sm:h-[300px] w-full">
               <ResponsiveContainer width="100%" height="100%" className="text-gray-700">
-                <AreaChart
-                  data={dashboardData?.dailyVisits || []}
+                <ComposedChart
+                  data={dashboardData?.dailyVisits.map(visit => {
+                    const visits = dashboardData?.dailyVisits.map(v => v.visits) || [];
+                    const peakVisits = Math.max(...visits);
+                    const avgVisits = visits.reduce((a, b) => a + b, 0) / visits.length;
+                    return {
+                      ...visit,
+                      peakVisits,
+                      avgVisits
+                    };
+                  }) || []}
                   margin={{ top: 10, right: 30, left: 20, bottom: 20 }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#eee" opacity={0.5} />
                   <XAxis
                     dataKey="date"
                     tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
@@ -381,29 +432,53 @@ export default function AdminDashboard() {
                   />
                   <Tooltip
                     labelFormatter={(date) => new Date(date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-                    formatter={(value) => [`${value} visits`, 'Visits']}
-                    contentStyle={{ background: 'rgba(255, 255, 255, 0.9)', border: '1px solid #ddd' }}
+                    formatter={(value, name) => [
+                      `${name === 'avgVisits' ? Math.round(Number(value)) : value} visits`,
+                      name === 'visits' ? 'Daily Visits' : name === 'peakVisits' ? 'Peak Visits' : 'Average Visits'
+                    ]}
+                    contentStyle={{ background: 'rgba(255, 255, 255, 0.95)', border: 'none', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' }}
+                    cursor={{ stroke: '#6D28D9', strokeWidth: 1 }}
                   />
                   <defs>
                     <linearGradient id="colorVisits" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8} />
-                      <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.1} />
+                      <stop offset="5%" stopColor="#6D28D9" stopOpacity={0.9} />
+                      <stop offset="95%" stopColor="#6D28D9" stopOpacity={0.1} />
                     </linearGradient>
                   </defs>
                   <Area
                     type="monotone"
                     dataKey="visits"
-                    stroke="#3B82F6"
+                    stroke="#6D28D9"
+                    strokeWidth={3}
                     fillOpacity={1}
                     fill="url(#colorVisits)"
                     animationDuration={1500}
+                    dot={{ r: 4, fill: "#6D28D9", strokeWidth: 2, stroke: "#fff" }}
                   />
-                </AreaChart>
+                  <Line
+                    type="monotone"
+                    dataKey="peakVisits"
+                    stroke="#EF4444"
+                    strokeWidth={2}
+                    strokeDasharray="5 5"
+                    dot={false}
+                    name="peakVisits"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="avgVisits"
+                    stroke="#10B981"
+                    strokeWidth={2}
+                    strokeDasharray="5 5"
+                    dot={false}
+                    name="avgVisits"
+                  />
+                </ComposedChart>
               </ResponsiveContainer>
             </div>
 
             {/* Bar Chart */}
-            <div className="h-[300px] w-full">
+            {/* <div className="h-[250px] sm:h-[300px] w-full">
               <ResponsiveContainer width="100%" height="100%" className="text-gray-700">
                 <BarChart
                   data={dashboardData?.dailyVisits || []}
@@ -424,30 +499,30 @@ export default function AdminDashboard() {
                   <Tooltip
                     labelFormatter={(date) => new Date(date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                     formatter={(value) => [`${value} visits`, 'Daily Visits']}
-                    contentStyle={{ background: 'rgba(255, 255, 255, 0.9)', border: '1px solid #ddd' }}
+                    contentStyle={{ background: 'rgba(255, 255, 255, 0.95)', border: 'none', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' }}
                   />
                   <Bar
                     dataKey="visits"
                     fill="#4F46E5"
-                    radius={[4, 4, 0, 0]}
+                    radius={[6, 6, 0, 0]}
                     animationDuration={1500}
                   >
                     {(dashboardData?.dailyVisits || []).map((entry, index) => (
                       <Cell
                         key={`cell-${index}`}
                         fill={entry.visits > (dashboardData?.dailyVisits || []).reduce((acc, curr) => acc + curr.visits, 0) / (dashboardData?.dailyVisits || []).length
-                          ? '#4F46E5'
-                          : '#818CF8'}
+                          ? '#6366F1'
+                          : '#A5B4FC'}
                       />
                     ))}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
-            </div>
+            </div> */}
           </div>
 
           {/* Summary Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           <div className="bg-green-50 p-4 rounded-lg">
               <p className="text-green-600 font-semibold">Today's Visits</p>
               <p className="text-2xl font-bold text-green-900">
@@ -481,7 +556,7 @@ export default function AdminDashboard() {
         {/* Most Ordered Products Donut Chart */}
         <div className="bg-white p-6 rounded-lg shadow-md mb-8 mt-8">
           <h3 className="text-lg text-gray-600 font-semibold mb-4">Most Ordered Products</h3>
-          <div className="h-[300px] w-full">
+          <div className="h-[250px] sm:h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%" className="text-gray-700">
               <PieChart>
                 <Pie
@@ -530,8 +605,8 @@ export default function AdminDashboard() {
                   </text> */}
                 <Tooltip
                   formatter={(value, name) => [`${value} orders`, name]}
-                  contentStyle={{ background: 'rgba(255, 255, 255, 0.9)', border: '1px solid #ddd' }}
-                />
+                  contentStyle={{ background: 'rgba(255, 255, 255, 0.95)', border: 'none', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' }}
+                  />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -550,6 +625,24 @@ export default function AdminDashboard() {
             ))}
           </div>
         </div>
+
+        {/* State-wise Metrics Map */}
+        {/* <div className="bg-white p-6 rounded-lg shadow-md mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg text-gray-600 font-semibold">State-wise Distribution</h3>
+            <div className="flex items-center space-x-2">
+              <Map className="text-indigo-500 h-6 w-6" />
+            </div>
+          </div>
+          <div className="h-[500px] w-full">
+            {dashboardData?.stateWiseData && (
+              <IndiaMap
+                stateData={dashboardData.stateWiseData}
+                metric="orders"
+              />
+            )}
+          </div>
+        </div> */}
       </div>
     </AdminLayout>
   );

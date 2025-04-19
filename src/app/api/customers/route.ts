@@ -14,6 +14,7 @@ export async function GET() {
           select: {
             id: true,
             total: true,
+            paymentStatus: true,
           },
         },
       },
@@ -24,8 +25,8 @@ export async function GET() {
       name: customer.name,
       email: customer.email,
       phone: customer.phoneNumber || '',
-      totalOrders: customer.orders.length,
-      totalSpent: customer.orders.reduce((sum, order) => sum + (order.total || 0), 0),
+      totalOrders: customer.orders.reduce((length, order) => order.paymentStatus === 'completed' ? length + 1 : length, 0),
+      totalSpent: customer.orders.reduce((sum, order) => order.paymentStatus === 'completed' ? sum + (order.total || 0) : sum, 0),
       status: 'active',
       joinedAt: customer.createdAt.toISOString()
     }));
