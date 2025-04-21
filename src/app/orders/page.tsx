@@ -3,12 +3,12 @@
 import React, { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Layout from '@/components/layout/Layout';
-import Image from 'next/image';
+// import Image from 'next/image';
 import { Package, ChevronRight, ShoppingBag, Truck, MapPin, CheckCircle, CreditCard, XCircle, Clock } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Preloader from '@/components/ui/preloader';
-import { Button } from '@/components/ui/button';
+// import { Button } from '@/components/ui/button';
 
 interface Order {
   id: string;

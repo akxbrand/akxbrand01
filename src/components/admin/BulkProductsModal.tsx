@@ -6,7 +6,7 @@ import { Button } from 'primereact/button';
 import { InputNumber } from 'primereact/inputnumber';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { Toast } from 'primereact/toast';
+// import { Toast } from 'primereact/toast';
 import { Tag } from 'primereact/tag';
 
 interface Product {

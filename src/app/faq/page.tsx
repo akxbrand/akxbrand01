@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
+// import Image from "next/image";
 import Layout from "@/components/layout/Layout";
-import { Truck, CreditCard, RefreshCcw, HelpCircle, ChevronDown, ChevronUp, ShieldCheck, Clock, Globe, Phone, Mail, MessageSquare } from "lucide-react";
-import Link from "next/link";
+import { Truck, RefreshCcw, HelpCircle, ChevronDown, ChevronUp, ShieldCheck, Phone, Mail, MessageSquare } from "lucide-react";
+// import Link from "next/link";
 
 export default function FAQPage() {
   // FAQ Categories with their respective questions and answers

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Modal from '@/components/ui/Modal';
-import { X, Upload } from 'lucide-react';
+import { X } from 'lucide-react';
 import Image from 'next/image';
 import CloudinaryUpload from '@/components/common/CloudinaryUpload';
 

@@ -4,12 +4,13 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import Layout from '@/components/layout/Layout';
 import { useRouter } from 'next/navigation';
-import { loadScript, initializeRazorpay } from '@/utils/razorpay';
+import { initializeRazorpay } from '@/utils/razorpay';
 import { useCart } from '@/context/CartContext';
 import Image from 'next/image';
 import { formatCurrency } from '@/utils/currency';
 import Toast from '@/components/ui/Toast';
 import PaymentSuccessModal from '@/components/ui/PaymentSuccessModal';
+import PaymentLoadingModal from '@/components/ui/PaymentLoadingModal';
 
 interface Address {
   id: string;
@@ -51,11 +52,11 @@ export default function CheckoutPage() {
     isDefault: false
   });
   const [formErrors, setFormErrors] = useState<Partial<Address>>({});
-  const [isLoadingPincode, setIsLoadingPincode] = useState(false);
+  // const [isLoadingPincode, setIsLoadingPincode] = useState(false);
   const [pincodeError, setPincodeError] = useState('');
   const [editingAddressId, setEditingAddressId] = useState<string | null>(null);
-  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
-  const [paymentError, setPaymentError] = useState('');
+  // const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  // const [paymentError, setPaymentError] = useState('');
   const [couponCode, setCouponCode] = useState('');
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
@@ -66,6 +67,8 @@ export default function CheckoutPage() {
     maxDiscount?: number;
   } | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showLoadingModal, setShowLoadingModal] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState('');
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
 
   const validateCoupon = async () => {
@@ -213,98 +216,7 @@ export default function CheckoutPage() {
     }
   };
 
-  // const handlePayment = async () => {
-  //   if (!selectedAddressId) {
-  //     showToastMessage('Please select a delivery address', 'error');
-  //     return;
-  //   }
-
-  //   setIsProcessingPayment(true);
-  //   setPaymentError('');
-  //   setPaymentError('');
-
-  //   try {
-  //     const selectedAddress = addresses.find(addr => addr.id === selectedAddressId);
-  //     const orderData = {
-  //       items: cartItems,
-  //       shippingAddress: selectedAddress,
-  //       couponDiscount: couponDiscount
-  //     };
-
-  //     const { orderId, amount, currency, dbOrderId } = await createRazorpayOrder(orderData);
-
-  //     const options = {
-  //       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-  //       amount: amount,
-  //       currency: currency,
-  //       name: 'AKX Brand',
-  //       description: 'Purchase Payment',
-  //       order_id: orderId,
-  //       method: {
-  //         upi: true,
-  //         netbanking: true,
-  //         card: true,
-  //         wallet: true
-  //       },
-  //       config: {
-  //         display: {
-  //           blocks: {
-  //             upi: {
-  //               name: 'Pay using UPI',
-  //               instruments: [
-  //                 { method: 'upi' }
-  //               ]
-  //             }
-  //           },
-  //           sequence: ['block.upi', 'block.other'],
-  //           preferences: {
-  //             show_default_blocks: true
-  //           }
-  //         }
-  //       },
-  //       handler: async (response: any) => {
-  //         try {
-  //           const verificationResponse = await fetch('/api/payment/verify', {
-  //             method: 'POST',
-  //             headers: { 'Content-Type': 'application/json' },
-  //             body: JSON.stringify({
-  //               razorpay_payment_id: response.razorpay_payment_id,
-  //               razorpay_order_id: response.razorpay_order_id,
-  //               razorpay_signature: response.razorpay_signature,
-  //               dbOrderId: dbOrderId
-  //             })
-  //           });
-
-  //           if (verificationResponse.ok) {
-  //             router.push(`/orders/${dbOrderId}?success=true`);
-  //           } else {
-  //             throw new Error('Payment verification failed');
-  //           }
-  //         } catch (error) {
-  //           console.error('Payment verification error:', error);
-  //           setPaymentError('Payment verification failed. Please contact support.');
-  //         }
-  //       },
-  //       prefill: {
-  //         name: selectedAddress?.label,
-  //         contact: selectedAddress?.phone
-  //       },
-  //       theme: {
-  //         color: '#3B82F6'
-  //       }
-  //     };
-
-  //     const razorpayInstance = await initializeRazorpay(options);
-  //     razorpayInstance.open();
-  //   } catch (error) {
-  //     console.error('Payment initialization error:', error);
-  //     setPaymentError('Failed to initialize payment. Please try again.');
-  //     showToastMessage('Payment initialization failed', 'error');
-  //   } finally {
-  //     setIsProcessingPayment(false);
-  //   }
-  // };
-
+  
   const handleAddAddress = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -418,6 +330,9 @@ export default function CheckoutPage() {
       return;
     }
 
+    setShowLoadingModal(true);
+    setLoadingMessage('Creating your order...');
+
     try {
       const response = await fetch('/api/payment/create-order', {
         method: 'POST',
@@ -443,6 +358,8 @@ export default function CheckoutPage() {
 
       const orderData = await response.json();
       
+      setLoadingMessage('Initializing payment...');
+      
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: orderData.amount,
@@ -454,7 +371,15 @@ export default function CheckoutPage() {
         },
         description: 'Payment for your order',
         order_id: orderData.orderId,
+        modal: {
+          ondismiss: function() {
+            setShowLoadingModal(false);
+            router.push('/checkout');
+          }
+        },
         handler: async function (response: any) {
+          setShowLoadingModal(true);
+          setLoadingMessage('Verifying payment...');
           try {
             const verifyResponse = await fetch('/api/payment/verify', {
               method: 'POST',
@@ -501,6 +426,7 @@ export default function CheckoutPage() {
           } catch (error: any) {
             console.error('Payment verification error:', error);
             showToastMessage(error.message || 'Payment verification failed', 'error');
+            setShowLoadingModal(false);
           }
         },
         prefill: {
@@ -511,9 +437,11 @@ export default function CheckoutPage() {
 
       const razorpay = await initializeRazorpay(options);
       razorpay.open();
+      setShowLoadingModal(false);
     } catch (error: any) {
       console.error('Order creation error:', error);
       showToastMessage(error.message || 'Failed to place order. Please try again.', 'error');
+      setShowLoadingModal(false);
     }
   };
 
@@ -564,7 +492,7 @@ export default function CheckoutPage() {
 
   const fetchAddressDetails = async (pincode: string) => {
     if (pincode.length === 6) {
-      setIsLoadingPincode(true);
+      // setIsLoadingPincode(true);
       setPincodeError('');
       try {
         const response = await fetch(
@@ -595,7 +523,8 @@ export default function CheckoutPage() {
           state: '',
         }));
       } finally {
-        setIsLoadingPincode(false);
+        // setIsLoadingPincode(false);
+        console.log('PIN code fetch complete');
       }
     }
   };
@@ -627,6 +556,12 @@ export default function CheckoutPage() {
             type={toastType}
             show={showToast}
             onClose={() => setShowToast(false)}
+          />
+        )}
+        {showLoadingModal && (
+          <PaymentLoadingModal
+            isOpen={showLoadingModal}
+            message={loadingMessage}
           />
         )}
         {showSuccessModal && orderDetails && (

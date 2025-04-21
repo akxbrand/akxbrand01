@@ -12,9 +12,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { Plus, Trash2, Play, Pause, X } from 'lucide-react';
+import { Plus, Trash2, Play, X } from 'lucide-react';
 import Toast from '@/components/ui/Toast';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 declare global {
   interface Window {

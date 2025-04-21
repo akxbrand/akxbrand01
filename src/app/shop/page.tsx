@@ -2,11 +2,19 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import ProductCard from '@/components/shop/ProductCard';
-import Filters from '@/components/shop/Filters';
+import dynamic from 'next/dynamic';
 import { Filter, Grid, List } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
 import Preloader from '@/components/ui/preloader';
+
+// Lazy load components
+const ProductCard = dynamic(() => import('@/components/shop/ProductCard'), {
+  loading: () => <div className="animate-pulse bg-gray-200 rounded-lg h-64 w-full"></div>
+});
+
+const Filters = dynamic(() => import('@/components/shop/Filters'), {
+  ssr: false
+});
 
 interface Product {
   id: string;
@@ -78,10 +86,24 @@ function ShopContent() {
     // setCurrentPage(1);
   }, [searchParams]);
 
-  // Fetch products
+  // Fetch products with caching
   const fetchProducts = async () => {
     try {
       setLoading(true);
+      const cacheKey = `products-${currentPage}-${sortBy}-${JSON.stringify(priceRange)}-${selectedCategories.join()}-${selectedSubcategories.join()}-${searchQuery}`;
+      const cachedData = sessionStorage.getItem(cacheKey);
+      
+      if (cachedData) {
+        const { products: cachedProducts, totalPages: cachedTotalPages, timestamp } = JSON.parse(cachedData);
+        // Check if cache is still valid (5 minutes)
+        if (Date.now() - timestamp < 300000) {
+          setProducts(cachedProducts);
+          setTotalPages(cachedTotalPages);
+          setLoading(false);
+          return;
+        }
+      }
+
       const queryParams = new URLSearchParams({
         page: currentPage.toString(),
         limit: PRODUCTS_PER_PAGE.toString(),
@@ -114,8 +136,17 @@ function ShopContent() {
 
       if (!response.ok) throw new Error(data.error);
 
-      setProducts(data.products || []);
-      setTotalPages(data.totalPages || 1);
+      const productsData = {
+        products: data.products || [],
+        totalPages: data.totalPages || 1,
+        timestamp: Date.now()
+      };
+      
+      // Cache the results
+      sessionStorage.setItem(cacheKey, JSON.stringify(productsData));
+      
+      setProducts(productsData.products);
+      setTotalPages(productsData.totalPages);
     } catch (error) {
       console.error('Error fetching products:', error);
       setProducts([]);
@@ -125,9 +156,9 @@ function ShopContent() {
     }
   };
 
-  // Combined effect for filters and pagination
+  // Debounced effect for filters and pagination
   useEffect(() => {
-    const applyFilters = async () => {
+    const debounceTimeout = setTimeout(async () => {
       try {
         setLoading(true);
         const queryParams = new URLSearchParams({
@@ -170,11 +201,11 @@ function ShopContent() {
       } finally {
         setLoading(false);
       }
-    };
+    }, 500);
 
-    const timeoutId = setTimeout(applyFilters, 300);
-    return () => clearTimeout(timeoutId);
+    return () => clearTimeout(debounceTimeout);
   }, [currentPage, sortBy, priceRange.min, priceRange.max, selectedCategories, selectedSubcategories, searchQuery]);
+  // }, [currentPage, sortBy, priceRange.min, priceRange.max, selectedCategories, selectedSubcategories, searchQuery]);
 
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);

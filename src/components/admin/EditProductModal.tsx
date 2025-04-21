@@ -50,7 +50,7 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
   const [price, setPrice] = useState(product.price);
   const [stock, setStock] = useState(product.stock);
   const [weeklySales, setWeeklySales] = useState(product.weeklySales || 0);
-  type ProductStatus = 'In Stock' | 'Limited Stock' | 'Out of Stock';
+  // type ProductStatus = 'In Stock' | 'Limited Stock' | 'Out of Stock';
   // const [status, setStatus] = useState<ProductStatus>(product.status as ProductStatus);
   const [isLimitedTimeDeal, setIsLimitedTimeDeal] = useState(product.isLimitedTimeDeal || false);
   const [dealStartTime, setDealStartTime] = useState(product.dealStartTime || '');
@@ -178,26 +178,26 @@ export default function EditProductModal({ isOpen, onClose, onSave, product }: E
     setImageError(newImages.length < 1 ? 'Please add at least 1 product image' : '');
   };
 
-  const handleAddSize = () => {
-    if (currentSize.size && currentSize.price > 0) {
-      setSizes([...sizes, currentSize]);
-      setCurrentSize({
-        size: '',
-        description: '',
-        uniqueFeatures: '',
-        productDetails: '',
-        careInstructions: '',
-        deliveryReturns: '',
-        oldPrice: 0,
-        price: 0,
-        stock: 0,
-        isLimitedTimeDeal: false,
-        dealStartTime: '',
-        dealEndTime: '',
-        dealQuantityLimit: 0
-      });
-    }
-  };
+  // const handleAddSize = () => {
+  //   if (currentSize.size && currentSize.price > 0) {
+  //     setSizes([...sizes, currentSize]);
+  //     setCurrentSize({
+  //       size: '',
+  //       description: '',
+  //       uniqueFeatures: '',
+  //       productDetails: '',
+  //       careInstructions: '',
+  //       deliveryReturns: '',
+  //       oldPrice: 0,
+  //       price: 0,
+  //       stock: 0,
+  //       isLimitedTimeDeal: false,
+  //       dealStartTime: '',
+  //       dealEndTime: '',
+  //       dealQuantityLimit: 0
+  //     });
+  //   }
+  // };
 
   const handleRemoveSize = (index: number) => {
     setSizes(sizes.filter((_, i) => i !== index));

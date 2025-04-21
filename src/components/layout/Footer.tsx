@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from "next/link";
-import { FaFacebookF, FaTwitter, FaInstagram, FaPinterestP } from 'react-icons/fa';
+import { FaFacebookF, FaTwitter, FaInstagram } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import Image from 'next/image';
 

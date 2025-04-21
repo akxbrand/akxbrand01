@@ -69,9 +69,9 @@ export default function AddProductModal({ isOpen, onClose, onAdd }: AddProductMo
   const [isNewArrival, setIsNewArrival] = useState(false);
   const [isTop10, setIsTop10] = useState(false);
   const [isLimitted, setIsLimitted] = useState(false);
-  const [currentColor, setCurrentColor] = useState('');
+  // const [currentColor, setCurrentColor] = useState('');
   const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [sizes, setSizes] = useState<ProductSize[]>([]);
   const [currentSize, setCurrentSize] = useState<ProductSize>({
@@ -96,7 +96,7 @@ export default function AddProductModal({ isOpen, onClose, onAdd }: AddProductMo
 
   const fetchCategories = async () => {
     try {
-      setLoading(true);
+      // setLoading(true);
       const response = await fetch('/api/admin/categories');
       const data = await response.json();
 
@@ -106,9 +106,7 @@ export default function AddProductModal({ isOpen, onClose, onAdd }: AddProductMo
     } catch (error) {
       console.error('Error fetching categories:', error);
       setError('Failed to load categories');
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
   const handleImageUploadSuccess = (url: string) => {
     if (imageUrls.length < 5) { // Maximum 5 images
@@ -229,7 +227,7 @@ export default function AddProductModal({ isOpen, onClose, onAdd }: AddProductMo
     setIsTop10(false);
     setIsLimitted(false);
     // setColors([]);
-    setCurrentColor('');
+    // setCurrentColor('');
     setSizes([]);
     setCurrentSize({
       size: '',
