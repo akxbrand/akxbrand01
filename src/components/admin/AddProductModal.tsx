@@ -41,9 +41,9 @@ interface AddProductModalProps {
     images: string[];
     categoryId: string;
     uniqueFeatures?: string;
-  productDetails?: string;
-  careInstructions?: string;
-  deliveryReturns?: string;
+    productDetails?: string;
+    careInstructions?: string;
+    deliveryReturns?: string;
     subCategoryId?: string;
     description: string;
     isBestSeller?: boolean;
@@ -78,9 +78,9 @@ export default function AddProductModal({ isOpen, onClose, onAdd }: AddProductMo
     size: '',
     description: '',
     uniqueFeatures: "",
-  productDetails: "",
-  careInstructions: "",
-  deliveryReturns: " ",
+    productDetails: "",
+    careInstructions: "",
+    deliveryReturns: "",
     oldPrice: 0,
     price: 0,
     stock: 0,
@@ -106,7 +106,7 @@ export default function AddProductModal({ isOpen, onClose, onAdd }: AddProductMo
     } catch (error) {
       console.error('Error fetching categories:', error);
       setError('Failed to load categories');
-    } 
+    }
   };
   const handleImageUploadSuccess = (url: string) => {
     if (imageUrls.length < 5) { // Maximum 5 images
@@ -142,9 +142,9 @@ export default function AddProductModal({ isOpen, onClose, onAdd }: AddProductMo
         size: '',
         description: '',
         uniqueFeatures: "",
-  productDetails: "",
-  careInstructions: "",
-  deliveryReturns: " ",
+        productDetails: "",
+        careInstructions: "",
+        deliveryReturns: " ",
         oldPrice: 0,
         price: 0,
         stock: 0,
@@ -233,9 +233,9 @@ export default function AddProductModal({ isOpen, onClose, onAdd }: AddProductMo
       size: '',
       description: '',
       uniqueFeatures: "",
-  productDetails: "",
-  careInstructions: "",
-  deliveryReturns: " ",
+      productDetails: "",
+      careInstructions: "",
+      deliveryReturns: " ",
       oldPrice: 0,
       price: 0,
       stock: 0,
@@ -442,62 +442,62 @@ export default function AddProductModal({ isOpen, onClose, onAdd }: AddProductMo
 
                   </div>
                   <div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                    <textarea
-                      // type="text"
-                      rows={3}
-                      placeholder='Enter product Description'
-                      value={currentSize.description}
-                      onChange={(e) => setCurrentSize({ ...currentSize, description: e.target.value })}
-                      className="w-full text-gray-700 resize-none px-3 py-2 border border-gray-300 rounded-md"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Unique Features</label>
-                    <textarea
-                      // type="text"
-                      placeholder='Enter product Unique Features'
-                      rows={3}
-                      value={currentSize.uniqueFeatures}
-                      onChange={(e) => setCurrentSize({ ...currentSize, uniqueFeatures: e.target.value })}
-                      className="w-full text-gray-700 resize-none px-3 py-2 border border-gray-300 rounded-md"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Product Details</label>
-                    <textarea
-                      // type="text"
-                      rows={3}
-                      placeholder='Enter product Details'
-                      value={currentSize.productDetails}
-                      onChange={(e) => setCurrentSize({ ...currentSize, productDetails: e.target.value })} 
-                      className="w-full text-gray-700 resize-none px-3 py-2 border border-gray-300 rounded-md"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Care Instructions</label>
-                    <textarea
-                      // type="text"
-                      rows={3}
-                      placeholder='Enter product Care Instructions'
-                      value={currentSize.careInstructions}
-                      onChange={(e) => setCurrentSize({ ...currentSize, careInstructions: e.target.value })} 
-                      className="w-full text-gray-700 resize-none px-3 py-2 border border-gray-300 rounded-md"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Delivery & Returns</label>
-                    <textarea
-                      // type="text"
-                      rows={3}
-                      placeholder='Enter product Delivery & Returns'
-                      value={currentSize.deliveryReturns}
-                      onChange={(e) => setCurrentSize({ ...currentSize, deliveryReturns: e.target.value })} 
-                      className="w-full text-gray-700 resize-none px-3 py-2 border border-gray-300 rounded-md"
-                    />
-                  </div>
-                 
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                      <textarea
+                        // type="text"
+                        rows={3}
+                        placeholder='Enter product Description'
+                        value={currentSize.description}
+                        onChange={(e) => setCurrentSize({ ...currentSize, description: e.target.value })}
+                        className="w-full text-gray-700 resize-none px-3 py-2 border border-gray-300 rounded-md"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Unique Features</label>
+                      <textarea
+                        // type="text"
+                        placeholder='Enter product Unique Features'
+                        rows={3}
+                        value={currentSize.uniqueFeatures}
+                        onChange={(e) => setCurrentSize({ ...currentSize, uniqueFeatures: e.target.value })}
+                        className="w-full text-gray-700 resize-none px-3 py-2 border border-gray-300 rounded-md"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Product Details</label>
+                      <textarea
+                        // type="text"
+                        rows={3}
+                        placeholder='Enter product Details'
+                        value={currentSize.productDetails}
+                        onChange={(e) => setCurrentSize({ ...currentSize, productDetails: e.target.value })}
+                        className="w-full text-gray-700 resize-none px-3 py-2 border border-gray-300 rounded-md"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Care Instructions</label>
+                      <textarea
+                        // type="text"
+                        rows={3}
+                        placeholder='Enter product Care Instructions'
+                        value={currentSize.careInstructions}
+                        onChange={(e) => setCurrentSize({ ...currentSize, careInstructions: e.target.value })}
+                        className="w-full text-gray-700 resize-none px-3 py-2 border border-gray-300 rounded-md"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Delivery & Returns</label>
+                      <textarea
+                        // type="text"
+                        rows={3}
+                        placeholder='Enter product Delivery & Returns'
+                        value={currentSize.deliveryReturns}
+                        onChange={(e) => setCurrentSize({ ...currentSize, deliveryReturns: e.target.value })}
+                        className="w-full text-gray-700 resize-none px-3 py-2 border border-gray-300 rounded-md"
+                      />
+                    </div>
+
                   </div>
 
                   <div className="mb-4">
@@ -640,7 +640,7 @@ export default function AddProductModal({ isOpen, onClose, onAdd }: AddProductMo
                                 handleImageUploadSuccess(url);
                                 input.value = '';
                               }
-                          }
+                            }
                           }}
                         />
                       </div>

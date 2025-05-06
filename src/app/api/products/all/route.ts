@@ -24,11 +24,15 @@ export async function GET(request: NextRequest) {
     // Build sort conditions
     let orderBy: any = { createdAt: 'desc' };
     switch (sortBy) {
-      case 'price_low_high':
+      case 'price-low':
         orderBy = { price: 'asc' };
         break;
-      case 'price_high_low':
+      case 'price-high':
         orderBy = { price: 'desc' };
+        break;
+      case 'rating':
+        // For rating sort, we'll calculate average rating after fetching the products
+        orderBy = { createdAt: 'desc' };
         break;
     }
 
